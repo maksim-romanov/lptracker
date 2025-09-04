@@ -2,13 +2,21 @@
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
     "strict": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "baseUrl": "src",
     "paths": {
-      "@/*": [
-        "./*"
+      "components/*": [
+        "components/*",
+      ],
+      "screens/*": [
+        "screens/*",
       ]
     }
   },
   "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
     "**/*.ts",
     "**/*.tsx",
     ".expo/types/**/*.ts",
