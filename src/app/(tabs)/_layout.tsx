@@ -17,6 +17,8 @@ const Tabs = withLayoutContext<
 >(BottomTabNavigator);
 
 const StyledTabs = withUnistyles(Tabs, (theme) => ({
+  tabBarInactiveTintColor: theme.colors.interactiveDisabled,
+  disablePageAnimations: true,
   tabBarStyle: {
     backgroundColor: theme.colors.backgroundModule,
   },
@@ -37,7 +39,7 @@ export default function TabLayout() {
         name="wallets"
         options={{
           title: "Wallets",
-          tabBarIcon: () => ({ sfSymbol: "lock.shield.fill" }),
+          tabBarIcon: () => ({ sfSymbol: "wallet.bifold.fill" }),
         }}
       />
     </StyledTabs>
