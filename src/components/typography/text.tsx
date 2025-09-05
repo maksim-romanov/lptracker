@@ -3,8 +3,8 @@ import { StyleSheet, UnistylesVariants } from "react-native-unistyles";
 
 export type TComponentVariants = UnistylesVariants<typeof styles>;
 
-export const Text = function ({ style, weight, size, ...props }: RNTextProps & TComponentVariants) {
-  styles.useVariants({ weight, size });
+export const Text = function ({ style, weight, size, type, ...props }: RNTextProps & TComponentVariants) {
+  styles.useVariants({ weight, size, type });
 
   return <RNText {...props} style={[styles.text, style]} />;
 };

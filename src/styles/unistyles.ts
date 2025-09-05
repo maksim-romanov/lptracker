@@ -2,7 +2,7 @@ import { StyleSheet } from "react-native-unistyles";
 
 import { breakpoints, darkTheme, lightTheme } from "./themes";
 
-// Configure Unistyles with themes and breakpoints
+// Configure Unistyles with themes, breakpoints, and spacing
 StyleSheet.configure({
   themes: {
     light: lightTheme,

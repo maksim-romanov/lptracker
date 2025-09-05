@@ -1,25 +1,28 @@
-import { ScrollView } from "react-native";
+import { ScrollView, View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
-import { Block } from "components/block";
+import { InfoBlock } from "components/block";
 import { Text } from "components/typography/text";
+import { Title } from "components/typography/title";
 
 export const Positions = function () {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text>Positions</Text>
 
-      <Block type="active">
-        <Text>Position 1</Text>
-      </Block>
+      <InfoBlock type="active">
+        <Title>Position 1</Title>
+      </InfoBlock>
 
-      <Block>
-        <Text weight="semiBold">Position 2</Text>
-      </Block>
+      <View style={styles.hstack}>
+        <InfoBlock>
+          <Text weight="semiBold">Position 2</Text>
+        </InfoBlock>
 
-      <Block>
-        <Text weight="bold">Position 2</Text>
-      </Block>
+        <InfoBlock>
+          <Text weight="bold">Position 2</Text>
+        </InfoBlock>
+      </View>
     </ScrollView>
   );
 };
@@ -27,6 +30,18 @@ export const Positions = function () {
 const styles = StyleSheet.create((theme, rt) => ({
   container: {
     paddingTop: rt.insets.top,
-    paddingHorizontal: 12,
+    paddingHorizontal: theme.spacing.lg,
+    gap: theme.spacing.md,
+  },
+
+  hstack: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: theme.spacing.md,
+  },
+
+  vstack: {
+    flexDirection: "column",
+    gap: theme.spacing.md,
   },
 }));

@@ -3,26 +3,53 @@ import { StyleSheet, UnistylesVariants } from "react-native-unistyles";
 
 type TComponentVariants = UnistylesVariants<typeof styles>;
 
-export const Block = function ({ style, type, ...props }: ViewProps & TComponentVariants) {
-  styles.useVariants({ type });
+export const InfoBlock = function ({ style, type, padding, margin, ...props }: ViewProps & TComponentVariants) {
+  styles.useVariants({ type, padding, margin });
 
   return <View style={[styles.block, style]} {...props} />;
 };
 
 const styles = StyleSheet.create((theme) => ({
   block: {
-    padding: 12,
-    borderRadius: 12,
+    flexGrow: 1,
+    borderRadius: theme.spacing.md,
 
     variants: {
       type: {
         active: {
           backgroundColor: theme.colors.interactiveActive,
         },
-
+        surface: {
+          backgroundColor: theme.colors.backgroundSurface,
+        },
+        floating: {
+          backgroundColor: theme.colors.backgroundFloating,
+        },
         default: {
           backgroundColor: theme.colors.backgroundModule,
         },
+      },
+
+      padding: {
+        none: { padding: theme.spacing.none },
+        xs: { padding: theme.spacing.xs },
+        sm: { padding: theme.spacing.sm },
+        md: { padding: theme.spacing.md },
+        lg: { padding: theme.spacing.lg },
+        xl: { padding: theme.spacing.xl },
+        xxl: { padding: theme.spacing.xxl },
+        default: { padding: theme.spacing.lg },
+      },
+
+      margin: {
+        none: { margin: theme.spacing.none },
+        xs: { margin: theme.spacing.xs },
+        sm: { margin: theme.spacing.sm },
+        md: { margin: theme.spacing.md },
+        lg: { margin: theme.spacing.lg },
+        xl: { margin: theme.spacing.xl },
+        xxl: { margin: theme.spacing.xxl },
+        default: { margin: theme.spacing.none },
       },
     },
   },

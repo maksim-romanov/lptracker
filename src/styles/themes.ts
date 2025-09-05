@@ -1,3 +1,19 @@
+// Spacing system (8px base scale like Uniswap and modern design systems)
+const spacing = {
+  none: 0,
+  xs: 4, // 0.25rem
+  sm: 8, // 0.5rem
+  md: 12, // 0.75rem
+  lg: 16, // 1rem
+  xl: 20, // 1.25rem
+  xxl: 24, // 1.5rem
+  xxxl: 32, // 2rem
+  huge: 40, // 2.5rem
+  massive: 48, // 3rem
+  giant: 64, // 4rem
+  colossal: 80, // 5rem
+} as const;
+
 // Uniswap v4 design system colors - Light Theme
 
 export const lightTheme = {
@@ -56,6 +72,7 @@ export const lightTheme = {
     accent3: "#9750DD", // Purple
     accent4: "#40B66B", // Green
   },
+  spacing,
 } as const;
 
 // Uniswap v4 design system colors - Dark Theme
@@ -116,6 +133,7 @@ export const darkTheme = {
     accent3: "#9750DD", // Purple
     accent4: "#40B66B", // Green
   },
+  spacing,
 } as const;
 
 // Breakpoints

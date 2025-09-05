@@ -1,9 +1,17 @@
 import { TextProps } from "react-native";
-import { StyleSheet } from "react-native-unistyles";
+import { StyleSheet, UnistylesVariants } from "react-native-unistyles";
 
-import { TComponentVariants, Text } from "./text";
+import { TComponentVariants as TTextVariants, Text } from "./text";
 
-export const Title = function ({ style, ...props }: TextProps & Omit<TComponentVariants, "size">) {
+export type TComponentVariants = UnistylesVariants<typeof styles>;
+
+export const Title = function ({
+  style,
+  size,
+  ...props
+}: TextProps & TComponentVariants & Omit<TTextVariants, "size">) {
+  styles.useVariants({ size });
+
   return <Text style={[styles.title, style]} {...props} />;
 };
 
@@ -15,7 +23,8 @@ const styles = StyleSheet.create((theme) => ({
           fontSize: 24,
         },
         default: {
-          fontSize: 20,
+          fontFamily: "Inter18pt-SemiBold",
+          fontSize: 24,
         },
       },
     },
