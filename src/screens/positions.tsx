@@ -1,5 +1,6 @@
-import { ScrollView, View } from "react-native";
-import { StyleSheet } from "react-native-unistyles";
+import { ScrollView } from "react-native";
+import { StyleSheet, UnistylesRuntime } from "react-native-unistyles";
+import { Col, Container, Row } from "react-native-unistyles-grid";
 
 import { InfoBlock } from "components/block";
 import { Text } from "components/typography/text";
@@ -8,21 +9,31 @@ import { Title } from "components/typography/title";
 export const Positions = function () {
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text>Positions</Text>
+      <Container>
+        <Text>
+          {" "}
+          Current breakpoint is {UnistylesRuntime.breakpoint} {UnistylesRuntime.screen.width}{" "}
+          {UnistylesRuntime.screen.height}
+        </Text>
 
-      <InfoBlock type="active">
-        <Title>Position 1</Title>
-      </InfoBlock>
-
-      <View style={styles.hstack}>
-        <InfoBlock>
-          <Text weight="semiBold">Position 2</Text>
+        <InfoBlock type="active">
+          <Title>Position 1</Title>
         </InfoBlock>
 
-        <InfoBlock>
-          <Text weight="bold">Position 2</Text>
-        </InfoBlock>
-      </View>
+        <Row>
+          <Col>
+            <InfoBlock>
+              <Text weight="semiBold">Position 2</Text>
+            </InfoBlock>
+          </Col>
+
+          <Col>
+            <InfoBlock>
+              <Text weight="bold">Position 2</Text>
+            </InfoBlock>
+          </Col>
+        </Row>
+      </Container>
     </ScrollView>
   );
 };
@@ -30,18 +41,6 @@ export const Positions = function () {
 const styles = StyleSheet.create((theme, rt) => ({
   container: {
     paddingTop: rt.insets.top,
-    paddingHorizontal: theme.spacing.lg,
-    gap: theme.spacing.md,
-  },
-
-  hstack: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: theme.spacing.md,
-  },
-
-  vstack: {
-    flexDirection: "column",
     gap: theme.spacing.md,
   },
 }));

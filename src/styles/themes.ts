@@ -136,15 +136,12 @@ export const darkTheme = {
   spacing,
 } as const;
 
-// Breakpoints
+// Mobile-first breakpoints for iOS/iPad and Android/Tablets
 export const breakpoints = {
-  xs: 0,
-  sm: 576,
-  md: 768,
-  lg: 992,
-  xl: 1200,
-  superLarge: 2000,
-  tvLike: 4000,
+  small: 0, // up to 360px (small phones)
+  medium: 361, // 361px – 767px (most phones)
+  large: 768, // 768px – 1023px (small tablets)
+  xlarge: 1024, // 1024px+ (tablets, foldables)
 } as const;
 
 // TypeScript types

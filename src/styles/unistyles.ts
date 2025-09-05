@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native-unistyles";
+import { UnistylesGrid } from "react-native-unistyles-grid";
 
 import { breakpoints, darkTheme, lightTheme } from "./themes";
 
@@ -14,6 +15,20 @@ StyleSheet.configure({
   },
 });
 
+UnistylesGrid.init((theme) => ({
+  // containerPaddingVertical: 0,
+  // containerPaddingHorizontal: 0,
+  containerStyles: {
+    paddingVertical: 0,
+    paddingHorizontal: theme.spacing.lg,
+  },
+  rowGap: theme.spacing.sm,
+  columnGap: {
+    medium: theme.spacing.sm,
+    large: 100,
+  },
+}));
+
 // TypeScript module augmentation
 declare module "react-native-unistyles" {
   export interface UnistylesThemes {
@@ -21,13 +36,6 @@ declare module "react-native-unistyles" {
     dark: typeof darkTheme;
   }
 
-  export interface UnistylesBreakpoints {
-    xs: 0;
-    sm: 576;
-    md: 768;
-    lg: 992;
-    xl: 1200;
-    superLarge: 2000;
-    tvLike: 4000;
-  }
+  type AppBreakpoints = typeof breakpoints;
+  export interface UnistylesBreakpoints extends AppBreakpoints {}
 }

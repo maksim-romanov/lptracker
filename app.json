@@ -47,6 +47,12 @@
       "expo-build-properties",
       "react-native-bottom-tabs",
       [
+        "expo-screen-orientation",
+        {
+          "initialOrientation": "DEFAULT"
+        }
+      ],
+      [
         "expo-font",
         {
           "fonts": [
