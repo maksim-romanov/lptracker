@@ -31,6 +31,14 @@ const styles = StyleSheet.create((theme) => ({
           color: theme.colors.success,
         },
 
+        surface: {
+          color: theme.colors.surface,
+        },
+
+        outline: {
+          color: theme.colors.outline,
+        },
+
         default: {
           color: theme.colors.onBackground,
         },

@@ -1,5 +1,4 @@
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
-import Octicons from "@expo/vector-icons/Octicons";
 import { Box, Column, Columns, Inline, Stack } from "@grapp/stacks";
 import numbro from "numbro";
 import { StyleSheet, withUnistyles } from "react-native-unistyles";
@@ -35,11 +34,11 @@ export const LPCard = function () {
 
         <Inline space={2}>
           <Tag
-            prefix={
-              <Box height={12} width={12}>
-                <Octicons name="dot-fill" size={12} color="red" />
-              </Box>
-            }
+            // prefix={
+            //   <Box height={12} width={12}>
+            //     <Octicons name="dot-fill" size={12} color="red" />
+            //   </Box>
+            // }
             color="red"
           >
             OP
