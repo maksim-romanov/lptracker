@@ -6,6 +6,7 @@ import { StyleSheet, withUnistyles } from "react-native-unistyles";
 import tinycolor from "tinycolor2";
 
 import { BaseStats } from "components/base-stats";
+import { EmptyState } from "components/empty-state";
 import { LPCard } from "components/lp-card";
 import { TotalBalance } from "components/total-balance";
 import { Text } from "components/typography/text";
@@ -30,6 +31,8 @@ const ListHeader = function () {
 
 export const Positions = function () {
   const [refreshing, setRefreshing] = React.useState(false);
+  // Simulate empty state - change this to [] to see the empty state
+  const positions: number[] = [];
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
@@ -39,12 +42,13 @@ export const Positions = function () {
   }, []);
 
   return (
-    <FlatList
+    <FlatList<number>
       ref={null}
       contentContainerStyle={[styles.container]}
-      data={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}
+      data={positions}
       renderItem={({ item }) => <LPCard />}
-      ListHeaderComponent={ListHeader}
+      ListHeaderComponent={positions.length > 0 ? ListHeader : null}
+      ListEmptyComponent={EmptyState}
       // stickyHeaderIndices={[0]}
       ListHeaderComponentStyle={styles.header}
       ItemSeparatorComponent={Separator}
@@ -62,6 +66,7 @@ const styles = StyleSheet.create((theme, rt) => ({
     paddingHorizontal: theme.spacing.lg,
     // paddingBottom: rt.insets.bottom,
     paddingBottom: theme.spacing.lg,
+    flexGrow: 0.5,
   },
   header: {
     marginBottom: theme.spacing.lg,

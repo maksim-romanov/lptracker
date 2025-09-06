@@ -21,7 +21,7 @@ export const typography = {
     subtitle1: { fontFamily: "Inter18pt-Regular", fontSize: 16, lineHeight: 16 * 1.1 },
     subtitle2: { fontFamily: "Inter18pt-Medium", fontSize: 14, lineHeight: 14 * 1.1 },
 
-    body1: { fontFamily: "Inter18pt-Regular", fontSize: 16, lineHeight: 16 * 1.1 },
+    body1: { fontFamily: "Inter18pt-Regular", fontSize: 16, lineHeight: 16 * 1.4 },
     body2: { fontFamily: "Inter18pt-Light", fontSize: 15, lineHeight: 15 * 1.1 },
 
     button: { fontFamily: "Inter18pt-Medium", fontSize: 14, lineHeight: 14 * 1.2 },

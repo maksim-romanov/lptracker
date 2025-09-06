@@ -15,6 +15,10 @@ const styles = StyleSheet.create((theme) => ({
 
     variants: {
       color: {
+        primary: {
+          color: theme.colors.primary,
+        },
+
         onPrimary: {
           color: theme.colors.onPrimary,
         },
