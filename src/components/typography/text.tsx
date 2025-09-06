@@ -15,16 +15,20 @@ const styles = StyleSheet.create((theme) => ({
 
     variants: {
       color: {
-        primary: {
+        onPrimary: {
           color: theme.colors.onPrimary,
         },
 
-        secondary: {
+        onSecondary: {
           color: theme.colors.onSecondary,
         },
 
-        surface: {
+        onSurface: {
           color: theme.colors.onSurface,
+        },
+
+        success: {
+          color: theme.colors.success,
         },
 
         default: {

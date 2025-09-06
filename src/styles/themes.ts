@@ -9,6 +9,7 @@ const theme = themeFromSourceColor(seedColor);
 // Spacing system (8px base scale like Uniswap and modern design systems)
 const spacing = {
   none: 0,
+  xxs: 2,
   xs: 4, // 0.25rem
   sm: 8, // 0.5rem
   md: 12, // 0.75rem
@@ -25,6 +26,17 @@ const spacing = {
 const lightSchemaColors = theme.schemes.light.toJSON();
 const darkSchemaColors = theme.schemes.dark.toJSON();
 
+const commonColors = {
+  primary: "#FF007A",
+  onPrimary: "#FFFFFF",
+
+  secondary: "#4C82FB",
+  onSecondary: "#FFFFFF",
+
+  success: "#40B66B", // Uniswap green
+  warning: "#FF9F0A", // Uniswap orange
+} as const;
+
 export const lightTheme = {
   colors: {
     ...Object.keys(lightSchemaColors).reduce(
@@ -34,16 +46,12 @@ export const lightTheme = {
       },
       {} as Record<keyof Scheme, string>,
     ),
-    primary: "#FF007A",
-    onPrimary: "#FFFFFF",
-
-    secondary: "#4C82FB",
-    onSecondary: "#FFFFFF",
+    ...commonColors,
 
     background: "#fff",
     surface: "#f0f0f0",
     outline: "#e0e0e0",
-  } as Record<keyof Scheme, string>,
+  } as const,
 
   spacing,
   typography,
@@ -61,18 +69,14 @@ export const darkTheme = {
       },
       {} as Record<keyof Scheme, string>,
     ),
-    primary: "#FF007A",
-    onPrimary: "#FFFFFF",
-
-    secondary: "#4C82FB",
-    onSecondary: "#FFFFFF",
+    ...commonColors,
 
     background: "#0D111C",
     surface: "#1B2236",
     outline: "#4C5665",
 
     onSurface: "#FFFFFF",
-  } as Record<keyof Scheme, string>,
+  } as const,
 
   spacing,
   typography,

@@ -6,6 +6,7 @@ import {
 import { ParamListBase, TabNavigationState } from "@react-navigation/native";
 import { withLayoutContext } from "expo-router";
 import { withUnistyles } from "react-native-unistyles";
+import tinycolor from "tinycolor2";
 
 const BottomTabNavigator = createNativeBottomTabNavigator().Navigator;
 
@@ -17,10 +18,16 @@ const Tabs = withLayoutContext<
 >(BottomTabNavigator);
 
 const StyledTabs = withUnistyles(Tabs, (theme) => ({
-  tabBarInactiveTintColor: theme.colors.outline,
   disablePageAnimations: true,
+  translucent: true,
+  sidebarAdaptable: true,
+  tabBarInactiveTintColor: theme.colors.outline,
+  rippleColor: theme.colors.primary,
   tabBarStyle: {
-    backgroundColor: theme.colors.background,
+    backgroundColor: tinycolor(theme.colors.background).setAlpha(0.4).toRgbString(),
+  },
+  tabLabelStyle: {
+    fontFamily: theme.typography.variants.headline2.fontFamily,
   },
 }));
 
