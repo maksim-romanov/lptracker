@@ -1,18 +1,37 @@
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import Octicons from "@expo/vector-icons/Octicons";
 import { Box, Column, Columns, Inline, Stack } from "@grapp/stacks";
 import numbro from "numbro";
-import { StyleSheet } from "react-native-unistyles";
+import { StyleSheet, withUnistyles } from "react-native-unistyles";
 
 import { Tag } from "./tag";
 import { Text } from "./typography/text";
 
 numbro.setLanguage("en");
 
+const SuccessTag = withUnistyles(Tag, (theme) => ({
+  color: theme.colors.success,
+}));
+
+const TrendUpIcon = withUnistyles(FontAwesome6, (theme) => ({
+  color: theme.colors.success,
+  size: 16,
+  name: "arrow-trend-up",
+}));
+
 export const LPCard = function () {
   return (
     <Box style={styles.container} rowGap={6}>
       <Stack space={2}>
-        <Text type="headline3">ETH/USDC</Text>
+        <Columns alignY="center">
+          <Column flex="fluid">
+            <Text type="headline3">ETH/USDC</Text>
+          </Column>
+
+          <Column flex="content">
+            <SuccessTag>in Range</SuccessTag>
+          </Column>
+        </Columns>
 
         <Inline space={2}>
           <Tag
@@ -30,7 +49,7 @@ export const LPCard = function () {
         </Inline>
       </Stack>
 
-      <Columns space={7} defaultFlex="content" alignX="left">
+      <Columns space={10} defaultFlex="content" alignX="left">
         <Column flex="content" style={{ flexShrink: 1 }}>
           <Box rowGap={2}>
             <Text type="caption">Value</Text>
@@ -61,18 +80,22 @@ export const LPCard = function () {
           </Box>
         </Column>
 
-        <Column flex="1/3">
+        <Column>
           <Box rowGap={2}>
             <Text type="caption">APR</Text>
 
-            <Text type="headline5" color="success" numberOfLines={1}>
-              {numbro(0.0312).format({
-                output: "percent",
-                mantissa: 2,
-                trimMantissa: true,
-                spaceSeparated: false,
-              })}
-            </Text>
+            <Inline space={2} alignY="center">
+              <TrendUpIcon />
+
+              <Text type="headline5" color="success" numberOfLines={1}>
+                {numbro(0.0312).format({
+                  output: "percent",
+                  mantissa: 2,
+                  trimMantissa: true,
+                  spaceSeparated: false,
+                })}
+              </Text>
+            </Inline>
           </Box>
         </Column>
       </Columns>

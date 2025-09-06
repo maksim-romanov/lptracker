@@ -1,7 +1,7 @@
 import React from "react";
 
 import { Column, Columns } from "@grapp/stacks";
-import { View } from "react-native";
+import { View, ViewProps } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 import tinycolor from "tinycolor2";
 
@@ -10,12 +10,12 @@ import { Text } from "./typography/text";
 type TProps = {
   color?: string;
   prefix?: React.ReactNode;
-};
+} & Pick<ViewProps, "style">;
 
-export const Tag = function ({ children, color = "#6F707B", prefix }: React.PropsWithChildren<TProps>) {
+export const Tag = function ({ children, color = "#6F707B", prefix, style }: React.PropsWithChildren<TProps>) {
   return (
-    <View style={styles.chip({ color })}>
-      <Columns space={3}>
+    <View style={[styles.chip({ color }), style]}>
+      <Columns space={3} alignY="center">
         {!!prefix && <>{prefix}</>}
 
         <Column flex="content">

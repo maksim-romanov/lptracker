@@ -24,8 +24,8 @@ export const typography = {
     body1: { fontFamily: "Inter18pt-Regular", fontSize: 16, lineHeight: 16 * 1.1 },
     body2: { fontFamily: "Inter18pt-Light", fontSize: 15, lineHeight: 15 * 1.1 },
 
-    button: { fontFamily: "Inter18pt-Medium", fontSize: 14, lineHeight: 14 * 1.1 },
-    caption: { fontFamily: "Inter18pt-Medium", fontSize: 12, lineHeight: 12 * 1.1 },
+    button: { fontFamily: "Inter18pt-Medium", fontSize: 14, lineHeight: 14 * 1.2 },
+    caption: { fontFamily: "Inter18pt-Medium", fontSize: 12, lineHeight: 12 * 1.2 },
     overline: { fontFamily: "Inter18pt-Light", fontSize: 10, lineHeight: 10 * 1.1 },
   } as const,
 };
