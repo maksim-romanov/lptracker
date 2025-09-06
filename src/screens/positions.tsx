@@ -1,24 +1,32 @@
 import React from "react";
 
 import { Box } from "@grapp/stacks";
-import { useHeaderHeight } from "@react-navigation/elements";
-import { FlatList } from "react-native";
-import { useBottomTabBarHeight } from "react-native-bottom-tabs";
+import { FlatList, RefreshControl } from "react-native";
 import { StyleSheet, withUnistyles } from "react-native-unistyles";
+import tinycolor from "tinycolor2";
 
 import { LPCard } from "components/lp-card";
 import { TotalBalance } from "components/total-balance";
 
 const Separator = withUnistyles(Box, (theme) => ({ height: theme.spacing.md }));
+const BrandRefreshControl = withUnistyles(RefreshControl, (theme) => ({
+  tintColor: tinycolor(theme.colors.primary).darken(10).toRgbString(),
+}));
 
 export const Positions = function () {
-  const tabBarHeight = useBottomTabBarHeight();
-  const headerHeight = useHeaderHeight();
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  }, []);
 
   return (
     <FlatList
       ref={null}
-      contentContainerStyle={[styles.container({ tabBarHeight })]}
+      contentContainerStyle={[styles.container]}
       data={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}
       renderItem={({ item }) => <LPCard />}
       ListHeaderComponent={TotalBalance}
@@ -26,18 +34,20 @@ export const Positions = function () {
       ListHeaderComponentStyle={styles.header}
       ItemSeparatorComponent={Separator}
       showsVerticalScrollIndicator={false}
-      contentInset={{ top: headerHeight }}
+      contentInsetAdjustmentBehavior="automatic"
+      // contentInset={{ top: headerHeight }}
+      refreshControl={<BrandRefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
     />
   );
 };
 
 const styles = StyleSheet.create((theme, rt) => ({
-  container: ({ tabBarHeight }: { tabBarHeight: number }) => ({
+  container: {
     // paddingTop: rt.insets.top,
     paddingHorizontal: theme.spacing.lg,
     // paddingBottom: rt.insets.bottom,
-    paddingBottom: tabBarHeight + theme.spacing.lg,
-  }),
+    paddingBottom: theme.spacing.lg,
+  },
   header: {
     marginBottom: theme.spacing.lg,
   },

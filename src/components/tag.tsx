@@ -15,7 +15,7 @@ type TProps = {
 export const Tag = function ({ children, color = "#6F707B", prefix, style }: React.PropsWithChildren<TProps>) {
   return (
     <View style={[styles.chip({ color }), style]}>
-      <Columns space={3} alignY="center">
+      <Columns space={2} alignY="center">
         {!!prefix && <>{prefix}</>}
 
         <Column flex="content">
@@ -32,7 +32,7 @@ const styles = StyleSheet.create((theme) => ({
   chip: ({ color }: { color: string }) => ({
     backgroundColor: tinycolor(color).setAlpha(0.2).toRgbString(),
     paddingHorizontal: theme.spacing.sm,
-    paddingVertical: theme.spacing.xs,
+    paddingVertical: theme.spacing.xs / 2,
     borderRadius: theme.spacing.xs,
     borderWidth: 1,
     borderColor: tinycolor(color).setAlpha(0.1).toRgbString(),

@@ -26,6 +26,10 @@ const spacing = {
 const lightSchemaColors = theme.schemes.light.toJSON();
 const darkSchemaColors = theme.schemes.dark.toJSON();
 
+// Helper function to convert schema colors to hex strings
+const convertSchemaColorsToHex = (schemaColors: Record<string, number>) =>
+  Object.fromEntries(Object.entries(schemaColors).map(([key, value]) => [key, hexFromArgb(value)]));
+
 const commonColors = {
   primary: "#FF007A",
   onPrimary: "#FFFFFF",
@@ -39,13 +43,7 @@ const commonColors = {
 
 export const lightTheme = {
   colors: {
-    ...Object.keys(lightSchemaColors).reduce(
-      (acc, key) => {
-        acc[key as keyof Scheme] = hexFromArgb(lightSchemaColors[key as keyof typeof lightSchemaColors]);
-        return acc;
-      },
-      {} as Record<keyof Scheme, string>,
-    ),
+    ...(convertSchemaColorsToHex(lightSchemaColors) as Record<keyof Scheme, string>),
     ...commonColors,
 
     background: "#fff",
@@ -62,13 +60,7 @@ export const lightTheme = {
 };
 export const darkTheme = {
   colors: {
-    ...Object.keys(darkSchemaColors).reduce(
-      (acc, key) => {
-        acc[key as keyof Scheme] = hexFromArgb(darkSchemaColors[key as keyof typeof darkSchemaColors]);
-        return acc;
-      },
-      {} as Record<keyof Scheme, string>,
-    ),
+    ...(convertSchemaColorsToHex(darkSchemaColors) as Record<keyof Scheme, string>),
     ...commonColors,
 
     background: "#0D111C",

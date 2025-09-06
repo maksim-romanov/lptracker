@@ -25,7 +25,7 @@ export const LPCard = function () {
       <Stack space={2}>
         <Columns alignY="center">
           <Column flex="fluid">
-            <Text type="headline3">ETH/USDC</Text>
+            <Text type="headline4">ETH/USDC</Text>
           </Column>
 
           <Column flex="content">
