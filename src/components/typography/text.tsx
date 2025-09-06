@@ -23,6 +23,10 @@ const styles = StyleSheet.create((theme) => ({
           color: theme.colors.onSecondary,
         },
 
+        surface: {
+          color: theme.colors.onSurface,
+        },
+
         default: {
           color: theme.colors.onBackground,
         },

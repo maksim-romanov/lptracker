@@ -47,6 +47,10 @@ export const lightTheme = {
 
   spacing,
   typography,
+
+  stacks: {
+    spacing: 4,
+  },
 };
 export const darkTheme = {
   colors: {
@@ -66,10 +70,16 @@ export const darkTheme = {
     background: "#0D111C",
     surface: "#1B2236",
     outline: "#4C5665",
+
+    onSurface: "#FFFFFF",
   } as Record<keyof Scheme, string>,
 
   spacing,
   typography,
+
+  stacks: {
+    spacing: 4,
+  },
 };
 
 // // Uniswap v4 design system colors - Light Theme
