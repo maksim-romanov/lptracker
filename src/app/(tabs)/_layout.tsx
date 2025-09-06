@@ -35,7 +35,7 @@ export default function TabLayout() {
   return (
     <StyledTabs>
       <Tabs.Screen
-        name="index"
+        name="positions"
         options={{
           title: "Positions",
           tabBarIcon: () => ({ sfSymbol: "chart.bar.fill" }),
