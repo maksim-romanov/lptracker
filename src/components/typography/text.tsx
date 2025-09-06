@@ -3,69 +3,46 @@ import { StyleSheet, UnistylesVariants } from "react-native-unistyles";
 
 export type TComponentVariants = UnistylesVariants<typeof styles>;
 
-export const Text = function ({ style, weight, size, type, ...props }: RNTextProps & TComponentVariants) {
-  styles.useVariants({ weight, size, type });
+export const Text = function ({ style, type, color, ...props }: RNTextProps & TComponentVariants) {
+  styles.useVariants({ type, color });
 
   return <RNText {...props} style={[styles.text, style]} />;
 };
 
 const styles = StyleSheet.create((theme) => ({
   text: {
+    color: theme.colors.onBackground,
+
     variants: {
-      weight: {
-        light: {
-          fontFamily: "Inter18pt-Light",
-        },
-        regular: {
-          fontFamily: "Inter18pt-Regular",
-        },
-        semiBold: {
-          fontFamily: "Inter18pt-SemiBold",
-        },
-        bold: {
-          fontFamily: "Inter24pt-Bold",
-        },
-        default: {
-          fontFamily: "Inter18pt-Medium",
-        },
-      },
-
-      size: {
-        small: {
-          fontSize: 14,
-        },
-        caption: {
-          fontSize: 12,
-        },
-        default: {
-          fontSize: 16,
-        },
-      },
-
-      type: {
-        accent: {
-          color: theme.colors.accent1,
-        },
-        accent2: {
-          color: theme.colors.accent2,
-        },
-        accent3: {
-          color: theme.colors.accent3,
-        },
-        accent4: {
-          color: theme.colors.accent4,
+      color: {
+        primary: {
+          color: theme.colors.onPrimary,
         },
 
         secondary: {
-          color: theme.colors.textSecondary,
+          color: theme.colors.onSecondary,
         },
-        tertiary: {
-          color: theme.colors.textTertiary,
-        },
+
         default: {
-          color: theme.colors.textPrimary,
+          color: theme.colors.onBackground,
         },
       },
+      type: theme.typography.variants,
+      // type: {
+      //   primary: {
+      //     color: theme.colors.onPrimary,
+      //   },
+      //   secondary: {
+      //     color: theme.colors.onSecondary,
+      //   },
+      //   tertiary: {
+      //     color: theme.colors.onTertiary,
+      //   },
+
+      //   default: {
+      //     color: theme.colors.onBackground,
+      //   },
+      // },
     },
   },
 }));

@@ -15,12 +15,12 @@ const UniThemeProvider = withUnistyles(ThemeProvider, (theme) => ({
     ...theme,
     dark: UnistylesRuntime.themeName === "dark", // Automatically detect dark theme
     colors: {
-      primary: theme.colors.interactiveActive, // #FF007A - Uniswap pink
+      primary: theme.colors.primary, // #FF007A - Uniswap pink
       background: theme.colors.background, // Main background
-      card: theme.colors.backgroundModule, // Card/surface background
-      text: theme.colors.textPrimary, // Primary text
-      border: theme.colors.border, // Borders and dividers
-      notification: theme.colors.error, // Badges and notifications
+      card: theme.colors.outline, // Card/surface background
+      text: theme.colors.onPrimary, // Primary text
+      border: theme.colors.onBackground, // Borders and dividers
+      notification: theme.colors.primary, // Badges and notifications
     },
     fonts: {
       regular: {},

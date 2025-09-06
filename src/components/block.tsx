@@ -16,17 +16,17 @@ const styles = StyleSheet.create((theme) => ({
 
     variants: {
       type: {
-        active: {
-          backgroundColor: theme.colors.interactiveActive,
+        primary: {
+          backgroundColor: theme.colors.primary,
         },
-        surface: {
-          backgroundColor: theme.colors.backgroundSurface,
+        secondary: {
+          backgroundColor: theme.colors.secondary,
         },
-        floating: {
-          backgroundColor: theme.colors.backgroundFloating,
+        tertiary: {
+          backgroundColor: theme.colors.tertiary,
         },
         default: {
-          backgroundColor: theme.colors.backgroundModule,
+          backgroundColor: theme.colors.surface,
         },
       },
 

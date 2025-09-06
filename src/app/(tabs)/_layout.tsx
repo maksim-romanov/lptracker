@@ -17,10 +17,10 @@ const Tabs = withLayoutContext<
 >(BottomTabNavigator);
 
 const StyledTabs = withUnistyles(Tabs, (theme) => ({
-  tabBarInactiveTintColor: theme.colors.interactiveDisabled,
+  tabBarInactiveTintColor: theme.colors.outline,
   disablePageAnimations: true,
   tabBarStyle: {
-    backgroundColor: theme.colors.backgroundModule,
+    backgroundColor: theme.colors.background,
   },
 }));
 
