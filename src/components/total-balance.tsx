@@ -11,8 +11,10 @@ export const TotalBalance = function () {
   return (
     <Box style={styles.container} alignX="center" gap={2}>
       <Stack align="center" space={2}>
-        <Text type="subtitle2">Total Value Locked</Text>
-        <Text type="headline2">
+        <Text type="subtitle2" color="onPrimary">
+          Total Value Locked
+        </Text>
+        <Text type="headline2" color="onPrimary">
           {numbro(1345982.2323).formatCurrency({
             mantissa: 0,
             thousandSeparated: true,

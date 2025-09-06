@@ -48,7 +48,7 @@ export const lightTheme = {
 
     background: "#fff",
     surface: "#f0f0f0",
-    outline: "#e0e0e0",
+    outline: "#9e9e9e",
   } as const,
 
   spacing,

@@ -39,6 +39,10 @@ const styles = StyleSheet.create((theme) => ({
           color: theme.colors.outline,
         },
 
+        tertiary: {
+          color: theme.colors.tertiary,
+        },
+
         default: {
           color: theme.colors.onBackground,
         },
