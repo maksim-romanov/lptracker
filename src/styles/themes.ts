@@ -39,6 +39,7 @@ const commonColors = {
 
   success: "#40B66B", // Uniswap green
   warning: "#FF9F0A", // Uniswap orange
+  error: "#FF4444", // More saturated red
 } as const;
 
 export const lightTheme = {

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 
 import { Box, Stack } from "@grapp/stacks";
 import { LinearGradient } from "expo-linear-gradient";
@@ -15,10 +15,13 @@ import Animated, {
 import { StyleSheet } from "react-native-unistyles";
 
 import UnicornWhite from "assets/icons/unicorn-white.svg";
+import { AddWalletModal } from "components/add-wallet-modal";
 
 import { Text } from "../components/typography/text";
 
 export const WelcomeScreen = function () {
+  const [isVisible, setIsVisible] = React.useState(false);
+
   // Animation values
   const iconScale = useSharedValue(0);
   const iconOpacity = useSharedValue(0);
@@ -73,54 +76,57 @@ export const WelcomeScreen = function () {
   }));
 
   return (
-    <Box style={styles.container}>
-      <Stack space={12} align="center">
-        {/* Hero Icon with Gradient Background */}
-        <Animated.View style={[styles.iconContainer, iconAnimatedStyle]}>
-          <LinearGradient
-            colors={["#FF007A", "#FF1A8A", "#E6006E"]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.gradientIcon}
-          >
-            <UnicornWhite />
-          </LinearGradient>
-        </Animated.View>
+    <>
+      <Box style={styles.container}>
+        <Stack space={12} align="center">
+          {/* Hero Icon with Gradient Background */}
+          <Animated.View style={[styles.iconContainer, iconAnimatedStyle]}>
+            <LinearGradient
+              colors={["#FF007A", "#FF1A8A", "#E6006E"]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.gradientIcon}
+            >
+              <UnicornWhite />
+            </LinearGradient>
+          </Animated.View>
 
-        {/* Content Stack */}
-        <Animated.View style={textAnimatedStyle}>
-          <Stack space={6} align="center">
-            <Stack space={3} align="center">
-              <Text type="headline1" color="onSurface" style={styles.title}>
-                Welcome to UniApp
-              </Text>
-
-              <View style={styles.subtitleContainer}>
-                <Text type="body1" color="outline" style={styles.subtitle}>
-                  Track your LP positions
+          {/* Content Stack */}
+          <Animated.View style={textAnimatedStyle}>
+            <Stack space={6} align="center">
+              <Stack space={3} align="center">
+                <Text type="headline1" color="onSurface" style={styles.title}>
+                  Welcome to UniApp
                 </Text>
-              </View>
-            </Stack>
 
-            {/* CTA Button */}
-            <Animated.View style={buttonAnimatedStyle}>
-              <TouchableOpacity style={styles.ctaButton} onPress={handleAddWalletPress} activeOpacity={0.8}>
-                <LinearGradient
-                  colors={["#FF007A", "#FF1A8A"]}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 0 }}
-                  style={styles.buttonGradient}
-                >
-                  <Text type="body1" color="onPrimary" style={styles.buttonText}>
-                    Add Wallet
+                <View style={styles.subtitleContainer}>
+                  <Text type="body1" color="outline" style={styles.subtitle}>
+                    Track your LP positions
                   </Text>
-                </LinearGradient>
-              </TouchableOpacity>
-            </Animated.View>
-          </Stack>
-        </Animated.View>
-      </Stack>
-    </Box>
+                </View>
+              </Stack>
+
+              {/* CTA Button */}
+              <Animated.View style={buttonAnimatedStyle}>
+                <TouchableOpacity style={styles.ctaButton} onPress={() => setIsVisible(true)} activeOpacity={0.8}>
+                  <LinearGradient
+                    colors={["#FF007A", "#FF1A8A"]}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 0 }}
+                    style={styles.buttonGradient}
+                  >
+                    <Text type="body1" color="onPrimary" style={styles.buttonText}>
+                      Add Wallet
+                    </Text>
+                  </LinearGradient>
+                </TouchableOpacity>
+              </Animated.View>
+            </Stack>
+          </Animated.View>
+        </Stack>
+      </Box>
+      <AddWalletModal isVisible={isVisible} onClose={() => setIsVisible(false)} />
+    </>
   );
 };
 

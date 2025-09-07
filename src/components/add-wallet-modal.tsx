@@ -1,11 +1,15 @@
 import React from "react";
 
 import { Box, Stack } from "@grapp/stacks";
-import { TextInput, TouchableOpacity } from "react-native";
+import { classValidatorResolver } from "@hookform/resolvers/class-validator";
+import { IsEthereumAddress, IsNotEmpty, IsString } from "class-validator";
+import { Controller, useForm } from "react-hook-form";
+import { InteractionManager, Keyboard, TextInput as RNTextInput, TouchableOpacity } from "react-native";
 import { KeyboardAvoidingView } from "react-native-keyboard-controller";
 import Modal from "react-native-modal";
 import { StyleSheet, withUnistyles } from "react-native-unistyles";
 
+import { TextInput } from "./text-input";
 import { Text } from "./typography/text";
 
 interface AddWalletModalProps {
@@ -18,13 +22,50 @@ const UniKeyboardAvoidingView = withUnistyles(KeyboardAvoidingView, (theme, rt) 
   keyboardVerticalOffset: -rt.insets.bottom,
 }));
 
+class NewWalletForm {
+  @IsNotEmpty()
+  @IsEthereumAddress()
+  walletAddress?: string;
+
+  @IsString()
+  walletName?: string;
+}
+
+const resolver = classValidatorResolver(NewWalletForm);
+
 export const AddWalletModal: React.FC<AddWalletModalProps> = ({ isVisible, onClose }) => {
+  const {
+    control,
+    handleSubmit,
+    formState: { isValid },
+  } = useForm({
+    mode: "onChange",
+    defaultValues: { walletAddress: "", walletName: "" },
+    resolver,
+  });
+  const addressRef = React.useRef<RNTextInput>(null);
+  const onSubmit = (data: NewWalletForm) => console.log(data);
+
+  const handleClose = () => {
+    Keyboard.dismiss();
+    onClose();
+  };
+
+  React.useEffect(() => {
+    if (isVisible) {
+      InteractionManager.runAfterInteractions(async () => {
+        await new Promise((resolve) => setTimeout(resolve, 100));
+        addressRef.current?.focus();
+      });
+    }
+  }, [isVisible]);
+
   return (
     <Modal
       isVisible={isVisible}
-      onBackdropPress={onClose}
+      onBackdropPress={handleClose}
       hasBackdrop
-      onSwipeComplete={onClose}
+      onSwipeComplete={handleClose}
       swipeDirection={["down"]}
       style={styles.modal}
       backdropOpacity={0.5}
@@ -41,22 +82,43 @@ export const AddWalletModal: React.FC<AddWalletModalProps> = ({ isVisible, onClo
             <Stack space={4}>
               <Text type="headline5">Add New Wallet</Text>
 
-              <Box style={styles.inputContainer}>
-                <TextInput
-                  autoFocus
-                  style={styles.input}
-                  placeholder="Enter wallet address (e.g., 0x1234...7890)"
-                  placeholderTextColor="#9B9B9B"
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                  keyboardType="default"
-                />
-              </Box>
+              <Controller
+                control={control}
+                name="walletAddress"
+                render={({ field, fieldState }) => (
+                  <TextInput
+                    {...field}
+                    ref={addressRef}
+                    error={fieldState.error?.message}
+                    onChangeText={field.onChange}
+                    placeholder="Address (e.g., 0x1234...7890)"
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    keyboardType="default"
+                  />
+                )}
+              />
+
+              <Controller
+                control={control}
+                name="walletName"
+                render={({ field, fieldState }) => (
+                  <TextInput
+                    {...field}
+                    error={fieldState.error?.message}
+                    onChangeText={field.onChange}
+                    placeholder="Wallet name (e.g., My Wallet)"
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    keyboardType="default"
+                  />
+                )}
+              />
             </Stack>
 
             <Stack horizontal space={4}>
               <Box flex="fluid">
-                <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
+                <TouchableOpacity style={styles.cancelButton} onPress={handleClose}>
                   <Text color="onSurface" type="body1">
                     Cancel
                   </Text>
@@ -64,7 +126,11 @@ export const AddWalletModal: React.FC<AddWalletModalProps> = ({ isVisible, onClo
               </Box>
 
               <Box flex="fluid">
-                <TouchableOpacity style={styles.addButton}>
+                <TouchableOpacity
+                  style={[styles.addButton, !isValid && { opacity: 0.5 }]}
+                  onPress={handleSubmit(onSubmit)}
+                  disabled={!isValid}
+                >
                   <Text color="onPrimary" type="body1">
                     Add Wallet
                   </Text>
@@ -132,5 +198,11 @@ const styles = StyleSheet.create((theme, rt) => ({
     borderRadius: theme.spacing.md,
     backgroundColor: theme.colors.primary,
     alignItems: "center",
+  },
+
+  errorText: {
+    paddingHorizontal: theme.spacing.lg,
+    paddingTop: theme.spacing.sm,
+    color: "#FF6B6B", // Red color for error text
   },
 }));
