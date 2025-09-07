@@ -1,7 +1,9 @@
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { Box, Stack } from "@grapp/stacks";
+import { observer } from "mobx-react-lite";
 import { StyleSheet, withUnistyles } from "react-native-unistyles";
 
+import { addressesStore } from "presentation/stores/addresses-store";
 import { formatAddress } from "utils/hash";
 
 import { Text } from "./typography/text";
@@ -13,8 +15,8 @@ const EmptyIcon = withUnistyles(FontAwesome6, (theme) => ({
   name: "chart-line",
 }));
 
-export const EmptyState = function () {
-  const walletAddress = "0x1234567890abcdef1234567890abcdef12345678";
+export const EmptyState = observer(function () {
+  const activeAddress = addressesStore.activeAddress!;
 
   return (
     <Box style={styles.container}>
@@ -31,7 +33,7 @@ export const EmptyState = function () {
           <Text type="body1" color="outline" style={styles.centeredText}>
             Wallet{" "}
             <Text type="body1" color="primary">
-              {formatAddress(walletAddress)}
+              {formatAddress(activeAddress)}
             </Text>{" "}
             doesn&apos;t have any v3 and v4 positions on{" "}
             <Text type="body1" color="primary">
@@ -43,7 +45,7 @@ export const EmptyState = function () {
       </Stack>
     </Box>
   );
-};
+});
 
 const styles = StyleSheet.create((theme) => ({
   container: {

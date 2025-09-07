@@ -5,7 +5,12 @@ import { AddressesRepositoryImpl } from "data/repositories/addresses-repository-
 import { SettingsRepositoryImpl } from "data/repositories/settings-repository-impl";
 import type { AddressesRepository } from "domain/repositories/addresses-repository";
 import type { SettingsRepository } from "domain/repositories/settings-repository";
-import { AddAddressUseCase, GetAddressesStateUseCase, RemoveAddressUseCase, SetActiveAddressUseCase } from "domain/use-cases/addresses";
+import {
+  AddAddressUseCase,
+  GetAddressesStateUseCase,
+  RemoveAddressUseCase,
+  SetActiveAddressUseCase,
+} from "domain/use-cases/addresses";
 import { AppInitializeUseCase } from "domain/use-cases/app-initialize";
 import { GetSettingsUseCase, SetThemeUseCase } from "domain/use-cases/settings";
 
