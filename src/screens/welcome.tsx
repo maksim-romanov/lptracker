@@ -38,8 +38,8 @@ export const WelcomeScreen = function () {
     textTranslateY.value = withDelay(600, withTiming(0, { duration: 600 }));
 
     // Button entrance animation
-    buttonOpacity.value = withDelay(1000, withTiming(1, { duration: 600 }));
-    buttonScale.value = withDelay(1000, withTiming(1, { duration: 600 }));
+    buttonOpacity.value = withDelay(1200, withTiming(1, { duration: 600 }));
+    buttonScale.value = withDelay(1200, withTiming(1, { duration: 600 }));
 
     // Continuous pulse animation for icon
     pulseScale.value = withDelay(
@@ -97,7 +97,7 @@ export const WelcomeScreen = function () {
 
               <View style={styles.subtitleContainer}>
                 <Text type="body1" color="outline" style={styles.subtitle}>
-                  Track your Uniswap positions and manage your DeFi portfolio
+                  Track your LP positions
                 </Text>
               </View>
             </Stack>
