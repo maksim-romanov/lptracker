@@ -2,11 +2,16 @@ import { makeAutoObservable, runInAction } from "mobx";
 
 import { container } from "di/container";
 import type { ERC20Address } from "domain/entities/addresses";
-import { AddAddressUseCase, GetAddressesStateUseCase, RemoveAddressUseCase, SetActiveAddressUseCase } from "domain/use-cases/addresses";
+import {
+  AddAddressUseCase,
+  GetAddressesStateUseCase,
+  RemoveAddressUseCase,
+  SetActiveAddressUseCase,
+} from "domain/use-cases/addresses";
 
 export class AddressesStore {
   items: ERC20Address[] = [];
-  activeAddressId: string | undefined = undefined;
+  activeAddress: string | undefined = undefined;
   loading = false;
 
   private readonly getState = container.resolve(GetAddressesStateUseCase);
@@ -18,8 +23,8 @@ export class AddressesStore {
     makeAutoObservable(this, {}, { autoBind: true });
   }
 
-  get activeAddress(): string | undefined {
-    return this.items.find((it) => it.id === this.activeAddressId)?.address;
+  get active(): string | undefined {
+    return this.activeAddress;
   }
 
   async hydrate(): Promise<void> {
@@ -28,7 +33,7 @@ export class AddressesStore {
       const state = await this.getState.execute();
       runInAction(() => {
         this.items = state.items;
-        this.activeAddressId = state.activeAddressId;
+        this.activeAddress = state.activeAddress;
       });
     } finally {
       runInAction(() => {
@@ -42,19 +47,17 @@ export class AddressesStore {
     await this.hydrate();
   }
 
-  async remove(id: string): Promise<void> {
-    await this.removeAddress.execute(id);
+  async remove(address: string): Promise<void> {
+    await this.removeAddress.execute(address);
     await this.hydrate();
   }
 
-  async setActive(id: string | undefined): Promise<void> {
-    await this.setActiveUseCase.execute(id);
+  async setActive(address: string | undefined): Promise<void> {
+    await this.setActiveUseCase.execute(address);
     runInAction(() => {
-      this.activeAddressId = id;
+      this.activeAddress = address;
     });
   }
 }
 
 export const addressesStore = new AddressesStore();
-
-

@@ -1,16 +1,20 @@
 import "react-native-reanimated";
 
-import React, { useEffect } from "react";
+import React from "react";
 
 import { ThemeProvider } from "@react-navigation/native";
-import { container } from "di/container";
-import { AppInitializeUseCase } from "domain/use-cases/app-initialize";
 import { BlurView } from "expo-blur";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { observer } from "mobx-react-lite";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { UnistylesRuntime, withUnistyles } from "react-native-unistyles";
 import tinycolor from "tinycolor2";
+
+import { container } from "di/container";
+import { AppInitializeUseCase } from "domain/use-cases/app-initialize";
+import { addressesStore } from "presentation/stores/addresses-store";
 
 // SplashScreen.preventAutoHideAsync();
 
@@ -41,28 +45,40 @@ const HeaderBlur = withUnistyles(BlurView, (theme, rt) => ({
   },
 }));
 
-export default function RootLayout() {
-  useEffect(() => {
+const RootLayout = observer(function () {
+  React.useEffect(() => {
     container.resolve(AppInitializeUseCase).execute();
+    addressesStore.hydrate();
   }, []);
+
+  const hasAnyAddress = addressesStore.items.length > 0;
   return (
     <UniThemeProvider>
-      <KeyboardProvider>
-        <Stack>
-          <Stack.Screen
-            name="(tabs)"
-            options={{
-              headerTransparent: true,
-              header: () => <HeaderBlur />,
-            }}
-          />
-          <Stack.Screen name="index" options={{ headerShown: false }} />
-          <Stack.Screen name="welcome" options={{ headerShown: false }} />
-          <Stack.Screen name="+not-found" />
-        </Stack>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <KeyboardProvider>
+          <Stack>
+            <Stack.Protected guard={!hasAnyAddress}>
+              <Stack.Screen name="index" options={{ headerShown: false }} />
+            </Stack.Protected>
 
-        <StatusBar style="auto" />
-      </KeyboardProvider>
+            <Stack.Protected guard={hasAnyAddress}>
+              <Stack.Screen
+                name="(tabs)"
+                options={{
+                  headerTransparent: true,
+                  header: () => <HeaderBlur />,
+                }}
+              />
+            </Stack.Protected>
+
+            <Stack.Screen name="+not-found" />
+          </Stack>
+
+          <StatusBar style="auto" />
+        </KeyboardProvider>
+      </GestureHandlerRootView>
     </UniThemeProvider>
   );
-}
+});
+
+export default RootLayout;

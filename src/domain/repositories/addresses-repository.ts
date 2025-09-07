@@ -5,8 +5,6 @@ export interface AddressesRepository {
   setState(next: AddressesState): Promise<void>;
 
   add(address: ERC20Address): Promise<void>;
-  remove(id: string): Promise<void>;
-  setActive(id: string | undefined): Promise<void>;
+  remove(address: string): Promise<void>;
+  setActive(address: string | undefined): Promise<void>;
 }
-
-

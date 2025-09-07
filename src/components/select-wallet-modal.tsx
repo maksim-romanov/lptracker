@@ -6,6 +6,7 @@ import Modal from "react-native-modal";
 import { StyleSheet, withUnistyles } from "react-native-unistyles";
 
 import { addressesStore } from "presentation/stores/addresses-store";
+
 import { Text } from "./typography/text";
 import { WalletItem } from "./wallet-item";
 
@@ -17,8 +18,8 @@ interface SelectWalletModalProps {
 const Separator = withUnistyles(Box, (theme) => ({ height: theme.spacing.md }));
 
 export const SelectWalletModal: React.FC<SelectWalletModalProps> = ({ isVisible, onClose }) => {
-  const handleSelect = async (id: string) => {
-    await addressesStore.setActive(id);
+  const handleSelect = async (address: string) => {
+    await addressesStore.setActive(address);
     onClose();
   };
 
@@ -43,13 +44,13 @@ export const SelectWalletModal: React.FC<SelectWalletModalProps> = ({ isVisible,
           <FlatList
             data={addressesStore.items}
             ItemSeparatorComponent={Separator}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item) => item.address}
             renderItem={({ item }) => (
-              <TouchableOpacity onPress={() => handleSelect(item.id)}>
+              <TouchableOpacity onPress={() => handleSelect(item.address)}>
                 <WalletItem
                   address={item.address}
                   name={item.name || "Wallet"}
-                  isActive={addressesStore.activeAddressId === item.id}
+                  isActive={addressesStore.activeAddress === item.address}
                 />
               </TouchableOpacity>
             )}
@@ -82,5 +83,3 @@ const styles = StyleSheet.create((theme) => ({
     marginBottom: theme.spacing.lg,
   },
 }));
-
-

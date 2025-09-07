@@ -17,15 +17,15 @@ export class AddAddressUseCase {
 
 export class RemoveAddressUseCase {
   constructor(private readonly repository: AddressesRepository) {}
-  async execute(id: string): Promise<void> {
-    return this.repository.remove(id);
+  async execute(address: string): Promise<void> {
+    return this.repository.remove(address);
   }
 }
 
 export class SetActiveAddressUseCase {
   constructor(private readonly repository: AddressesRepository) {}
-  async execute(id: string | undefined): Promise<void> {
-    return this.repository.setActive(id);
+  async execute(address: string | undefined): Promise<void> {
+    return this.repository.setActive(address);
   }
 }
 

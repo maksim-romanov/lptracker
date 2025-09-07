@@ -47,7 +47,6 @@ export const AddWalletModal: React.FC<AddWalletModalProps> = ({ isVisible, onClo
   const addressRef = React.useRef<RNTextInput>(null);
   const onSubmit = async (data: NewWalletForm) => {
     await addressesStore.add({
-      id: data.walletAddress!.trim().toLowerCase(),
       address: data.walletAddress!,
       name: data.walletName || "Wallet",
     });

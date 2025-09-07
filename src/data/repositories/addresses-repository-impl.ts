@@ -2,13 +2,13 @@ import { appStorage, STORAGE_KEYS } from "data/mmkv/storage";
 import type { AddressesState, ERC20Address } from "domain/entities/addresses";
 import type { AddressesRepository } from "domain/repositories/addresses-repository";
 
-const DEFAULT_STATE: AddressesState = { items: [], activeAddressId: undefined };
+const DEFAULT_STATE: AddressesState = { items: [], activeAddress: undefined };
 
 function safeParse(json: string | undefined): AddressesState {
   if (!json) return DEFAULT_STATE;
   try {
     const parsed = JSON.parse(json) as AddressesState;
-    if (!parsed.items) return DEFAULT_STATE;
+    if (!parsed || !Array.isArray(parsed.items)) return DEFAULT_STATE;
     return parsed;
   } catch {
     return DEFAULT_STATE;
@@ -27,28 +27,29 @@ export class AddressesRepositoryImpl implements AddressesRepository {
 
   async add(address: ERC20Address): Promise<void> {
     const state = await this.getState();
-    const exists = state.items.some((it) => it.id === address.id);
+    const normalized = address.address;
+    const exists = state.items.some((it) => it.address === normalized);
     if (exists) return;
     const next: AddressesState = {
-      items: [...state.items, address],
-      activeAddressId: state.activeAddressId ?? address.id,
+      items: [...state.items, { address: normalized, name: address.name }],
+      activeAddress: state.activeAddress ?? normalized,
     };
     await this.setState(next);
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(address: string): Promise<void> {
     const state = await this.getState();
-    const filtered = state.items.filter((it) => it.id !== id);
+    const filtered = state.items.filter((it) => it.address !== address);
     const next: AddressesState = {
       items: filtered,
-      activeAddressId: state.activeAddressId === id ? filtered[0]?.id : state.activeAddressId,
+      activeAddress: state.activeAddress === address ? filtered[0]?.address : state.activeAddress,
     };
     await this.setState(next);
   }
 
-  async setActive(id: string | undefined): Promise<void> {
+  async setActive(address: string | undefined): Promise<void> {
     const state = await this.getState();
-    if (id && !state.items.some((it) => it.id === id)) return;
-    await this.setState({ ...state, activeAddressId: id });
+    if (address && !state.items.some((it) => it.address === address)) return;
+    await this.setState({ ...state, activeAddress: address });
   }
 }

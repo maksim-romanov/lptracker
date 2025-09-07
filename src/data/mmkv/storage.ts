@@ -4,7 +4,5 @@ export const appStorage = new MMKV({ id: "uniapp-settings" });
 
 export const STORAGE_KEYS = {
   settings: "settings",
-  addresses: "addresses",
+  addresses: "addressesV2",
 } as const;
-
-

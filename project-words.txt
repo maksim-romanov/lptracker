@@ -9,6 +9,6 @@ rnfs
 unistyles
 lingui
 ofetch
-
 numbro
 xlarge
+swipeable
