@@ -3,6 +3,7 @@ import "react-native-reanimated";
 import React from "react";
 
 import { ThemeProvider } from "@react-navigation/native";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { BlurView } from "expo-blur";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -14,6 +15,7 @@ import tinycolor from "tinycolor2";
 
 import { container } from "di/container";
 import { AppInitializeUseCase } from "domain/use-cases/app-initialize";
+import { queryClient } from "lib/query-client";
 import { addressesStore } from "presentation/stores/addresses-store";
 
 // SplashScreen.preventAutoHideAsync();
@@ -53,31 +55,33 @@ const RootLayout = observer(function () {
 
   const hasAnyAddress = addressesStore.items.length > 0;
   return (
-    <UniThemeProvider>
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <KeyboardProvider>
-          <Stack>
-            <Stack.Protected guard={!hasAnyAddress}>
-              <Stack.Screen name="index" options={{ headerShown: false }} />
-            </Stack.Protected>
+    <QueryClientProvider client={queryClient}>
+      <UniThemeProvider>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <KeyboardProvider>
+            <Stack>
+              <Stack.Protected guard={!hasAnyAddress}>
+                <Stack.Screen name="index" options={{ headerShown: false }} />
+              </Stack.Protected>
 
-            <Stack.Protected guard={hasAnyAddress}>
-              <Stack.Screen
-                name="(tabs)"
-                options={{
-                  headerTransparent: true,
-                  header: () => <HeaderBlur />,
-                }}
-              />
-            </Stack.Protected>
+              <Stack.Protected guard={hasAnyAddress}>
+                <Stack.Screen
+                  name="(tabs)"
+                  options={{
+                    headerTransparent: true,
+                    header: () => <HeaderBlur />,
+                  }}
+                />
+              </Stack.Protected>
 
-            <Stack.Screen name="+not-found" />
-          </Stack>
+              <Stack.Screen name="+not-found" />
+            </Stack>
 
-          <StatusBar style="auto" />
-        </KeyboardProvider>
-      </GestureHandlerRootView>
-    </UniThemeProvider>
+            <StatusBar style="auto" />
+          </KeyboardProvider>
+        </GestureHandlerRootView>
+      </UniThemeProvider>
+    </QueryClientProvider>
   );
 });
 
