@@ -1,14 +1,14 @@
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { Box, Stack } from "@grapp/stacks";
 import { StyleSheet, withUnistyles } from "react-native-unistyles";
-import tinycolor from "tinycolor2";
 
 import { formatAddress } from "utils/hash";
 
 import { Text } from "./typography/text";
 
 const EmptyIcon = withUnistyles(FontAwesome6, (theme) => ({
-  color: tinycolor(theme.colors.primary).darken(10).toRgbString(),
+  // color: tinycolor(theme.colors.primary).darken(10).toRgbString(),
+  color: theme.colors.primary,
   size: 64,
   name: "chart-line",
 }));

@@ -9,7 +9,7 @@ import { Text } from "./typography/text";
 
 const WalletIcon = withUnistyles(Ionicons, (theme) => ({
   color: theme.colors.onSurface,
-  size: 26,
+  size: 24,
   name: "wallet-outline" as const,
 }));
 
@@ -27,9 +27,9 @@ const ActiveTag = withUnistyles(Tag, (theme) => ({
 export const WalletItem = function ({ address, name, isActive }: TProps) {
   return (
     <Box style={[styles.container, isActive && styles.active]} direction="row" alignY="center" gap={4}>
-      <WalletIcon style={isActive && styles.activeIcon} />
+      {isActive ? <WalletIcon style={styles.activeIcon} name="wallet" /> : <WalletIcon />}
 
-      <Box rowGap={2} flex="fluid">
+      <Box rowGap={1} flex="fluid">
         <Text type="caption">{name}</Text>
         <Text type="headline6" color={isActive ? "primary" : "onSurface"}>
           {formatAddress(address)}
