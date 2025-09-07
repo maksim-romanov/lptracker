@@ -6,6 +6,7 @@ import { StyleSheet, withUnistyles } from "react-native-unistyles";
 
 import { ActiveWallet } from "components/active-wallet";
 import { AddWallet } from "components/add-wallet";
+import { HelpBlock } from "components/help-block";
 import { Text } from "components/typography/text";
 import { WalletItem } from "components/wallet-item";
 
@@ -51,8 +52,10 @@ export const Wallets = function () {
           <WalletItem {...item} isActive={activeWallet === item.address} />
         </TouchableOpacity>
       )}
+      ListFooterComponent={<HelpBlock />}
       contentContainerStyle={styles.container}
       ListHeaderComponentStyle={styles.header}
+      ListFooterComponentStyle={styles.footer}
     />
   );
 };
@@ -64,5 +67,9 @@ const styles = StyleSheet.create((theme) => ({
 
   header: {
     marginBottom: theme.spacing.lg,
+  },
+
+  footer: {
+    marginTop: theme.spacing.xxl * 2,
   },
 }));

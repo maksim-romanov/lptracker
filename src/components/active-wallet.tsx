@@ -18,8 +18,12 @@ export const ActiveWallet = function () {
       <WalletIcon />
 
       <Box rowGap={1}>
-        <Text type="subtitle2">Active Wallet</Text>
-        <Text type="headline5">{formatAddress("0x1234567890123456789012345678901234567890")}</Text>
+        <Text type="subtitle2" color="onPrimary">
+          Active Wallet
+        </Text>
+        <Text type="headline5" color="onPrimary">
+          {formatAddress("0x1234567890123456789012345678901234567890")}
+        </Text>
       </Box>
     </Box>
   );
