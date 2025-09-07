@@ -1,8 +1,10 @@
 import "react-native-reanimated";
 
-import React from "react";
+import React, { useEffect } from "react";
 
 import { ThemeProvider } from "@react-navigation/native";
+import { container } from "di/container";
+import { AppInitializeUseCase } from "domain/use-cases/app-initialize";
 import { BlurView } from "expo-blur";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -40,6 +42,9 @@ const HeaderBlur = withUnistyles(BlurView, (theme, rt) => ({
 }));
 
 export default function RootLayout() {
+  useEffect(() => {
+    container.resolve(AppInitializeUseCase).execute();
+  }, []);
   return (
     <UniThemeProvider>
       <KeyboardProvider>

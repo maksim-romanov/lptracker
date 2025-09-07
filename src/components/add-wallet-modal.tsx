@@ -9,6 +9,7 @@ import { KeyboardAvoidingView } from "react-native-keyboard-controller";
 import Modal from "react-native-modal";
 import { StyleSheet, withUnistyles } from "react-native-unistyles";
 
+import { addressesStore } from "presentation/stores/addresses-store";
 import { TextInput } from "./text-input";
 import { Text } from "./typography/text";
 
@@ -44,7 +45,14 @@ export const AddWalletModal: React.FC<AddWalletModalProps> = ({ isVisible, onClo
     resolver,
   });
   const addressRef = React.useRef<RNTextInput>(null);
-  const onSubmit = (data: NewWalletForm) => console.log(data);
+  const onSubmit = async (data: NewWalletForm) => {
+    await addressesStore.add({
+      id: data.walletAddress!.trim().toLowerCase(),
+      address: data.walletAddress!,
+      name: data.walletName || "Wallet",
+    });
+    onClose();
+  };
 
   const handleClose = () => {
     Keyboard.dismiss();

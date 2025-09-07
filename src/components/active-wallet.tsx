@@ -1,11 +1,17 @@
+import React from "react";
+
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Box } from "@grapp/stacks";
+import { TouchableOpacity } from "react-native";
 import { Shadow } from "react-native-shadow-2";
 import { StyleSheet, withUnistyles } from "react-native-unistyles";
 import tinycolor from "tinycolor2";
 
+import { addressesStore } from "presentation/stores/addresses-store";
 import { formatAddress } from "utils/hash";
 
+import { observer } from "mobx-react-lite";
+import { SelectWalletModal } from "./select-wallet-modal";
 import { Text } from "./typography/text";
 
 const WalletIcon = withUnistyles(Ionicons, (theme) => ({
@@ -21,24 +27,33 @@ const BrandShadow = withUnistyles(Shadow, (theme) => ({
   stretch: true,
 }));
 
-export const ActiveWallet = function () {
-  return (
-    <BrandShadow>
-      <Box style={styles.container} direction="row" alignY="center" gap={4}>
-        <WalletIcon />
+export const ActiveWallet = observer(function () {
+  const address = addressesStore.activeAddress;
+  const [isVisible, setIsVisible] = React.useState(false);
 
-        <Box rowGap={1}>
-          <Text type="subtitle2" color="onPrimary">
-            Active Wallet
-          </Text>
-          <Text type="headline5" color="onPrimary">
-            {formatAddress("0x1234567890123456789012345678901234567890")}
-          </Text>
-        </Box>
-      </Box>
-    </BrandShadow>
+  return (
+    <>
+      <BrandShadow>
+        <TouchableOpacity onPress={() => setIsVisible(true)}>
+          <Box style={styles.container} direction="row" alignY="center" gap={4}>
+            <WalletIcon />
+
+            <Box rowGap={1}>
+              <Text type="subtitle2" color="onPrimary">
+                Active Wallet
+              </Text>
+              <Text type="headline5" color="onPrimary">
+                {address ? formatAddress(address) : "No active wallet"}
+              </Text>
+            </Box>
+          </Box>
+        </TouchableOpacity>
+      </BrandShadow>
+
+      <SelectWalletModal isVisible={isVisible} onClose={() => setIsVisible(false)} />
+    </>
   );
-};
+});
 
 const styles = StyleSheet.create((theme) => ({
   container: {

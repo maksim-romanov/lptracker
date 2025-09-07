@@ -1,6 +1,7 @@
 import React from "react";
 
 import { Box, Stack } from "@grapp/stacks";
+import { observer } from "mobx-react-lite";
 import { FlatList, TouchableOpacity } from "react-native";
 import { StyleSheet, withUnistyles } from "react-native-unistyles";
 
@@ -9,6 +10,7 @@ import { AddWallet } from "components/add-wallet";
 import { HelpBlock } from "components/help-block";
 import { Text } from "components/typography/text";
 import { WalletItem } from "components/wallet-item";
+import { addressesStore } from "presentation/stores/addresses-store";
 
 const ListHeaderComponent = () => {
   return (
@@ -24,32 +26,27 @@ const ListHeaderComponent = () => {
     </Box>
   );
 };
-
-const walletsData = [
-  {
-    name: "Wallet 1",
-    address: "0x1234567890123456789012345678901234567890",
-  },
-  {
-    name: "Wallet 2",
-    address: "0x9012345678901234567890123456789012345678",
-  },
-];
-
 const Separator = withUnistyles(Box, (theme) => ({ height: theme.spacing.md }));
 
-export const Wallets = function () {
-  const [activeWallet, setActiveWallet] = React.useState<string>(walletsData[0].address);
+export const Wallets = observer(function () {
+  React.useEffect(() => {
+    addressesStore.hydrate();
+  }, []);
 
   return (
     <FlatList
       contentInsetAdjustmentBehavior="automatic"
       ListHeaderComponent={ListHeaderComponent}
-      data={walletsData}
+      data={addressesStore.items}
+      extraData={addressesStore.activeAddressId}
       ItemSeparatorComponent={Separator}
       renderItem={({ item }) => (
-        <TouchableOpacity>
-          <WalletItem {...item} isActive={activeWallet === item.address} />
+        <TouchableOpacity onPress={() => addressesStore.setActive(item.id)}>
+          <WalletItem
+            address={item.address}
+            name={item.name || "Wallet"}
+            isActive={addressesStore.activeAddressId === item.id}
+          />
         </TouchableOpacity>
       )}
       ListFooterComponent={<HelpBlock />}
@@ -58,7 +55,7 @@ export const Wallets = function () {
       ListFooterComponentStyle={styles.footer}
     />
   );
-};
+});
 
 const styles = StyleSheet.create((theme) => ({
   container: {
