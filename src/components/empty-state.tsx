@@ -3,6 +3,8 @@ import { Box, Stack } from "@grapp/stacks";
 import { StyleSheet, withUnistyles } from "react-native-unistyles";
 import tinycolor from "tinycolor2";
 
+import { formatAddress } from "utils/hash";
+
 import { Text } from "./typography/text";
 
 const EmptyIcon = withUnistyles(FontAwesome6, (theme) => ({
@@ -13,11 +15,6 @@ const EmptyIcon = withUnistyles(FontAwesome6, (theme) => ({
 
 export const EmptyState = function () {
   const walletAddress = "0x1234567890abcdef1234567890abcdef12345678";
-
-  const formatWalletAddress = (address: string) => {
-    if (address.length <= 10) return address;
-    return `${address.slice(0, 6)}...${address.slice(-4)}`;
-  };
 
   return (
     <Box style={styles.container}>
@@ -34,7 +31,7 @@ export const EmptyState = function () {
           <Text type="body1" color="outline" style={styles.centeredText}>
             Wallet{" "}
             <Text type="body1" color="primary">
-              {formatWalletAddress(walletAddress)}
+              {formatAddress(walletAddress)}
             </Text>{" "}
             doesn&apos;t have any v3 and v4 positions on{" "}
             <Text type="body1" color="primary">

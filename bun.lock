@@ -56,6 +56,7 @@
         "@eslint/json": "^0.13.2",
         "@eslint/markdown": "^7.2.0",
         "@types/react": "~19.0.10",
+        "@types/tinycolor2": "^1.4.6",
         "eslint": "^9.25.0",
         "eslint-config-expo": "~9.2.0",
         "eslint-config-prettier": "^10.1.8",
@@ -902,6 +903,8 @@
     "@types/strip-bom": ["@types/strip-bom@3.0.0", "", {}, "sha512-xevGOReSYGM7g/kUBZzPqCrR/KYAo+F0yiPc85WFTJa0MSLtyFTVTU6cJu/aV4mid7IffDIWqo69THF2o4JiEQ=="],
 
     "@types/strip-json-comments": ["@types/strip-json-comments@0.0.30", "", {}, "sha512-7NQmHra/JILCd1QqpSzl8+mJRc8ZHz3uDm8YV1Ks9IhK0epEiTw8aIErbvH9PI+6XbqhyIQy3462nEsn7UVzjQ=="],
+
+    "@types/tinycolor2": ["@types/tinycolor2@1.4.6", "", {}, "sha512-iEN8J0BoMnsWBqjVbWH/c0G0Hh7O21lpR2/+PrvAVgWdzL7eexIFm4JN/Wn10PTcmNdtS6U67r499mlWMXOxNw=="],
 
     "@types/unist": ["@types/unist@3.0.3", "", {}, "sha512-ko/gIFJRv177XgZsZcBwnqJN5x/Gien8qNOn0D5bQU/zAzVf9Zt3BlcUiLqhV9y4ARk0GbT3tnUiPNgnTXzc/Q=="],
 

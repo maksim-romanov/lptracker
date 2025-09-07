@@ -14,8 +14,8 @@ export const typography = {
     headline1: { fontFamily: "Inter24pt-Bold", fontSize: 48, lineHeight: 48 * 1.2 },
     headline2: { fontFamily: "Inter24pt-Bold", fontSize: 36, lineHeight: 36 * 1.2 },
     headline3: { fontFamily: "Inter24pt-Bold", fontSize: 28, lineHeight: 28 * 1.1 },
-    headline4: { fontFamily: "Inter18pt-SemiBold", fontSize: 22, lineHeight: 22 * 1.1 },
-    headline5: { fontFamily: "Inter18pt-Medium", fontSize: 18, lineHeight: 18 * 1.1 },
+    headline4: { fontFamily: "Inter18pt-SemiBold", fontSize: 22, lineHeight: 22 * 1.2 },
+    headline5: { fontFamily: "Inter18pt-SemiBold", fontSize: 18, lineHeight: 18 * 1.2 },
     headline6: { fontFamily: "Inter18pt-Medium", fontSize: 16, lineHeight: 16 * 1.1 },
 
     subtitle1: { fontFamily: "Inter18pt-Regular", fontSize: 16, lineHeight: 16 * 1.1 },

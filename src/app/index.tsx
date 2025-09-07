@@ -1,1 +1,5 @@
-export { WelcomeScreen as default } from "screens/welcome";
+import { Redirect } from "expo-router";
+
+export default function Index() {
+  return <Redirect href="/(tabs)/wallets" />;
+}

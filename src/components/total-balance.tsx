@@ -2,10 +2,10 @@ import { Box, Stack } from "@grapp/stacks";
 import numbro from "numbro";
 import { StyleSheet } from "react-native-unistyles";
 
+import { formatAddress } from "utils/hash";
+
 import { Tag } from "./tag";
 import { Text } from "./typography/text";
-
-const formatAddress = (addr: string) => addr.replace(/^(0x)?(.{4}).+(.{4})$/, "$1$2…$3");
 
 export const TotalBalance = function () {
   return (
