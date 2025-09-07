@@ -44,8 +44,7 @@ const styles = StyleSheet.create((theme) => ({
   container: {
     backgroundColor: theme.colors.primary,
     paddingHorizontal: theme.spacing.lg,
-    paddingTop: theme.spacing.xxl,
-    paddingBottom: theme.spacing.lg,
+    paddingVertical: theme.spacing.lg,
     borderRadius: theme.spacing.md,
   },
 }));
