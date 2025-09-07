@@ -11,6 +11,9 @@
       ],
       "screens/*": [
         "screens/*",
+      ],
+      "assets/*": [
+        "../assets/*",
       ]
     }
   },

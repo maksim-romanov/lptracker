@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 
-import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { Box, Stack } from "@grapp/stacks";
 import { LinearGradient } from "expo-linear-gradient";
 import { TouchableOpacity, View } from "react-native";
@@ -13,15 +12,11 @@ import Animated, {
   withSequence,
   withTiming,
 } from "react-native-reanimated";
-import { StyleSheet, withUnistyles } from "react-native-unistyles";
+import { StyleSheet } from "react-native-unistyles";
+
+import UnicornWhite from "assets/icons/unicorn-white.svg";
 
 import { Text } from "../components/typography/text";
-
-const WelcomeIcon = withUnistyles(FontAwesome6, (theme) => ({
-  color: "#FFFFFF",
-  size: 60,
-  name: "wallet",
-}));
 
 export const WelcomeScreen = function () {
   // Animation values
@@ -88,7 +83,7 @@ export const WelcomeScreen = function () {
             end={{ x: 1, y: 1 }}
             style={styles.gradientIcon}
           >
-            <WelcomeIcon />
+            <UnicornWhite />
           </LinearGradient>
         </Animated.View>
 

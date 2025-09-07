@@ -20,11 +20,6 @@
       "edgeToEdgeEnabled": true,
       "package": "com.maksimromanov.uniappnew"
     },
-    "web": {
-      "bundler": "metro",
-      "output": "static",
-      "favicon": "./assets/images/favicon.png"
-    },
     "plugins": [
       "expo-router",
       [
@@ -33,15 +28,6 @@
           "ios": {
             "useFrameworks": "static"
           }
-        }
-      ],
-      [
-        "expo-splash-screen",
-        {
-          "image": "./assets/images/splash-icon.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
         }
       ],
       "expo-build-properties",
@@ -91,6 +77,19 @@
               }
             ]
           }
+        }
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#ffffff",
+          "image": "./assets/images/adaptive-icon.png",
+          "dark": {
+            "image": "./assets/images/adaptive-icon-dark.png",
+            "backgroundColor": "#000000"
+          },
+          "imageWidth": 400,
+          "resizeMode": "contain"
         }
       ]
     ],
