@@ -4,7 +4,7 @@ import {
   ValidatorConstraint,
   ValidatorConstraintInterface,
 } from "class-validator";
-import { isAddress } from "ethers";
+import { isAddress } from "viem";
 
 @ValidatorConstraint({ async: false })
 export class IsEthereumAddressConstraint implements ValidatorConstraintInterface {

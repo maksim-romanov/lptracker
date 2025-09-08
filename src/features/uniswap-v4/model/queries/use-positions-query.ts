@@ -2,8 +2,7 @@ import { useCallback, useMemo } from "react";
 
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Address } from "viem";
-
-import { container } from "../../../../di/container";
+import { container } from "tsyringe";
 import { GetUserPositionsUseCaseImpl } from "../../model/use-cases/get-user-positions";
 import { SupportedChain } from "../types";
 

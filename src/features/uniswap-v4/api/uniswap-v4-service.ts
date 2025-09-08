@@ -1,8 +1,7 @@
 import { request } from "graphql-request";
 import Keys from "react-native-keys";
 import type { PublicClient } from "viem";
-import { Address, Chain, createPublicClient, http } from "viem";
-import { arbitrum, mainnet } from "viem/chains";
+import { Address, createPublicClient, http } from "viem";
 
 import { GetPositionsDocument } from "./__generated__/graphql";
 import { UNISWAP_V4_CONFIGS, UniswapV4Config, SupportedChain } from "./configs";
@@ -20,7 +19,7 @@ export class UniswapV4Service {
   }
 
   private createPublicClient(chain: SupportedChain) {
-    const chainConfig: Chain = chain === "ethereum" ? mainnet : arbitrum;
+    const chainConfig = UNISWAP_V4_CONFIGS[chain].viemChain;
 
     return createPublicClient({
       chain: chainConfig,
