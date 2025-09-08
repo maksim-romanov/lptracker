@@ -4,7 +4,7 @@
       "schema": {
         "https://gateway.thegraph.com/api/subgraphs/id/G5TsTKNi8yhPSV7kycaE23oWbqv9zzNqR49FoEQjzq1r": {
           "headers": {
-            "Authorization": "Bearer ${UNISWAP_V4_TOKEN}"
+            "Authorization": "Bearer ${SUBGRAPH_TOKEN}"
           }
         }
       },
