@@ -3,10 +3,8 @@ import { container } from "tsyringe";
 
 import { AddressesRepositoryImpl } from "data/repositories/addresses-repository-impl";
 import { SettingsRepositoryImpl } from "data/repositories/settings-repository-impl";
-import { UniswapV4RepositoryImpl } from "data/repositories/uniswap-v4-repository-impl";
 import type { AddressesRepository } from "domain/repositories/addresses-repository";
 import type { SettingsRepository } from "domain/repositories/settings-repository";
-import type { UniswapV4Repository } from "domain/repositories/uniswap-v4-repository";
 import {
   AddAddressUseCase,
   GetAddressesStateUseCase,
@@ -15,7 +13,9 @@ import {
 } from "domain/use-cases/addresses";
 import { AppInitializeUseCase } from "domain/use-cases/app-initialize";
 import { GetSettingsUseCase, SetThemeUseCase } from "domain/use-cases/settings";
-import { ClearPositionsCacheUseCaseImpl, GetUserPositionsUseCaseImpl } from "domain/use-cases/uniswap-v4-positions";
+import { UniswapV4RepositoryImpl } from "features/uniswap-v4/api/uniswap-v4-repository";
+import type { UniswapV4Repository } from "features/uniswap-v4/model/repositories/uniswap-v4-repository";
+import { GetUserPositionsUseCaseImpl } from "features/uniswap-v4/model/use-cases/get-user-positions";
 
 // Repository bindings
 container.register<SettingsRepository>("SettingsRepository", {
@@ -57,10 +57,6 @@ container.register(AppInitializeUseCase, {
 // Uniswap V4 UseCase bindings
 container.register(GetUserPositionsUseCaseImpl, {
   useFactory: (c) => new GetUserPositionsUseCaseImpl(c.resolve("UniswapV4Repository")),
-});
-
-container.register(ClearPositionsCacheUseCaseImpl, {
-  useFactory: (c) => new ClearPositionsCacheUseCaseImpl(c.resolve("UniswapV4Repository")),
 });
 
 export { container };

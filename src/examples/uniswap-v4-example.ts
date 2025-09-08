@@ -1,9 +1,8 @@
 import { Address } from "viem";
 
-import { UniswapV4Service } from "../data/services/uniswap-v4-service";
 import { container } from "../di/container";
-import { ClearPositionsCacheUseCaseImpl, GetUserPositionsUseCaseImpl } from "../domain/use-cases/uniswap-v4-positions";
-import { UniswapV4PositionsStore } from "../presentation/stores/uniswap-v4-positions-store";
+import { UniswapV4Service } from "../features/uniswap-v4/api/uniswap-v4-service";
+import { GetUserPositionsUseCaseImpl } from "../features/uniswap-v4/model/use-cases/get-user-positions";
 
 /**
  * Пример использования Uniswap V4 API
@@ -23,7 +22,7 @@ export class UniswapV4Example {
         console.log(`  Token0: ${position.poolKey.currency0}`);
         console.log(`  Token1: ${position.poolKey.currency1}`);
         console.log(`  Fee: ${position.poolKey.fee / 10000}%`);
-        console.log(`  Range: ${position.tickLower} to ${position.tickUpper}`);
+        console.log(`  Raw info: ${position.info}`);
         console.log(`  Liquidity: ${position.liquidity}`);
         console.log("---");
       });
@@ -40,7 +39,8 @@ export class UniswapV4Example {
    */
   static async fetchPositionsAllChains(userAddress: Address) {
     try {
-      const positions = await UniswapV4Service.fetchUserPositionsAllChains(userAddress);
+      const getUserPositionsUseCase = container.resolve(GetUserPositionsUseCaseImpl);
+      const positions = await getUserPositionsUseCase.execute(userAddress);
 
       console.log(`Found ${positions.length} total positions across all chains`);
 
@@ -70,28 +70,7 @@ export class UniswapV4Example {
   /**
    * Пример использования store с DI
    */
-  static async useStoreExample(userAddress: Address) {
-    try {
-      // Получаем use cases из DI контейнера
-      const getUserPositionsUseCase = container.resolve(GetUserPositionsUseCaseImpl);
-      const clearPositionsCacheUseCase = container.resolve(ClearPositionsCacheUseCaseImpl);
-
-      // Создаем store
-      const store = new UniswapV4PositionsStore(getUserPositionsUseCase, clearPositionsCacheUseCase);
-
-      // Получаем позиции
-      await store.fetchUserPositions(userAddress);
-
-      console.log(`Store has ${store.positions.length} positions`);
-      console.log(`Loading: ${store.isLoading}`);
-      console.log(`Error: ${store.error}`);
-
-      return store;
-    } catch (error) {
-      console.error("Error using store:", error);
-      throw error;
-    }
-  }
+  // store example removed
 }
 
 // Пример использования:

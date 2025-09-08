@@ -11,13 +11,6 @@ interface TextInputProps extends Omit<RNTextInputProps, "style"> {
   containerStyle?: any;
 }
 
-const UniInput = withUnistyles(RNTextInput, (theme) => ({
-  padding: theme.spacing.lg,
-  fontSize: 16,
-  color: theme.colors.onSurface,
-  fontFamily: "Inter-Regular",
-}));
-
 const UniInputContainer = withUnistyles(Box, (theme) => ({
   backgroundColor: theme.colors.background,
   borderRadius: theme.spacing.md,
@@ -28,7 +21,7 @@ const UniInputContainer = withUnistyles(Box, (theme) => ({
 export const TextInput: React.FC<TextInputProps> = ({ error, containerStyle, ...textInputProps }) => {
   return (
     <UniInputContainer style={containerStyle}>
-      <UniInput {...textInputProps} />
+      <RNTextInput {...textInputProps} style={styles.input} />
       {error && (
         <Text color="onSurface" type="caption" style={styles.errorText}>
           {error}
@@ -39,6 +32,12 @@ export const TextInput: React.FC<TextInputProps> = ({ error, containerStyle, ...
 };
 
 const styles = StyleSheet.create((theme) => ({
+  input: {
+    padding: theme.spacing.lg,
+    fontSize: 16,
+    color: theme.colors.onSurface,
+    fontFamily: "Inter-Regular",
+  },
   errorText: {
     paddingHorizontal: theme.spacing.lg,
     paddingTop: theme.spacing.sm,

@@ -2,13 +2,18 @@ import { useEffect } from "react";
 
 import { Address } from "viem";
 
-import { useUniswapV4Positions } from "./use-uniswap-v4-positions-query";
+import { useUniswapV4Positions } from "features/uniswap-v4";
 
 /**
  * Test hook for checking Uniswap V4 positions on specific network using React Query
  */
 export const useUniswapV4Test = (userAddress: Address, chain: "ethereum" | "arbitrum" = "arbitrum") => {
-  const { positions, isLoading, error, refetch } = useUniswapV4Positions(userAddress, chain, {
+  const {
+    data: positions = [],
+    isLoading,
+    error,
+    refetch,
+  } = useUniswapV4Positions(userAddress, chain, {
     enabled: true,
     staleTime: 0, // Always fetch fresh data for tests
   });
@@ -34,7 +39,7 @@ export const useUniswapV4Test = (userAddress: Address, chain: "ethereum" | "arbi
         console.log(`  - Token0: ${position.poolKey.currency0}`);
         console.log(`  - Token1: ${position.poolKey.currency1}`);
         console.log(`  - Fee: ${position.poolKey.fee / 10000}%`);
-        console.log(`  - Tick Range: ${position.tickLower} to ${position.tickUpper}`);
+        // Packed ticks are part of info; no direct tickLower/tickUpper on inferred type
         console.log(`  - Liquidity: ${position.liquidity}`);
         console.log(`  - Hooks: ${position.poolKey.hooks}`);
         console.log(`  - Tick Spacing: ${position.poolKey.tickSpacing}`);

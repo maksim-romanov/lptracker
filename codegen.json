@@ -1,0 +1,19 @@
+{
+  "schema": {
+    "https://gateway.thegraph.com/api/subgraphs/id/G5TsTKNi8yhPSV7kycaE23oWbqv9zzNqR49FoEQjzq1r": {
+      "headers": {
+        "Authorization": "Bearer 483aa90f30cf4a8250dee1c72c643c9d"
+      }
+    }
+  },
+  "documents": ["src/features/uniswap-v4/api/queries/**/*.graphql"],
+  "generates": {
+    "src/features/uniswap-v4/api/__generated__/graphql.ts": {
+      "plugins": ["typescript", "typed-document-node", "typescript-operations"],
+      "config": {
+        "avoidOptionals": true,
+        "maybeValue": "T | undefined"
+      }
+    }
+  }
+}

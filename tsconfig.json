@@ -4,6 +4,7 @@
     "strict": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
+    "resolveJsonModule": true,
     "baseUrl": "src",
     "paths": {
       "components/*": [

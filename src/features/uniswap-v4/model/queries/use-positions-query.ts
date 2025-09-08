@@ -3,9 +3,9 @@ import { useCallback, useMemo } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Address } from "viem";
 
-import { container } from "../di/container";
-import { GetUserPositionsUseCaseImpl } from "../domain/use-cases/uniswap-v4-positions";
-import { SupportedChain } from "../types/uniswap-v4";
+import { container } from "../../../../di/container";
+import { GetUserPositionsUseCaseImpl } from "../../model/use-cases/get-user-positions";
+import { SupportedChain } from "../types";
 
 // Query keys for React Query
 export const uniswapV4QueryKeys = {
@@ -19,8 +19,10 @@ export const uniswapV4QueryKeys = {
 /**
  * Hook for fetching Uniswap V4 positions using React Query
  */
+const getUserPositionsUseCase = container.resolve(GetUserPositionsUseCaseImpl);
+
 export const useUniswapV4Positions = (
-  userAddress: Address | null,
+  userAddress: Address,
   chain?: SupportedChain,
   options?: {
     enabled?: boolean;
@@ -28,12 +30,7 @@ export const useUniswapV4Positions = (
     cacheTime?: number;
   },
 ) => {
-  const getUserPositionsUseCase = useMemo(() => {
-    return container.resolve(GetUserPositionsUseCaseImpl);
-  }, []);
-
   const queryKey = useMemo(() => {
-    if (!userAddress) return [];
     return chain
       ? uniswapV4QueryKeys.positionsByUserAndChain(userAddress, chain)
       : uniswapV4QueryKeys.positionsByUser(userAddress);
@@ -42,25 +39,16 @@ export const useUniswapV4Positions = (
   const query = useQuery({
     queryKey,
     queryFn: async () => {
-      if (!userAddress) throw new Error("User address is required");
-      return await getUserPositionsUseCase.execute(userAddress, chain, true);
+      return await getUserPositionsUseCase.execute(userAddress, chain);
     },
-    enabled: !!userAddress && (options?.enabled ?? true),
+    enabled: options?.enabled ?? true,
     staleTime: options?.staleTime ?? 5 * 60 * 1000, // 5 minutes
     gcTime: options?.cacheTime ?? 10 * 60 * 1000, // 10 minutes
     retry: 3,
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
   });
 
-  return {
-    positions: query.data ?? [],
-    isLoading: query.isLoading,
-    isFetching: query.isFetching,
-    error: query.error,
-    isError: query.isError,
-    refetch: query.refetch,
-    isRefetching: query.isRefetching,
-  };
+  return query;
 };
 
 /**
@@ -97,14 +85,13 @@ export const useUniswapV4PositionsCache = () => {
 
   const prefetchPositions = useCallback(
     async (userAddress: Address, chain?: SupportedChain) => {
-      const getUserPositionsUseCase = container.resolve(GetUserPositionsUseCaseImpl);
       const queryKey = chain
         ? uniswapV4QueryKeys.positionsByUserAndChain(userAddress, chain)
         : uniswapV4QueryKeys.positionsByUser(userAddress);
 
       return queryClient.prefetchQuery({
         queryKey,
-        queryFn: () => getUserPositionsUseCase.execute(userAddress, chain, true),
+        queryFn: () => getUserPositionsUseCase.execute(userAddress, chain),
         staleTime: 5 * 60 * 1000, // 5 minutes
       });
     },
@@ -122,22 +109,4 @@ export const useUniswapV4PositionsCache = () => {
 /**
  * Hook for getting positions by chain
  */
-export const useUniswapV4PositionsByChain = (userAddress: Address | null, chain: SupportedChain) => {
-  const { positions, ...rest } = useUniswapV4Positions(userAddress, chain);
-
-  const positionsByChain = useMemo(() => {
-    return positions.filter((position) => position.chain === chain);
-  }, [positions, chain]);
-
-  return {
-    positions: positionsByChain,
-    ...rest,
-  };
-};
-
-/**
- * Hook for getting all positions across all chains
- */
-export const useUniswapV4AllPositions = (userAddress: Address | null) => {
-  return useUniswapV4Positions(userAddress);
-};
+// The ByChain/All helpers are intentionally omitted to keep the API minimal.

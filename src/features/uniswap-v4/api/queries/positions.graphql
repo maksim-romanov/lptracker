@@ -1,0 +1,9 @@
+query GetPositions($owner: String!) {
+  positions(where: { owner: $owner }) {
+    tokenId
+    owner
+    id
+  }
+}
+
+

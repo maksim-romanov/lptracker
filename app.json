@@ -92,6 +92,9 @@
         }
       ]
     ],
+    "extra": {
+      "supportedChains": ["ethereum", "arbitrum"]
+    },
     "experiments": {
       "typedRoutes": true
     }
