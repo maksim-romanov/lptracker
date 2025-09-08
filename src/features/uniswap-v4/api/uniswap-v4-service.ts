@@ -1,4 +1,5 @@
 import { request } from "graphql-request";
+import Keys from "react-native-keys";
 import type { PublicClient } from "viem";
 import { Address, Chain, createPublicClient, http } from "viem";
 import { arbitrum, mainnet } from "viem/chains";
@@ -33,7 +34,7 @@ export class UniswapV4Service {
   async getPositionIds(owner: Address): Promise<bigint[]> {
     try {
       const headers = {
-        Authorization: `Bearer ${this.config.subgraphKey}`,
+        Authorization: `Bearer ${Keys.secureFor("SUBGRAPH_TOKEN")}`,
       };
 
       const response = await request(

@@ -43,4 +43,6 @@ ios
 
 .eslintcache
 
+# env files
 .env
+keys.*.json

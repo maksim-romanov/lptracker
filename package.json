@@ -7,6 +7,8 @@
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo run:android",
     "ios": "expo run:ios",
+    "dev:android": "KEYSFILE=keys.development.json expo run:android",
+    "dev:ios": "KEYSFILE=keys.development.json expo run:ios",
     "web": "expo start --web",
     "lint": "expo lint",
     "codegen": "dotenv -e .env -- graphql-codegen --config codegen.json"
@@ -54,6 +56,7 @@
     "react-native-edge-to-edge": "^1.7.0",
     "react-native-gesture-handler": "~2.24.0",
     "react-native-keyboard-controller": "^1.18.6",
+    "react-native-keys": "^0.7.13",
     "react-native-mmkv": "^3.3.1",
     "react-native-modal": "^14.0.0-rc.1",
     "react-native-nitro-modules": "^0.29.2",
