@@ -10,7 +10,7 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.maksimromanov.sparklr",
+      "bundleIdentifier": "com.maksimromanov.sparklr"
     },
     "android": {
       "adaptiveIcon": {

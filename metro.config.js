@@ -19,5 +19,9 @@ config.transformer.minifierConfig = {
   },
 };
 
+// Prefer legacy resolution over package "exports" maps to avoid noisy warnings
+// like attempted subpath imports (e.g. "@noble/hashes/crypto.js").
+config.resolver.unstable_enablePackageExports = false;
+
 // module.exports = wrapWithReanimatedMetroConfig(config);
 module.exports = config;
