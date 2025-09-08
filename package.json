@@ -9,7 +9,7 @@
     "ios": "expo run:ios",
     "web": "expo start --web",
     "lint": "expo lint",
-    "codegen": "graphql-codegen --config codegen.json"
+    "codegen": "dotenv -e .env -- graphql-codegen --config codegen.json"
   },
   "dependencies": {
     "@bottom-tabs/react-navigation": "^0.11.1",
@@ -92,7 +92,8 @@
     "eslint-plugin-jest": "^29.0.1",
     "eslint-plugin-prettier": "^5.5.4",
     "graphql": "^16.11.0",
-    "typescript": "~5.8.3"
+    "typescript": "~5.8.3",
+    "dotenv-cli": "^7.4.2"
   },
   "private": true
 }
