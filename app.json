@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "uniapp-new",
-    "slug": "uniapp-new",
+    "name": "Sparklr",
+    "slug": "sparklr",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -10,7 +10,7 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.maksimromanov.uniappnew"
+      "bundleIdentifier": "com.maksimromanov.sparklr",
     },
     "android": {
       "adaptiveIcon": {
@@ -18,7 +18,7 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.maksimromanov.uniappnew"
+      "package": "com.maksimromanov.sparklr"
     },
     "plugins": [
       "expo-router",
