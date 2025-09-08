@@ -4,14 +4,13 @@ import { Box, Stack } from "@grapp/stacks";
 import { FlatList, RefreshControl } from "react-native";
 import { StyleSheet, withUnistyles } from "react-native-unistyles";
 import tinycolor from "tinycolor2";
-import { Address } from "viem";
 
 import { BaseStats } from "components/base-stats";
 import { EmptyState } from "components/empty-state";
 import { LPCard } from "components/lp-card";
 import { TotalBalance } from "components/total-balance";
 import { Text } from "components/typography/text";
-import { useUniswapV4Test } from "hooks/use-uniswap-v4-test";
+// Uniswap V4 test hook removed
 
 const Separator = withUnistyles(Box, (theme) => ({ height: theme.spacing.md }));
 const BrandRefreshControl = withUnistyles(RefreshControl, (theme) => ({
@@ -36,8 +35,7 @@ export const Positions = function () {
   // Simulate empty state - change this to [] to see the empty state
   const positions: number[] = [];
 
-  // Test hook for Uniswap V4 positions
-  useUniswapV4Test("0xeca0b7cdd7f2fe6389ee3720ae415d07abe0ed58" as Address, "arbitrum");
+  // Uniswap V4 integration temporarily removed
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);

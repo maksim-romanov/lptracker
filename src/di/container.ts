@@ -13,9 +13,7 @@ import {
 } from "domain/use-cases/addresses";
 import { AppInitializeUseCase } from "domain/use-cases/app-initialize";
 import { GetSettingsUseCase, SetThemeUseCase } from "domain/use-cases/settings";
-import { UniswapV4RepositoryImpl } from "features/uniswap-v4/api/uniswap-v4-repository";
-import type { UniswapV4Repository } from "features/uniswap-v4/model/repositories/uniswap-v4-repository";
-import { GetUserPositionsUseCaseImpl } from "features/uniswap-v4/model/use-cases/get-user-positions";
+// Uniswap V4 removed
 
 // Repository bindings
 container.register<SettingsRepository>("SettingsRepository", {
@@ -24,9 +22,7 @@ container.register<SettingsRepository>("SettingsRepository", {
 container.register<AddressesRepository>("AddressesRepository", {
   useClass: AddressesRepositoryImpl,
 });
-container.register<UniswapV4Repository>("UniswapV4Repository", {
-  useClass: UniswapV4RepositoryImpl,
-});
+// Uniswap V4 repository binding removed
 
 // UseCase bindings
 container.register(GetSettingsUseCase, {
@@ -54,9 +50,6 @@ container.register(AppInitializeUseCase, {
   useFactory: (c) => new AppInitializeUseCase(c.resolve(GetSettingsUseCase)),
 });
 
-// Uniswap V4 UseCase bindings
-container.register(GetUserPositionsUseCaseImpl, {
-  useFactory: (c) => new GetUserPositionsUseCaseImpl(c.resolve("UniswapV4Repository")),
-});
+// Uniswap V4 use case binding removed
 
 export { container };
