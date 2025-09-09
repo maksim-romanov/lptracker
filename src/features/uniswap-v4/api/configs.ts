@@ -1,5 +1,5 @@
-import { arbitrum, mainnet } from "viem/chains";
 import type { Chain } from "viem";
+import { arbitrum, mainnet } from "viem/chains";
 
 export const UNISWAP_V4_CONFIGS = {
   ethereum: {
@@ -12,6 +12,7 @@ export const UNISWAP_V4_CONFIGS = {
     chain: "arbitrum" as const,
     viemChain: arbitrum,
     positionManagerAddress: "0xd88f38f930b7952f2db2432cb002e7abbf3dd869",
+    stateViewAddress: "0x76fd297e2d437cd7f76d50f01afe6160f86e9990",
     subgraphUrl: "https://gateway.thegraph.com/api/subgraphs/id/G5TsTKNi8yhPSV7kycaE23oWbqv9zzNqR49FoEQjzq1r",
   },
 } as const;
