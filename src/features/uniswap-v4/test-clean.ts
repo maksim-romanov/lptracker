@@ -7,6 +7,7 @@ import {
   formatLifetimeFees,
   calculateCurrentPrice,
   calculateInversePrice,
+  calculateAprFromInitialInvestment,
 } from "./utils/calculation-utils";
 import { getFeeGrowthInside, getBasicPoolInfo } from "./utils/pool-utils";
 import { getPositionDetails, getStoredPositionInfo } from "./utils/position-utils";
@@ -177,6 +178,40 @@ async function main() {
     mainUIData.tokens.token1.decimals,
   );
   console.log("Inverse Price (USDC/ETH):", inversePrice);
+
+  // Note: Historical APR calculation removed due to RPC node limitations
+  // For production, use archive RPC nodes or The Graph for historical data
+
+  // === APR based on initial investment ===
+  try {
+    // For demonstration, let's assume the position was opened 30 days ago
+    // In a real app, you'd get this from subgraph or position creation event
+    const daysSinceOpen = 30;
+
+    // Calculate current total value (invested + uncollected fees)
+    const currentInvestedValue = Number(mainUIData.invested.token1) + Number(mainUIData.invested.token0) * currentPrice;
+
+    console.log("currentInvestedValue: ", currentInvestedValue);
+    const uncollectedFeesValue =
+      Number(mainUIData.uncollectedFees.token1LifetimeFees) +
+      Number(mainUIData.uncollectedFees.token0LifetimeFees) * currentPrice;
+    const currentTotalValue = currentInvestedValue + uncollectedFeesValue;
+
+    // For demonstration, let's assume initial investment was slightly less than current invested value
+    // (to account for some price appreciation and fees earned)
+    const estimatedInitialValue = currentInvestedValue * 0.95; // 5% less than current invested
+
+    const aprFromInitial = calculateAprFromInitialInvestment(estimatedInitialValue, currentTotalValue, daysSinceOpen);
+
+    console.log("=== APR (based on initial investment) ===");
+    console.log("Estimated initial value:", estimatedInitialValue.toFixed(2), "USDC");
+    console.log("Current total value:", currentTotalValue.toFixed(2), "USDC");
+    console.log("Uncollected fees value:", uncollectedFeesValue.toFixed(2), "USDC");
+    console.log("Days since open:", daysSinceOpen);
+    console.log("APR (from initial investment):", aprFromInitial.toFixed(2) + "%");
+  } catch (err) {
+    console.log("Failed to compute APR from initial investment:", err);
+  }
 
   // Export data for UI components
   return mainUIData;

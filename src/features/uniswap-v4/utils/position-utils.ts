@@ -155,6 +155,7 @@ export async function getStoredPositionInfo(
   positionDetails: PositionDetails,
   tokenId: bigint,
   poolId: string,
+  blockNumber?: bigint,
 ): Promise<{
   liquidity: bigint;
   feeGrowthInside0Last: bigint;
@@ -183,6 +184,7 @@ export async function getStoredPositionInfo(
     ],
     functionName: "getPositionInfo",
     args: [poolId, arbitrumConfig.positionManagerAddress, positionDetails.tickLower, positionDetails.tickUpper, salt],
+    blockNumber,
   })) as readonly [bigint, bigint, bigint];
 
   return {

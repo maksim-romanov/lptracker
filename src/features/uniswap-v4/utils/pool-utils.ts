@@ -95,7 +95,7 @@ export async function getPoolSlotData(poolId: string): Promise<PoolSlotData> {
       protocolFee: protocolFee as number,
       lpFee: lpFee as number,
     };
-  } catch (error) {
+  } catch {
     console.log("Could not fetch slot data from StateView, trying PoolManager...");
 
     try {
@@ -126,7 +126,7 @@ export async function getPoolSlotData(poolId: string): Promise<PoolSlotData> {
         protocolFee: protocolFee as number,
         lpFee: lpFee as number,
       };
-    } catch (poolManagerError) {
+    } catch {
       console.log("Could not fetch slot data from PoolManager either");
       // Return default values
       return {
@@ -189,6 +189,7 @@ export async function getFeeGrowthInside(
   poolId: string,
   tickLower: number,
   tickUpper: number,
+  blockNumber?: bigint,
 ): Promise<{
   feeGrowthInside0X128: bigint;
   feeGrowthInside1X128: bigint;
@@ -212,6 +213,7 @@ export async function getFeeGrowthInside(
     ],
     functionName: "getFeeGrowthInside",
     args: [poolId, tickLower, tickUpper],
+    blockNumber,
   })) as readonly [bigint, bigint];
 
   return {

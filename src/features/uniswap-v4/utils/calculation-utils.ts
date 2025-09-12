@@ -12,6 +12,13 @@ export interface InvestedAmounts {
   token1: string;
 }
 
+export interface AprBreakdown {
+  token0Fees7d: string; // formatted
+  token1Fees7d: string; // formatted
+  feesValueNowUSD?: number; // optional, caller can supply price to value
+  aprPercent: number; // annualized based on 7d
+}
+
 /**
  * Calculate lifetime fees for a position
  * @param liquidity - Position liquidity
@@ -157,10 +164,46 @@ export function calculateSimplePositionValue(
   tickLower: number,
   tickUpper: number,
 ): { estimatedValue: string } {
-  // This is a very simplified calculation
-  // In reality, you'd need the current price and more complex math
+  // Placeholder retained for compatibility
   const estimatedValue = (Number(liquidity) / 1e18).toFixed(6);
   return { estimatedValue };
+}
+
+/**
+ * Annualize 7d fees to APR (caller values fees externally in token1 or USD)
+ */
+export function annualize7dApr(feesValueNow: number, positionValueNow: number): number {
+  if (!isFinite(feesValueNow) || !isFinite(positionValueNow) || positionValueNow <= 0) return 0;
+  const weeklyReturn = feesValueNow / positionValueNow; // 7-day return
+  return weeklyReturn * (365 / 7) * 100; // percentage
+}
+
+/**
+ * Calculate APR based on initial investment and current value (including fees)
+ * @param initialValue - Initial position value when opened
+ * @param currentValue - Current position value (invested + uncollected fees)
+ * @param daysSinceOpen - Days since position was opened
+ * @returns APR percentage
+ */
+export function calculateAprFromInitialInvestment(
+  initialValue: number,
+  currentValue: number,
+  daysSinceOpen: number,
+): number {
+  if (
+    !isFinite(initialValue) ||
+    !isFinite(currentValue) ||
+    !isFinite(daysSinceOpen) ||
+    initialValue <= 0 ||
+    currentValue <= 0 ||
+    daysSinceOpen <= 0
+  )
+    return 0;
+
+  const totalReturn = (currentValue - initialValue) / initialValue; // Total return ratio
+  const dailyReturn = totalReturn / daysSinceOpen; // Daily return ratio
+  const annualizedReturn = dailyReturn * 365; // Annualized return ratio
+  return annualizedReturn * 100; // Convert to percentage
 }
 
 /**
