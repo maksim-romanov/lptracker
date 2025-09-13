@@ -30,7 +30,6 @@
           }
         }
       ],
-      "expo-build-properties",
       "react-native-bottom-tabs",
       [
         "react-native-keys",
@@ -101,7 +100,8 @@
           "imageWidth": 200,
           "resizeMode": "contain"
         }
-      ]
+      ],
+      "expo-web-browser"
     ],
     "extra": {
       "supportedChains": ["ethereum", "arbitrum"]

@@ -10,7 +10,7 @@ module.exports = function (api) {
           autoProcessPaths: ["@grapp/stacks"],
         },
       ],
-      "react-native-worklets/plugin",
+      "react-native-reanimated/plugin",
     ],
   };
 };
