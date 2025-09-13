@@ -74,7 +74,7 @@ const RootLayout = observer(function () {
                 />
               </Stack.Protected>
 
-              <Stack.Screen name="+not-found" />
+              <Stack.Screen name="+not-found" options={{ headerShown: false }} />
             </Stack>
 
             <StatusBar style="auto" />
