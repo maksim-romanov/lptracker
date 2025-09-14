@@ -93,105 +93,193 @@ struct LiquidityPoolWidgetView: View {
         }
     }
 
-    // Small widget layout (compact but styled)
-    private var smallWidgetLayout: some View {
-        VStack(alignment: .leading, spacing: WidgetTheme.Spacing.xs) {
-            // Header - compact but styled
-            VStack(alignment: .leading, spacing: 1) {
-                Text(entry.poolPairName)
-                    .font(WidgetTheme.Typography.title)
-                    .foregroundColor(WidgetTheme.adaptiveOnSurface(colorScheme: colorScheme))
-                    .bold()
+    // Calculate token percentages dynamically
+    private var token0Percentage: Double {
+        let totalUSDValue = entry.totalValue
+        if totalUSDValue == 0 { return 0 }
 
-                HStack(spacing: 4) {
+        // Rough estimation: assume token0Amount * current price vs token1Amount
+        // For simplicity, we'll calculate based on amounts assuming ETH ~$2000-3000
+        let estimatedToken0Value = entry.token0Amount * 2500 // Rough ETH price
+        let estimatedToken1Value = entry.token1Amount // USDC is ~$1
+        let totalEstimated = estimatedToken0Value + estimatedToken1Value
+
+        if totalEstimated == 0 { return 0 }
+        return (estimatedToken0Value / totalEstimated) * 100
+    }
+
+    private var token1Percentage: Double {
+        return 100 - token0Percentage
+    }
+
+    private var formattedToken0Percentage: String {
+        if token0Percentage < 1 && token0Percentage > 0 {
+            return "<1%"
+        } else if token0Percentage == 0 {
+            return "0%"
+        } else {
+            return String(format: "%.0f%%", token0Percentage)
+        }
+    }
+
+    private var formattedToken1Percentage: String {
+        if token1Percentage < 1 && token1Percentage > 0 {
+            return "<1%"
+        } else if token1Percentage == 0 {
+            return "0%"
+        } else {
+            return String(format: "%.0f%%", token1Percentage)
+        }
+    }
+
+    // Modern range slider component - reusable
+    private var modernRangeSlider: some View {
+        ZStack(alignment: .leading) {
+            // Background track with gradient
+            RoundedRectangle(cornerRadius: 3)
+                .fill(
+                    LinearGradient(
+                        colors: [
+                            WidgetTheme.adaptiveOutline(colorScheme: colorScheme).opacity(0.15),
+                            WidgetTheme.adaptiveOutline(colorScheme: colorScheme).opacity(0.25)
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                )
+                .frame(height: 6)
+
+            // Active range indicator with modern gradient - centered on track
+            GeometryReader { geometry in
+                let rangeWidth = geometry.size.width * 0.5 // 50% of track width
+                let rangeStart = (geometry.size.width - rangeWidth) / 2 // Center the range
+
+                RoundedRectangle(cornerRadius: 3)
+                    .fill(
+                        LinearGradient(
+                            colors: [
+                                WidgetTheme.Colors.success.opacity(0.6),
+                                WidgetTheme.Colors.success.opacity(0.8),
+                                WidgetTheme.Colors.success.opacity(0.6)
+                            ],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .frame(width: rangeWidth, height: 6)
+                    .position(x: rangeStart + rangeWidth/2, y: 3)
+            }
+            .frame(height: 6)
+
+            // Modern position indicator
+            GeometryReader { geometry in
+                ZStack {
+                    // Outer glow
                     Circle()
-                        .fill(entry.isInRange ? WidgetTheme.Colors.success : WidgetTheme.Colors.warning)
-                        .frame(width: 6, height: 6)
+                        .fill(
+                            RadialGradient(
+                                colors: [
+                                    (entry.isInRange ? WidgetTheme.Colors.success : WidgetTheme.Colors.warning).opacity(0.3),
+                                    Color.clear
+                                ],
+                                center: .center,
+                                startRadius: 2,
+                                endRadius: 8
+                            )
+                        )
+                        .frame(width: 16, height: 16)
 
-                    Text(entry.isInRange ? "In Range" : "Out of Range")
+                    // Main indicator
+                    Circle()
+                        .fill(
+                            RadialGradient(
+                                colors: [
+                                    (entry.isInRange ? WidgetTheme.Colors.success : WidgetTheme.Colors.warning),
+                                    (entry.isInRange ? WidgetTheme.Colors.success : WidgetTheme.Colors.warning).opacity(0.8)
+                                ],
+                                center: UnitPoint(x: 0.3, y: 0.3),
+                                startRadius: 1,
+                                endRadius: 6
+                            )
+                        )
+                        .frame(width: 12, height: 12)
+                        .overlay(
+                            Circle()
+                                .stroke(
+                                    LinearGradient(
+                                        colors: [
+                                            Color.white.opacity(0.8),
+                                            Color.white.opacity(0.3)
+                                        ],
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    ),
+                                    lineWidth: 2
+                                )
+                        )
+                        .shadow(color: Color.black.opacity(0.2), radius: 2, x: 0, y: 1)
+                }
+                .position(
+                    x: max(8, min(geometry.size.width - 8, entry.rangePosition * geometry.size.width)),
+                    y: 3
+                )
+            }
+            .frame(height: 6)
+        }
+        .padding(.vertical, 6)
+    }
+
+    // Small widget layout (using modern slider with compact design)
+    private var smallWidgetLayout: some View {
+        VStack(spacing: WidgetTheme.Spacing.sm) {
+            // Header with pool name and tokens
+            VStack(alignment: .leading, spacing: 2) {
+                Text(entry.poolPairName)
+                    .font(.system(size: 16, weight: .bold))
+                    .foregroundColor(WidgetTheme.adaptiveOnSurface(colorScheme: colorScheme))
+
+                HStack(spacing: 3) {
+                    Text(entry.token0Symbol)
                         .font(.caption2)
-                        .foregroundColor(entry.isInRange ? WidgetTheme.Colors.success : WidgetTheme.Colors.warning)
+                        .foregroundColor(WidgetTheme.Colors.primary)
+                        .bold()
+                    Text("•")
+                        .font(.caption2)
+                        .foregroundColor(WidgetTheme.adaptiveOnSurface(colorScheme: colorScheme).opacity(0.4))
+                    Text(entry.token1Symbol)
+                        .font(.caption2)
+                        .foregroundColor(WidgetTheme.Colors.secondary)
                         .bold()
                 }
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
 
-            // Range slider - enhanced
-            ZStack(alignment: .leading) {
-                RoundedRectangle(cornerRadius: 1.5)
-                    .fill(WidgetTheme.adaptiveOutline(colorScheme: colorScheme).opacity(0.3))
-                    .frame(height: 3)
+            // Modern range slider
+            modernRangeSlider
 
-                RoundedRectangle(cornerRadius: 1.5)
-                    .fill(WidgetTheme.Colors.success.opacity(0.4))
-                    .frame(height: 3)
-                    .scaleEffect(x: 0.5, anchor: .center)
+            // Total Value - hero
+            Text("$\(String(format: "%.0f", entry.totalValue))")
+                .font(.system(size: 28, weight: .bold, design: .rounded))
+                .foregroundColor(WidgetTheme.adaptiveOnSurface(colorScheme: colorScheme))
+                .minimumScaleFactor(0.7)
+                .lineLimit(1)
+                .frame(maxWidth: .infinity)
 
-                GeometryReader { geometry in
-                    Circle()
-                        .fill(entry.isInRange ? WidgetTheme.Colors.success : WidgetTheme.Colors.warning)
-                        .frame(width: 8, height: 8)
-                        .overlay(
-                            Circle()
-                                .stroke(WidgetTheme.Colors.primary, lineWidth: 1.5)
-                        )
-                        .shadow(color: .black.opacity(0.1), radius: 1, x: 0, y: 0.5)
-                        .position(
-                            x: max(4, min(geometry.size.width - 4, entry.rangePosition * geometry.size.width)),
-                            y: 1.5
-                        )
-                }
-                .frame(height: 3)
-            }
-            .padding(.vertical, 3)
-
-            Spacer()
-
-            // Prominent Total Value
-            VStack(alignment: .center, spacing: 2) {
-                Text("Total Value")
-                    .font(.caption)
-                    .foregroundColor(WidgetTheme.adaptiveOnSurface(colorScheme: colorScheme).opacity(0.8))
-                    .bold()
-
-                Text("$\(String(format: "%.0f", entry.totalValue))")
-                    .font(.system(size: 22, weight: .bold, design: .rounded))
-                    .foregroundColor(WidgetTheme.adaptiveOnSurface(colorScheme: colorScheme))
-                    .minimumScaleFactor(0.8)
-                    .lineLimit(1)
-            }
-            .frame(maxWidth: .infinity)
-
-            // Fees card
+            // Fees - bottom
             HStack {
-                VStack(alignment: .leading, spacing: 1) {
-                    Text("Fees")
-                        .font(.caption2)
-                        .foregroundColor(WidgetTheme.adaptiveOnSurface(colorScheme: colorScheme).opacity(0.7))
-
-                    Text("$\(String(format: "%.1f", entry.uncollectedFees))")
-                        .font(.system(size: 14, weight: .bold))
-                        .foregroundColor(WidgetTheme.Colors.success)
-                }
+                Text("Fees")
+                    .font(.caption2)
+                    .foregroundColor(WidgetTheme.adaptiveOnSurface(colorScheme: colorScheme).opacity(0.6))
 
                 Spacer()
 
-                VStack(alignment: .trailing, spacing: 1) {
-                    Text("APY")
-                        .font(.caption2)
-                        .foregroundColor(WidgetTheme.adaptiveOnSurface(colorScheme: colorScheme).opacity(0.7))
-
-                    Text("~12%")
-                        .font(.caption)
-                        .foregroundColor(WidgetTheme.Colors.primary)
-                        .bold()
-                }
+                Text("$\(String(format: "%.1f", entry.uncollectedFees))")
+                    .font(.caption)
+                    .foregroundColor(WidgetTheme.Colors.success)
+                    .bold()
             }
-            .padding(.all, WidgetTheme.Spacing.xs)
-            .background(WidgetTheme.Colors.success.opacity(0.08))
-            .cornerRadius(WidgetTheme.Spacing.xs)
         }
-        .padding(.vertical, WidgetTheme.Spacing.sm)
-        .padding(.horizontal, WidgetTheme.Spacing.sm)
+        .padding(.all, WidgetTheme.Spacing.md)
         .background(WidgetTheme.adaptiveSurface(colorScheme: colorScheme))
         .containerBackground(WidgetTheme.adaptiveSurface(colorScheme: colorScheme), for: .widget)
     }
@@ -221,34 +309,7 @@ struct LiquidityPoolWidgetView: View {
                 }
             }
 
-            // Range position slider
-            ZStack(alignment: .leading) {
-                RoundedRectangle(cornerRadius: 2)
-                    .fill(WidgetTheme.adaptiveOutline(colorScheme: colorScheme).opacity(0.3))
-                    .frame(height: 4)
-
-                RoundedRectangle(cornerRadius: 2)
-                    .fill(WidgetTheme.Colors.success.opacity(0.4))
-                    .frame(height: 4)
-                    .scaleEffect(x: 0.5, anchor: .center)
-
-                GeometryReader { geometry in
-                    Circle()
-                        .fill(entry.isInRange ? WidgetTheme.Colors.success : WidgetTheme.Colors.warning)
-                        .frame(width: 10, height: 10)
-                        .overlay(
-                            Circle()
-                                .stroke(WidgetTheme.Colors.primary, lineWidth: 1.5)
-                        )
-                        .shadow(color: .black.opacity(0.1), radius: 1, x: 0, y: 0.5)
-                        .position(
-                            x: max(5, min(geometry.size.width - 5, entry.rangePosition * geometry.size.width)),
-                            y: 2
-                        )
-                }
-                .frame(height: 4)
-            }
-            .padding(.vertical, 4)
+            modernRangeSlider
 
             // Total Value and Fees on one row
             HStack(alignment: .top, spacing: WidgetTheme.Spacing.md) {
@@ -290,7 +351,7 @@ struct LiquidityPoolWidgetView: View {
 
                         Spacer()
 
-                        Text("50.2%")
+                        Text(formattedToken0Percentage)
                             .font(.caption2)
                             .foregroundColor(WidgetTheme.adaptiveOnSurface(colorScheme: colorScheme).opacity(0.6))
                     }
@@ -308,7 +369,7 @@ struct LiquidityPoolWidgetView: View {
 
                 VStack(alignment: .trailing, spacing: 4) {
                     HStack {
-                        Text("49.8%")
+                        Text(formattedToken1Percentage)
                             .font(.caption2)
                             .foregroundColor(WidgetTheme.adaptiveOnSurface(colorScheme: colorScheme).opacity(0.6))
 
@@ -369,34 +430,7 @@ struct LiquidityPoolWidgetView: View {
                 }
             }
 
-            // Range position slider - larger
-            ZStack(alignment: .leading) {
-                RoundedRectangle(cornerRadius: 2)
-                    .fill(WidgetTheme.adaptiveOutline(colorScheme: colorScheme).opacity(0.3))
-                    .frame(height: 4)
-
-                RoundedRectangle(cornerRadius: 2)
-                    .fill(WidgetTheme.Colors.success.opacity(0.4))
-                    .frame(height: 4)
-                    .scaleEffect(x: 0.5, anchor: .center)
-
-                GeometryReader { geometry in
-                    Circle()
-                        .fill(entry.isInRange ? WidgetTheme.Colors.success : WidgetTheme.Colors.warning)
-                        .frame(width: 12, height: 12)
-                        .overlay(
-                            Circle()
-                                .stroke(WidgetTheme.Colors.primary, lineWidth: 2)
-                        )
-                        .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
-                        .position(
-                            x: max(6, min(geometry.size.width - 6, entry.rangePosition * geometry.size.width)),
-                            y: 2
-                        )
-                }
-                .frame(height: 4)
-            }
-            .padding(.vertical, 6)
+            modernRangeSlider
 
             // Prominent Total Value display
             VStack(alignment: .center, spacing: 4) {
@@ -455,7 +489,7 @@ struct LiquidityPoolWidgetView: View {
 
                         Spacer()
 
-                        Text("50.2%")
+                        Text(formattedToken0Percentage)
                             .font(WidgetTheme.Typography.caption)
                             .foregroundColor(WidgetTheme.adaptiveOnSurface(colorScheme: colorScheme).opacity(0.6))
                     }
@@ -473,7 +507,7 @@ struct LiquidityPoolWidgetView: View {
 
                 VStack(alignment: .trailing, spacing: 6) {
                     HStack {
-                        Text("49.8%")
+                        Text(formattedToken1Percentage)
                             .font(WidgetTheme.Typography.caption)
                             .foregroundColor(WidgetTheme.adaptiveOnSurface(colorScheme: colorScheme).opacity(0.6))
 
@@ -532,6 +566,18 @@ struct LiquidityPoolWidget: Widget {
         poolPairName: "ETH/USDC",
         rangePosition: 0.6 // In range
     )
+    LiquidityPoolEntry(
+        date: .now,
+        totalValue: 987.32,
+        uncollectedFees: 5.67,
+        isInRange: false,
+        token0Amount: 0.0, // All ETH converted to USDC
+        token1Amount: 2100.50,
+        token0Symbol: "ETH",
+        token1Symbol: "USDC",
+        poolPairName: "ETH/USDC",
+        rangePosition: 0.1 // Out of range - far left, price went up
+    )
 }
 
 #Preview(as: .systemMedium) {
@@ -554,12 +600,12 @@ struct LiquidityPoolWidget: Widget {
         totalValue: 987.65,
         uncollectedFees: 5.67,
         isInRange: false,
-        token0Amount: 0.3,
-        token1Amount: 1200.50,
+        token0Amount: 0.0, // All ETH converted to USDC
+        token1Amount: 2050.30,
         token0Symbol: "ETH",
         token1Symbol: "USDC",
         poolPairName: "ETH/USDC",
-        rangePosition: 0.1 // Out of range - far left
+        rangePosition: 0.1 // Out of range - far left, price went up
     )
 }
 
@@ -577,5 +623,17 @@ struct LiquidityPoolWidget: Widget {
         token1Symbol: "USDC",
         poolPairName: "ETH/USDC",
         rangePosition: 0.6 // In range
+    )
+    LiquidityPoolEntry(
+        date: .now,
+        totalValue: 892.15,
+        uncollectedFees: 2.89,
+        isInRange: false,
+        token0Amount: 0.78, // All USDC converted to ETH
+        token1Amount: 0.0,
+        token0Symbol: "ETH",
+        token1Symbol: "USDC",
+        poolPairName: "ETH/USDC",
+        rangePosition: 0.85 // Out of range - far right, price went down
     )
 }
