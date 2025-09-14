@@ -9,7 +9,7 @@ struct Provider: AppIntentTimelineProvider {
     func snapshot(for configuration: ConfigurationAppIntent, in context: Context) async -> SimpleEntry {
         SimpleEntry(date: Date(), configuration: configuration)
     }
-    
+
     func timeline(for configuration: ConfigurationAppIntent, in context: Context) async -> Timeline<SimpleEntry> {
         var entries: [SimpleEntry] = []
 
@@ -23,16 +23,14 @@ struct Provider: AppIntentTimelineProvider {
 
         return Timeline(entries: entries, policy: .atEnd)
     }
-
-//    func relevances() async -> WidgetRelevances<ConfigurationAppIntent> {
-//        // Generate a list containing the contexts this widget is relevant in.
-//    }
 }
+
 
 struct SimpleEntry: TimelineEntry {
     let date: Date
     let configuration: ConfigurationAppIntent
 }
+
 
 struct widgetEntryView : View {
     var entry: Provider.Entry
@@ -69,6 +67,7 @@ struct AdaptiveWidgetView: View {
     }
 }
 
+
 struct widget: Widget {
     let kind: String = "widget"
 
@@ -78,6 +77,7 @@ struct widget: Widget {
         }
     }
 }
+
 
 extension ConfigurationAppIntent {
     fileprivate static var smiley: ConfigurationAppIntent {
@@ -99,3 +99,4 @@ extension ConfigurationAppIntent {
     SimpleEntry(date: .now, configuration: .smiley)
     SimpleEntry(date: .now, configuration: .starEyes)
 }
+
