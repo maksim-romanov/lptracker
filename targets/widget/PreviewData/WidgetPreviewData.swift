@@ -13,7 +13,9 @@ struct WidgetPreviewData {
     poolPairName: "ETH/USDC",
     rangePosition: 0.6, // In range
     rangeMin: 0.25, // Range from 25%
-    rangeMax: 0.75  // to 75%
+    rangeMax: 0.75,  // to 75%
+    selectedPositionId: "1",
+    walletName: "Main Wallet"
   )
 
   static let outOfRangeLeftEntry = LiquidityPoolEntry(
@@ -28,7 +30,9 @@ struct WidgetPreviewData {
     poolPairName: "ETH/USDC",
     rangePosition: 0.1, // Out of range - far left, price went up
     rangeMin: 0.3, // Narrow range from 30%
-    rangeMax: 0.6  // to 60%
+    rangeMax: 0.6,  // to 60%
+    selectedPositionId: "2",
+    walletName: "Main Wallet"
   )
 
   static let outOfRangeRightEntry = LiquidityPoolEntry(
@@ -43,7 +47,9 @@ struct WidgetPreviewData {
     poolPairName: "ETH/USDC",
     rangePosition: 0.85, // Out of range - far right, price went down
     rangeMin: 0.2, // Wide range from 20%
-    rangeMax: 0.8  // to 80%
+    rangeMax: 0.8,  // to 80%
+    selectedPositionId: "4",
+    walletName: "Trading Wallet"
   )
 
   static let mediumOutOfRangeEntry = LiquidityPoolEntry(
@@ -58,6 +64,8 @@ struct WidgetPreviewData {
     poolPairName: "ETH/USDC",
     rangePosition: 0.1, // Out of range - far left, price went up
     rangeMin: 0.4, // Range from 40%
-    rangeMax: 0.7  // to 70%
+    rangeMax: 0.7,  // to 70%
+    selectedPositionId: "2",
+    walletName: "Main Wallet"
   )
 }

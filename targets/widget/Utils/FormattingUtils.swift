@@ -47,20 +47,4 @@ extension LiquidityPoolEntry {
     return FormattingUtils.formatPercentage(token1Percentage)
   }
 
-  static var sampleData: LiquidityPoolEntry {
-    LiquidityPoolEntry(
-      date: Date(),
-      totalValue: 1234.56,
-      uncollectedFees: 12.34,
-      isInRange: true,
-      token0Amount: 0.5,
-      token1Amount: 1850.25,
-      token0Symbol: "ETH",
-      token1Symbol: "USDC",
-      poolPairName: "ETH/USDC",
-      rangePosition: 0.6,
-      rangeMin: 0.25,
-      rangeMax: 0.75
-    )
-  }
 }
