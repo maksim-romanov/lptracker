@@ -16,6 +16,7 @@ struct widgetControl: ControlWidget {
                 action: StartTimerIntent(value.name)
             ) { isRunning in
                 Label(isRunning ? "On" : "Off", systemImage: "timer")
+                    .foregroundColor(isRunning ? WidgetTheme.Colors.primary : WidgetTheme.Colors.outline)
             }
         }
         .displayName("Timer")

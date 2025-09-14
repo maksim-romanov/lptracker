@@ -36,15 +36,36 @@ struct SimpleEntry: TimelineEntry {
 
 struct widgetEntryView : View {
     var entry: Provider.Entry
+    @Environment(\.colorScheme) var colorScheme
 
     var body: some View {
-        VStack {
+        VStack(spacing: WidgetTheme.Spacing.md) {
             Text("Time:")
+                .font(WidgetTheme.Typography.caption)
+                .foregroundColor(WidgetTheme.adaptiveOnSurface(colorScheme: colorScheme).opacity(0.7))
+
             Text(entry.date, style: .time)
+                .font(WidgetTheme.Typography.title)
+                .foregroundColor(WidgetTheme.adaptiveOnSurface(colorScheme: colorScheme))
 
             Text("Favorite Emoji:")
+                .font(WidgetTheme.Typography.caption)
+                .foregroundColor(WidgetTheme.adaptiveOnSurface(colorScheme: colorScheme).opacity(0.7))
+
             Text(entry.configuration.favoriteEmoji)
+                .font(WidgetTheme.Typography.headline)
         }
+        .padding(WidgetTheme.Spacing.lg)
+    }
+}
+
+struct AdaptiveWidgetView: View {
+    var entry: Provider.Entry
+    @Environment(\.colorScheme) var colorScheme
+
+    var body: some View {
+        widgetEntryView(entry: entry)
+            .containerBackground(WidgetTheme.adaptiveSurface(colorScheme: colorScheme), for: .widget)
     }
 }
 
@@ -53,8 +74,7 @@ struct widget: Widget {
 
     var body: some WidgetConfiguration {
         AppIntentConfiguration(kind: kind, intent: ConfigurationAppIntent.self, provider: Provider()) { entry in
-            widgetEntryView(entry: entry)
-                .containerBackground(.fill.tertiary, for: .widget)
+            AdaptiveWidgetView(entry: entry)
         }
     }
 }

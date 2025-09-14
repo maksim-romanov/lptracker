@@ -16,11 +16,14 @@ struct WidgetLiveActivity: Widget {
     var body: some WidgetConfiguration {
         ActivityConfiguration(for: WidgetAttributes.self) { context in
             // Lock screen/banner UI goes here
-            VStack {
+            VStack(spacing: WidgetTheme.Spacing.sm) {
                 Text("Hello \(context.state.emoji)")
+                    .font(WidgetTheme.Typography.body)
+                    .foregroundColor(WidgetTheme.Colors.onPrimary)
             }
-            .activityBackgroundTint(Color.cyan)
-            .activitySystemActionForegroundColor(Color.black)
+            .padding(WidgetTheme.Spacing.md)
+            .activityBackgroundTint(WidgetTheme.Colors.primary)
+            .activitySystemActionForegroundColor(WidgetTheme.Colors.onPrimary)
 
         } dynamicIsland: { context in
             DynamicIsland {
@@ -28,23 +31,35 @@ struct WidgetLiveActivity: Widget {
                 // various regions, like leading/trailing/center/bottom
                 DynamicIslandExpandedRegion(.leading) {
                     Text("Leading")
+                        .font(WidgetTheme.Typography.caption)
+                        .foregroundColor(WidgetTheme.Colors.primary)
                 }
                 DynamicIslandExpandedRegion(.trailing) {
                     Text("Trailing")
+                        .font(WidgetTheme.Typography.caption)
+                        .foregroundColor(WidgetTheme.Colors.secondary)
                 }
                 DynamicIslandExpandedRegion(.bottom) {
-                    Text("Bottom \(context.state.emoji)")
-                    // more content
+                    VStack(spacing: WidgetTheme.Spacing.xs) {
+                        Text("Bottom \(context.state.emoji)")
+                            .font(WidgetTheme.Typography.body)
+                        // more content
+                    }
                 }
             } compactLeading: {
                 Text("L")
+                    .font(WidgetTheme.Typography.caption)
+                    .foregroundColor(WidgetTheme.Colors.primary)
             } compactTrailing: {
                 Text("T \(context.state.emoji)")
+                    .font(WidgetTheme.Typography.caption)
+                    .foregroundColor(WidgetTheme.Colors.secondary)
             } minimal: {
                 Text(context.state.emoji)
+                    .font(WidgetTheme.Typography.body)
             }
             .widgetURL(URL(string: "https://www.expo.dev"))
-            .keylineTint(Color.red)
+            .keylineTint(WidgetTheme.Colors.primary)
         }
     }
 }
