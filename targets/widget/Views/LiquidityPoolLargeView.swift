@@ -5,7 +5,7 @@ struct LiquidityPoolLargeView: View {
   @Environment(\.colorScheme) var colorScheme
 
   var body: some View {
-    VStack(alignment: .leading, spacing: WidgetTheme.Spacing.sm) {
+    VStack(alignment: .leading, spacing: WidgetTheme.Spacing.md) {
       // Header with pool pair and range status
       HStack {
         VStack(alignment: .leading, spacing: 2) {
@@ -34,23 +34,23 @@ struct LiquidityPoolLargeView: View {
         }
       }
 
-      RangeSlider(entry: entry)
+      RangeSlider(entry: entry, variant: .large)
 
       // Prominent Total Value display
-      VStack(alignment: .center, spacing: 4) {
+      VStack(alignment: .center, spacing: 0) {
         Text("Total Portfolio Value")
           .font(WidgetTheme.Typography.body)
           .foregroundColor(WidgetTheme.adaptiveOnSurface(colorScheme: colorScheme).opacity(0.8))
           .bold()
 
         Text("$\(FormattingUtils.formatCurrency(entry.totalValue, decimals: 2))")
-          .font(.system(size: 32, weight: .bold, design: .rounded))
+          .font(.system(size: 38, weight: .bold, design: .rounded))
           .foregroundColor(WidgetTheme.adaptiveOnSurface(colorScheme: colorScheme))
           .minimumScaleFactor(0.8)
           .lineLimit(1)
       }
       .frame(maxWidth: .infinity)
-      .padding(.vertical, WidgetTheme.Spacing.md)
+      .padding(.vertical, WidgetTheme.Spacing.sm)
 
       // Fees in prominent card
       HStack {
@@ -101,8 +101,6 @@ struct LiquidityPoolLargeView: View {
         )
       }
     }
-//    .padding(.vertical, WidgetTheme.Spacing.lg)
-//    .padding(.horizontal, WidgetTheme.Spacing.lg)
     .containerBackground(WidgetTheme.adaptiveBackground(colorScheme: colorScheme), for: .widget)
   }
 }

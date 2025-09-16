@@ -33,27 +33,54 @@ struct LiquidityPoolSmallView: View {
 
       // Total Value - hero
       Text("$\(FormattingUtils.formatCurrency(entry.totalValue))")
-        .font(.system(size: 28, weight: .bold, design: .rounded))
+        .font(.system(size: 36, weight: .bold, design: .rounded))
         .foregroundColor(WidgetTheme.adaptiveOnSurface(colorScheme: colorScheme))
         .minimumScaleFactor(0.7)
         .lineLimit(1)
         .frame(maxWidth: .infinity)
 
-      // Fees - bottom
-      HStack {
-        Text("Fees")
+      // Token composition centered below total
+      HStack(spacing: 6) {
+        Text(entry.formattedToken0Percentage)
           .font(.caption2)
-          .foregroundColor(WidgetTheme.adaptiveOnSurface(colorScheme: colorScheme).opacity(0.6))
-
-        Spacer()
-
-        Text("$\(FormattingUtils.formatCurrency(entry.uncollectedFees, decimals: 1))")
-          .font(.caption)
-          .foregroundColor(WidgetTheme.Colors.success)
+          .foregroundColor(WidgetTheme.Colors.primary)
+          .bold()
+        Text("|")
+          .font(.caption2)
+          .foregroundColor(WidgetTheme.adaptiveOnSurface(colorScheme: colorScheme).opacity(0.4))
+        Text(entry.formattedToken1Percentage)
+          .font(.caption2)
+          .foregroundColor(WidgetTheme.Colors.secondary)
           .bold()
       }
+      .frame(maxWidth: .infinity)
+
+      // Bottom row: Range status (left) and Fees (right)
+      HStack(spacing: WidgetTheme.Spacing.xs) {
+        HStack(spacing: 3) {
+          Text("+$\(FormattingUtils.formatCurrency(entry.uncollectedFees, decimals: 1))")
+            .font(.caption2)
+            .foregroundColor(WidgetTheme.Colors.success)
+            .bold()
+            .lineLimit(1)
+            .minimumScaleFactor(0.8)
+        }
+        
+        Spacer()
+
+        HStack(spacing: 3) {
+          Circle()
+            .fill(entry.isInRange ? WidgetTheme.Colors.success : WidgetTheme.Colors.warning)
+            .frame(width: 5, height: 5)
+          Text(entry.isInRange ? "In Range" : "Out of Range")
+            .font(.caption2)
+            .foregroundColor(entry.isInRange ? WidgetTheme.Colors.success : WidgetTheme.Colors.warning)
+            .lineLimit(1)
+            .minimumScaleFactor(0.6)
+        }
+      }
     }
-    .padding(.all, WidgetTheme.Spacing.xs)
+//    .padding(.all, WidgetTheme.Spacing.xs)
     .containerBackground(WidgetTheme.adaptiveBackground(colorScheme: colorScheme), for: .widget)
   }
 }

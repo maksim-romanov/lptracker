@@ -16,7 +16,7 @@ struct LiquidityPoolMediumView: View {
         Spacer()
 
         // Range status indicator
-        HStack(spacing: 4) {
+        HStack(spacing: WidgetTheme.Spacing.sm) {
           Circle()
             .fill(entry.isInRange ? WidgetTheme.Colors.success : WidgetTheme.Colors.warning)
             .frame(width: 8, height: 8)
@@ -28,7 +28,7 @@ struct LiquidityPoolMediumView: View {
         }
       }
 
-      RangeSlider(entry: entry)
+      RangeSlider(entry: entry, variant: .normal)
 
       // Total Value and Fees on one row
       HStack(alignment: .top, spacing: WidgetTheme.Spacing.md) {
@@ -78,8 +78,6 @@ struct LiquidityPoolMediumView: View {
         )
       }
     }
-    .padding(.vertical, WidgetTheme.Spacing.md)
-//    .padding(.horizontal, WidgetTheme.Spacing.md)
     .containerBackground(WidgetTheme.adaptiveBackground(colorScheme: colorScheme), for: .widget)
   }
 }
