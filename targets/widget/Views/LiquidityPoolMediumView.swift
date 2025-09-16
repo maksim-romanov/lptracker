@@ -79,9 +79,8 @@ struct LiquidityPoolMediumView: View {
       }
     }
     .padding(.vertical, WidgetTheme.Spacing.md)
-    .padding(.horizontal, WidgetTheme.Spacing.md)
-    .background(WidgetTheme.adaptiveSurface(colorScheme: colorScheme))
-    .containerBackground(WidgetTheme.adaptiveSurface(colorScheme: colorScheme), for: .widget)
+//    .padding(.horizontal, WidgetTheme.Spacing.md)
+    .containerBackground(WidgetTheme.adaptiveBackground(colorScheme: colorScheme), for: .widget)
   }
 }
 

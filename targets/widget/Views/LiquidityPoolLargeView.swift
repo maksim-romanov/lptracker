@@ -101,10 +101,9 @@ struct LiquidityPoolLargeView: View {
         )
       }
     }
-    .padding(.vertical, WidgetTheme.Spacing.lg)
-    .padding(.horizontal, WidgetTheme.Spacing.lg)
-    .background(WidgetTheme.adaptiveSurface(colorScheme: colorScheme))
-    .containerBackground(WidgetTheme.adaptiveSurface(colorScheme: colorScheme), for: .widget)
+//    .padding(.vertical, WidgetTheme.Spacing.lg)
+//    .padding(.horizontal, WidgetTheme.Spacing.lg)
+    .containerBackground(WidgetTheme.adaptiveBackground(colorScheme: colorScheme), for: .widget)
   }
 }
 

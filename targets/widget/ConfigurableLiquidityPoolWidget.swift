@@ -2,7 +2,6 @@ import WidgetKit
 import SwiftUI
 import AppIntents
 
-@available(iOS 16.0, *)
 struct ConfigurableLiquidityPoolWidget: Widget {
   let kind: String = "ConfigurableLiquidityPoolWidget"
 
@@ -20,14 +19,12 @@ struct ConfigurableLiquidityPoolWidget: Widget {
   }
 }
 
-@available(iOS 16.0, *)
 struct ConfigurableLiquidityPoolEntry: TimelineEntry {
   let date: Date
   let entry: LiquidityPoolEntry
   let configuration: SelectLPPositionIntent
 }
 
-@available(iOS 16.0, *)
 struct ConfigurableLiquidityPoolProvider: AppIntentTimelineProvider {
   func placeholder(in context: Context) -> ConfigurableLiquidityPoolEntry {
     ConfigurableLiquidityPoolEntry(

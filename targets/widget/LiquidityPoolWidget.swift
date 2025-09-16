@@ -1,5 +1,6 @@
 import WidgetKit
 import SwiftUI
+import AppIntents
 
 struct LiquidityPoolWidgetView: View {
   var entry: LiquidityPoolEntry
@@ -23,45 +24,36 @@ struct LiquidityPoolWidget: Widget {
   let kind: String = "LiquidityPoolWidget"
 
   var body: some WidgetConfiguration {
-    if #available(iOS 16.0, *) {
-      return AppIntentConfiguration(
-        kind: kind,
-        intent: SelectLPPositionIntent.self,
-        provider: ConfigurableLiquidityPoolProvider()
-      ) { entry in
-        LiquidityPoolWidgetView(entry: entry.entry)
-      }
-      .configurationDisplayName("Liquidity Pool")
-      .description("Monitor your selected liquidity pool position and fees.")
-      .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
-    } else {
-      return StaticConfiguration(kind: kind, provider: LiquidityPoolProvider()) { entry in
-        LiquidityPoolWidgetView(entry: entry)
-      }
-      .configurationDisplayName("Liquidity Pool")
-      .description("Monitor your liquidity pool position and fees.")
-      .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
+    return AppIntentConfiguration(
+      kind: kind,
+      intent: SelectLPPositionIntent.self,
+      provider: ConfigurableLiquidityPoolProvider()
+    ) { entry in
+      LiquidityPoolWidgetView(entry: entry.entry)
     }
+    .configurationDisplayName("Liquidity Pool")
+    .description("Monitor your selected liquidity pool position and fees.")
+    .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
   }
 }
 
 #Preview(as: .systemSmall) {
   LiquidityPoolWidget()
 } timeline: {
-  WidgetPreviewData.inRangeEntry
-  WidgetPreviewData.outOfRangeLeftEntry
+  WidgetPreviewData.configInRangeEntry
+  WidgetPreviewData.configOutOfRangeLeftEntry
 }
 
 #Preview(as: .systemMedium) {
   LiquidityPoolWidget()
 } timeline: {
-  WidgetPreviewData.inRangeEntry
-  WidgetPreviewData.mediumOutOfRangeEntry
+  WidgetPreviewData.configInRangeEntry
+  WidgetPreviewData.configMediumOutOfRangeEntry
 }
 
 #Preview(as: .systemLarge) {
   LiquidityPoolWidget()
 } timeline: {
-  WidgetPreviewData.inRangeEntry
-  WidgetPreviewData.outOfRangeRightEntry
+  WidgetPreviewData.configInRangeEntry
+  WidgetPreviewData.configOutOfRangeRightEntry
 }

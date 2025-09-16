@@ -53,8 +53,7 @@ struct LiquidityPoolSmallView: View {
           .bold()
       }
     }
-    .padding(.all, WidgetTheme.Spacing.md)
-    .background(WidgetTheme.adaptiveSurface(colorScheme: colorScheme))
-    .containerBackground(WidgetTheme.adaptiveSurface(colorScheme: colorScheme), for: .widget)
+    .padding(.all, WidgetTheme.Spacing.xs)
+    .containerBackground(WidgetTheme.adaptiveBackground(colorScheme: colorScheme), for: .widget)
   }
 }

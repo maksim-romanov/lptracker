@@ -1,4 +1,5 @@
 import WidgetKit
+import AppIntents
 
 struct WidgetPreviewData {
   static let inRangeEntry = LiquidityPoolEntry(
@@ -67,5 +68,29 @@ struct WidgetPreviewData {
     rangeMax: 0.7,  // to 70%
     selectedPositionId: "2",
     walletName: "Main Wallet"
+  )
+
+  static let configInRangeEntry = ConfigurableLiquidityPoolEntry(
+    date: .now,
+    entry: WidgetPreviewData.inRangeEntry,
+    configuration: SelectLPPositionIntent()
+  )
+
+  static let configOutOfRangeLeftEntry = ConfigurableLiquidityPoolEntry(
+    date: .now,
+    entry: WidgetPreviewData.outOfRangeLeftEntry,
+    configuration: SelectLPPositionIntent()
+  )
+
+  static let configOutOfRangeRightEntry = ConfigurableLiquidityPoolEntry(
+    date: .now,
+    entry: WidgetPreviewData.outOfRangeRightEntry,
+    configuration: SelectLPPositionIntent()
+  )
+
+  static let configMediumOutOfRangeEntry = ConfigurableLiquidityPoolEntry(
+    date: .now,
+    entry: WidgetPreviewData.mediumOutOfRangeEntry,
+    configuration: SelectLPPositionIntent()
   )
 }
