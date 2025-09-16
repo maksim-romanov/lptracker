@@ -11,7 +11,8 @@
     "dev:ios": "KEYSFILE=keys.development.json expo run:ios",
     "web": "expo start --web",
     "lint": "expo lint",
-    "codegen": "dotenv -e .env -- graphql-codegen --config codegen.json"
+    "codegen": "dotenv -e .env -- graphql-codegen --config codegen.json",
+    "prebuild:targets": "expo prebuild --template ./node_modules/@bacons/apple-targets/prebuild-blank.tgz --clean"
   },
   "dependencies": {
     "@bacons/apple-targets": "^3.0.2",
@@ -32,7 +33,7 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
     "ethers": "^6.15.0",
-    "expo": "54.0.6",
+    "expo": "54.0.7",
     "expo-blur": "~15.0.7",
     "expo-build-properties": "~1.0.8",
     "expo-constants": "~18.0.8",
@@ -41,7 +42,7 @@
     "expo-image": "~3.0.8",
     "expo-linear-gradient": "~15.0.7",
     "expo-linking": "~8.0.8",
-    "expo-router": "~6.0.3",
+    "expo-router": "~6.0.5",
     "expo-screen-orientation": "~9.0.7",
     "expo-splash-screen": "~31.0.10",
     "expo-status-bar": "~3.0.8",
