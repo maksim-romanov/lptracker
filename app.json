@@ -32,7 +32,6 @@
           }
         }
       ],
-      "react-native-bottom-tabs",
       [
         "react-native-keys",
         {

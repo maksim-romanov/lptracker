@@ -32,7 +32,7 @@ const ListHeader = function () {
 export const Positions = function () {
   const [refreshing, setRefreshing] = React.useState(false);
   // Simulate empty state - change this to [] to see the empty state
-  const positions: number[] = [];
+  const positions: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
