@@ -26,6 +26,7 @@ const WalletIconActive = withUnistyles(WalletIcon, (theme) => ({
 type TProps = {
   isActive: boolean;
   address: Address;
+  name?: string;
 };
 
 const UniShadow = withUnistyles(Shadow, (theme) => ({
@@ -34,7 +35,7 @@ const UniShadow = withUnistyles(Shadow, (theme) => ({
   stretch: true,
 }));
 
-export const WalletItemBlock = function ({ isActive, address }: TProps) {
+export const WalletItemBlock = function ({ isActive, address, name }: TProps) {
   styles.useVariants({ isActive });
 
   const containerStyle = useAnimatedStyle(() => ({
@@ -50,7 +51,15 @@ export const WalletItemBlock = function ({ isActive, address }: TProps) {
             <Column flex="content">{isActive ? <WalletIconActive /> : <WalletIcon />}</Column>
 
             <Column flex="fluid">
-              <Text type="subtitle2">{formatAddress(address)}</Text>
+              <Box gap={1}>
+                {name && (
+                  <Text type="caption" color="onSurfaceVariant">
+                    {name}
+                  </Text>
+                )}
+
+                <Text type="subtitle1">{formatAddress(address)}</Text>
+              </Box>
             </Column>
 
             <Column flex="content">{isActive && <PrimaryTag>Active</PrimaryTag>}</Column>
@@ -111,7 +120,7 @@ const styles = StyleSheet.create((theme) => ({
     borderColor: theme.colors.outline,
 
     paddingHorizontal: theme.spacing.md,
-    paddingVertical: theme.spacing.md,
+    paddingVertical: theme.spacing.lg,
 
     variants: {
       isActive: {

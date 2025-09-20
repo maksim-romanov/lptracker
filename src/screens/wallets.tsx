@@ -86,7 +86,7 @@ export const WalletsScreen = observer(function () {
       data={addressesStore.items}
       renderItem={({ item }) => (
         <TouchableOpacity onPress={() => addressesStore.setActive(item.address)}>
-          <WalletItemBlock isActive={addressesStore.activeAddress === item.address} address={item.address} />
+          <WalletItemBlock isActive={addressesStore.activeAddress === item.address} {...item} />
         </TouchableOpacity>
       )}
       ListFooterComponent={ListFooter}

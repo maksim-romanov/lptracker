@@ -55,7 +55,7 @@ export const AddWalletForm = () => {
 
   React.useEffect(() => {
     setImmediate(async () => {
-      await new Promise((resolve) => setTimeout(resolve, 250));
+      await new Promise((resolve) => setTimeout(resolve, 300));
       addressRef.current?.focus();
     });
   }, []);

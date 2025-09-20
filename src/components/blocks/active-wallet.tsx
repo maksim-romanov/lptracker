@@ -4,6 +4,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { observer } from "mobx-react-lite";
 import { ImageBackground } from "react-native";
 import { StyleSheet, withUnistyles } from "react-native-unistyles";
+import { Address } from "viem";
 
 import { Text } from "components/typography/text";
 import { addressesStore } from "presentation/stores/addresses-store";
@@ -25,9 +26,20 @@ const UniLinearGradient = withUnistyles(LinearGradient, (theme) => ({
   start: { x: 1, y: 0 },
 }));
 
-export const ActiveWalletBlock = observer(function () {
-  const address = addressesStore.activeAddress;
+type TProps = {
+  address: Address;
+};
 
+const withDataProvider = (Component: React.ComponentType<TProps>) => {
+  return observer(function () {
+    const address = addressesStore.activeAddress;
+    if (!address) return null;
+
+    return <Component address={address} />;
+  });
+};
+
+export const ActiveWalletBlock = withDataProvider(function ({ address }: TProps) {
   return (
     <ImageBackground source={{ uri: bgBase64 }} style={styles.wrapper}>
       <UniLinearGradient>
@@ -43,7 +55,7 @@ export const ActiveWalletBlock = observer(function () {
                   Active Wallet
                 </Text>
 
-                <Text type="headline5">{address ? formatAddress(address) : "No active wallet"}</Text>
+                <Text type="headline5">{formatAddress(address)}</Text>
               </Box>
             </Column>
           </Columns>

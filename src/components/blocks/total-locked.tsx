@@ -1,12 +1,15 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Box, Inline, Stack } from "@grapp/stacks";
 import { LinearGradient } from "expo-linear-gradient";
+import { observer } from "mobx-react-lite";
 import numbro from "numbro";
 import { ImageBackground } from "react-native";
 import { StyleSheet, withUnistyles } from "react-native-unistyles";
+import { Address } from "viem";
 
 import { TertiaryTag } from "components/tag/presets";
 import { Text } from "components/typography/text";
+import { addressesStore } from "presentation/stores/addresses-store";
 import { formatAddress } from "utils/hash";
 
 const bgBase64 =
@@ -25,7 +28,22 @@ const LockIcon = withUnistyles(Ionicons, (theme) => ({
   color: theme.colors.primary,
 }));
 
-export const TotalLockedBlock = function () {
+type TProps = {
+  totalLocked: number;
+  address: Address;
+};
+
+const withDataProvider = (Component: React.ComponentType<TProps>) => {
+  return observer(function () {
+    const totalLocked = 5460.23;
+    const address = addressesStore.activeAddress;
+    if (!address) return null;
+
+    return <Component totalLocked={totalLocked} address={address} />;
+  });
+};
+
+export const TotalLockedBlock = withDataProvider(function ({ totalLocked, address }: TProps) {
   return (
     <ImageBackground source={{ uri: bgBase64 }} style={styles.wrapper}>
       <UniLinearGradient>
@@ -42,7 +60,7 @@ export const TotalLockedBlock = function () {
 
           <Stack align="center" space={4}>
             <Text type="headline1">
-              {numbro(1345982.2323).formatCurrency({
+              {numbro(totalLocked).formatCurrency({
                 mantissa: 0,
                 thousandSeparated: true,
                 trimMantissa: true,
@@ -50,13 +68,13 @@ export const TotalLockedBlock = function () {
               })}
             </Text>
 
-            <TertiaryTag rounded>{formatAddress("0x1234567890123456789012345678901234567890")}</TertiaryTag>
+            <TertiaryTag rounded>{formatAddress(address)}</TertiaryTag>
           </Stack>
         </Box>
       </UniLinearGradient>
     </ImageBackground>
   );
-};
+});
 
 const styles = StyleSheet.create((theme) => ({
   wrapper: {
