@@ -109,5 +109,8 @@
     "graphql": "^16.11.0",
     "typescript": "~5.9.2"
   },
-  "private": true
+  "private": true,
+  "patchedDependencies": {
+    "react-native-ios-utilities@5.1.8-1": "patches/react-native-ios-utilities@5.1.8-1.patch"
+  }
 }
