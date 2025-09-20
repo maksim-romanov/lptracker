@@ -2,14 +2,13 @@ import { makeAutoObservable, runInAction } from "mobx";
 
 import { container } from "di/container";
 import type { AppSettings, ThemePreference } from "domain/entities/settings";
-import { GetSettingsUseCase, SetThemeUseCase } from "domain/use-cases/settings";
+import { SettingsManagementUseCase } from "domain/use-cases/settings";
 
 export class SettingsStore {
   theme: ThemePreference | undefined = undefined;
   loading = false;
 
-  private readonly getSettings = container.resolve(GetSettingsUseCase);
-  private readonly setThemeUseCase = container.resolve(SetThemeUseCase);
+  private readonly settingsManagement = container.resolve(SettingsManagementUseCase);
 
   constructor() {
     makeAutoObservable(this, {}, { autoBind: true });
@@ -18,10 +17,10 @@ export class SettingsStore {
   async hydrate(): Promise<void> {
     this.loading = true;
     try {
-      const settings: AppSettings = await this.getSettings.execute();
-      runInAction(() => {
-        this.theme = settings.theme;
-      });
+      const settings = await this.settingsManagement.getSettings();
+      this.updateSettings(settings);
+    } catch (error) {
+      console.error("Failed to hydrate settings:", error);
     } finally {
       runInAction(() => {
         this.loading = false;
@@ -31,9 +30,23 @@ export class SettingsStore {
 
   async setTheme(theme: ThemePreference | undefined): Promise<void> {
     if (theme === this.theme) return;
-    await this.setThemeUseCase.execute(theme);
+
+    this.loading = true;
+    try {
+      const settings = await this.settingsManagement.setTheme(theme);
+      this.updateSettings(settings);
+    } catch (error) {
+      console.error("Failed to set theme:", error);
+    } finally {
+      runInAction(() => {
+        this.loading = false;
+      });
+    }
+  }
+
+  private updateSettings(settings: AppSettings): void {
     runInAction(() => {
-      this.theme = theme;
+      this.theme = settings.theme;
     });
   }
 }

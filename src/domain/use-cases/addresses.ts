@@ -1,30 +1,25 @@
 import type { AddressesState, ERC20Address } from "domain/entities/addresses";
 import type { AddressesRepository } from "domain/repositories/addresses-repository";
 
-export class GetAddressesStateUseCase {
+export class AddressesManagementUseCase {
   constructor(private readonly repository: AddressesRepository) {}
-  async execute(): Promise<AddressesState> {
+
+  async getState(): Promise<AddressesState> {
     return this.repository.getState();
   }
-}
 
-export class AddAddressUseCase {
-  constructor(private readonly repository: AddressesRepository) {}
-  async execute(address: ERC20Address): Promise<void> {
-    return this.repository.add(address);
+  async addAddress(address: ERC20Address): Promise<AddressesState> {
+    await this.repository.add(address);
+    return this.repository.getState();
   }
-}
 
-export class RemoveAddressUseCase {
-  constructor(private readonly repository: AddressesRepository) {}
-  async execute(address: string): Promise<void> {
-    return this.repository.remove(address);
+  async removeAddress(address: string): Promise<AddressesState> {
+    await this.repository.remove(address);
+    return this.repository.getState();
   }
-}
 
-export class SetActiveAddressUseCase {
-  constructor(private readonly repository: AddressesRepository) {}
-  async execute(address: string | undefined): Promise<void> {
-    return this.repository.setActive(address);
+  async setActiveAddress(address: string | undefined): Promise<AddressesState> {
+    await this.repository.setActive(address);
+    return this.repository.getState();
   }
 }
