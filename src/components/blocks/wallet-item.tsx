@@ -52,12 +52,6 @@ export const WalletItemBlock = function ({ isActive, address, name }: TProps) {
 
             <Column flex="fluid">
               <Box gap={1}>
-                {name && (
-                  <Text type="caption" color="onSurfaceVariant">
-                    {name}
-                  </Text>
-                )}
-
                 <Text type="subtitle1">{formatAddress(address)}</Text>
               </Box>
             </Column>
