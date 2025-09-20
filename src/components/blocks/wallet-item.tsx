@@ -2,6 +2,7 @@ import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Box, Column, Columns } from "@grapp/stacks";
 import { LinearGradient } from "expo-linear-gradient";
+import { StyleProp, ViewStyle } from "react-native";
 import Animated, { useAnimatedStyle, withSpring } from "react-native-reanimated";
 import { Shadow } from "react-native-shadow-2";
 import { StyleSheet, withUnistyles } from "react-native-unistyles";
@@ -27,6 +28,8 @@ type TProps = {
   isActive: boolean;
   address: Address;
   name?: string;
+
+  containerStyle?: StyleProp<ViewStyle>;
 };
 
 const UniShadow = withUnistyles(Shadow, (theme) => ({
@@ -35,32 +38,30 @@ const UniShadow = withUnistyles(Shadow, (theme) => ({
   stretch: true,
 }));
 
-export const WalletItemBlock = function ({ isActive, address, name }: TProps) {
+export const WalletItemBlock = function ({ isActive, address, name, containerStyle }: TProps) {
   styles.useVariants({ isActive });
 
-  const containerStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: withSpring(isActive ? 1.01 : 1) }],
+  const contStyle = useAnimatedStyle(() => ({
+    // transform: [{ scale: withSpring(isActive ? 1.01 : 1) }],
     opacity: withSpring(isActive ? 1 : 0.6),
   }));
 
   return (
-    <Animated.View style={containerStyle}>
-      <UniShadow disabled={!isActive}>
-        <Box style={styles.container}>
-          <Columns alignY="center" space={2}>
-            <Column flex="content">{isActive ? <WalletIconActive /> : <WalletIcon />}</Column>
+    <UniShadow disabled={!isActive}>
+      <Box style={[styles.container, containerStyle]}>
+        <Columns alignY="center" space={2}>
+          <Column flex="content">{isActive ? <WalletIconActive /> : <WalletIcon />}</Column>
 
-            <Column flex="fluid">
-              <Box gap={1}>
-                <Text type="subtitle1">{formatAddress(address)}</Text>
-              </Box>
-            </Column>
+          <Column flex="fluid">
+            <Box gap={1}>
+              <Text type="subtitle1">{formatAddress(address)}</Text>
+            </Box>
+          </Column>
 
-            <Column flex="content">{isActive && <PrimaryTag>Active</PrimaryTag>}</Column>
-          </Columns>
-        </Box>
-      </UniShadow>
-    </Animated.View>
+          <Column flex="content">{isActive && <PrimaryTag>Active</PrimaryTag>}</Column>
+        </Columns>
+      </Box>
+    </UniShadow>
   );
 };
 

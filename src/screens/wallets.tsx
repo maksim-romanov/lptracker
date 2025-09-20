@@ -4,7 +4,7 @@ import { BottomSheetBackdrop, BottomSheetBackdropProps, BottomSheetModal, Bottom
 import { Box } from "@grapp/stacks";
 import { observer } from "mobx-react-lite";
 import { FlatList, Keyboard, TouchableOpacity } from "react-native";
-import { StyleSheet, withUnistyles } from "react-native-unistyles";
+import { StyleSheet } from "react-native-unistyles";
 
 import { ActiveWalletBlock } from "components/blocks/active-wallet";
 import { InfoBlock } from "components/blocks/info-block";
@@ -17,7 +17,7 @@ import { addressesStore } from "presentation/stores/addresses-store";
 
 const ListFooter = function () {
   return (
-    <Box marginTop={8}>
+    <Box marginTop={6} marginX={4}>
       <InfoBlock title="Track Any Wallet">
         Add any wallet address to track{" "}
         <Text color="primary" type="subtitle2">
@@ -46,7 +46,7 @@ const ListHeader = function () {
 
   return (
     <>
-      <Box gap={6} marginBottom={4}>
+      <Box gap={6} marginBottom={4} marginX={4} marginTop={6}>
         <ActiveWalletBlock />
 
         <Box gap={4}>
@@ -79,32 +79,30 @@ const ListHeader = function () {
   );
 };
 
-const Separator = withUnistyles(Box, (theme) => ({ height: theme.spacing.md }));
+const Separator = () => <Box marginBottom={3} />;
 
 export const WalletsScreen = observer(function () {
   return (
     <FlatList<ERC20Address>
       data={addressesStore.items}
-      renderItem={({ item }) => (
-        <ContextMenuButton
-          sections={[
-            {
-              label: "Wallet",
-              actions: [
-                {
-                  key: "delete",
-                  label: "Delete",
-                  onSelect: () => addressesStore.remove(item.address),
-                },
-              ],
-            },
-          ]}
-        >
-          <TouchableOpacity onPress={() => addressesStore.setActive(item.address)}>
-            <WalletItemBlock isActive={addressesStore.activeAddress === item.address} {...item} />
-          </TouchableOpacity>
-        </ContextMenuButton>
-      )}
+      renderItem={({ item }) => {
+        const deleteAddress = () => addressesStore.remove(item.address);
+
+        const actions = [
+          { key: "edit", label: "Edit", onSelect: () => null },
+          { destructive: true, key: "delete", label: "Delete", onSelect: deleteAddress },
+        ];
+
+        return (
+          <ContextMenuButton sections={[{ actions }]}>
+            <Box marginX={4}>
+              <TouchableOpacity onPress={() => addressesStore.setActive(item.address)}>
+                <WalletItemBlock isActive={addressesStore.activeAddress === item.address} {...item} />
+              </TouchableOpacity>
+            </Box>
+          </ContextMenuButton>
+        );
+      }}
       ListFooterComponent={ListFooter}
       ItemSeparatorComponent={Separator}
       ListHeaderComponent={ListHeader}
@@ -116,12 +114,10 @@ export const WalletsScreen = observer(function () {
 
 const styles = StyleSheet.create((theme, rt) => ({
   contentContainer: {
-    paddingHorizontal: theme.spacing.lg,
     paddingBottom: theme.spacing.lg,
   },
 
   container: {
-    paddingTop: theme.spacing.lg,
     backgroundColor: theme.colors.surface,
   },
 

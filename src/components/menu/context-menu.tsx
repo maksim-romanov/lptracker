@@ -16,10 +16,10 @@ interface MenuAction {
   key: string;
   label: string;
   onSelect: () => void;
-  variant?: "default" | "destructive" | "success";
   iosIconName?: string;
   androidIconName?: string;
   disabled?: boolean;
+  destructive?: boolean;
 }
 
 interface MenuSection {
@@ -49,9 +49,9 @@ export function ContextMenuButton({ children, sections, preview, onOpenChange }:
             {section.actions.map((action) => (
               <ContextMenuItem
                 key={action.key}
-                variant={action.variant}
                 onSelect={action.disabled ? undefined : action.onSelect}
                 disabled={action.disabled}
+                destructive={action.destructive}
               >
                 <ContextMenuItemTitle>{action.label}</ContextMenuItemTitle>
 
@@ -61,7 +61,6 @@ export function ContextMenuButton({ children, sections, preview, onOpenChange }:
               </ContextMenuItem>
             ))}
 
-            {/* Добавляем разделитель между секциями, кроме последней */}
             {sectionIndex < sections.length - 1 && <ContextMenuSeparator />}
           </React.Fragment>
         ))}
