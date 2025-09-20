@@ -1,88 +1,26 @@
-import "react-native-reanimated";
-
-import React from "react";
-
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { ThemeProvider } from "@react-navigation/native";
-import { QueryClientProvider } from "@tanstack/react-query";
-import { BlurView } from "expo-blur";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { observer } from "mobx-react-lite";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { KeyboardProvider } from "react-native-keyboard-controller";
-import { UnistylesRuntime, withUnistyles } from "react-native-unistyles";
-import tinycolor from "tinycolor2";
 
-import { container } from "di/container";
-import { AppInitializeUseCase } from "domain/use-cases/app-initialize";
-import { queryClient } from "lib/query-client";
-import { addressesStore } from "presentation/stores/addresses-store";
+import { Header } from "components/navigation/glass-header";
+import { DarkTheme } from "styles/theme/navigation";
 
-// SplashScreen.preventAutoHideAsync();
-
-const UniThemeProvider = withUnistyles(ThemeProvider, (theme) => ({
-  value: {
-    ...theme,
-    dark: UnistylesRuntime.themeName === "dark", // Automatically detect dark theme
-    colors: {
-      primary: theme.colors.primary, // #FF007A - Uniswap pink
-      background: theme.colors.background, // Main background
-      card: theme.colors.outline, // Card/surface background
-      text: theme.colors.onPrimary, // Primary text
-      border: theme.colors.onBackground, // Borders and dividers
-      notification: theme.colors.primary, // Badges and notifications
-    },
-    fonts: {
-      regular: {},
-      medium: {},
-    } as any,
-  },
-}));
-
-const HeaderBlur = withUnistyles(BlurView, (theme, rt) => ({
-  intensity: 50,
-  style: {
-    height: rt.insets.top,
-    backgroundColor: tinycolor(theme.colors.background).setAlpha(0.1).toRgbString(),
-  },
-}));
-
-const RootLayout = observer(function () {
-  React.useEffect(() => {
-    container.resolve(AppInitializeUseCase).execute();
-    addressesStore.hydrate();
-  }, []);
-
-  const hasAnyAddress = addressesStore.items.length > 0;
+export default function RootLayout() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <UniThemeProvider>
-        <GestureHandlerRootView style={{ flex: 1 }}>
-          <KeyboardProvider>
-            <Stack>
-              <Stack.Protected guard={!hasAnyAddress}>
-                <Stack.Screen name="index" options={{ headerShown: false }} />
-              </Stack.Protected>
+    // <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+    <GestureHandlerRootView>
+      <BottomSheetModalProvider>
+        <ThemeProvider value={DarkTheme}>
+          <Stack>
+            <Stack.Screen name="(tabs)" options={{ headerTransparent: true, header: Header }} />
+            <Stack.Screen name="modal" options={{ presentation: "modal", title: "Modal" }} />
+          </Stack>
 
-              <Stack.Protected guard={hasAnyAddress}>
-                <Stack.Screen
-                  name="(tabs)"
-                  options={{
-                    headerTransparent: true,
-                    header: () => <HeaderBlur />,
-                  }}
-                />
-              </Stack.Protected>
-
-              <Stack.Screen name="+not-found" options={{ headerShown: false }} />
-            </Stack>
-
-            <StatusBar style="auto" />
-          </KeyboardProvider>
-        </GestureHandlerRootView>
-      </UniThemeProvider>
-    </QueryClientProvider>
+          <StatusBar style="auto" />
+        </ThemeProvider>
+      </BottomSheetModalProvider>
+    </GestureHandlerRootView>
   );
-});
-
-export default RootLayout;
+}

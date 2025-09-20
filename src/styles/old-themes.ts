@@ -69,7 +69,7 @@ export const darkTheme = {
     outline: "#4C5665",
 
     onSurface: "#FFFFFF",
-  } as const,
+  } as Record<keyof Scheme, string>,
 
   spacing,
   typography,

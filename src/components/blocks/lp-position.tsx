@@ -3,14 +3,8 @@ import { Box, Column, Columns, Inline, Stack } from "@grapp/stacks";
 import numbro from "numbro";
 import { StyleSheet, withUnistyles } from "react-native-unistyles";
 
-import { Tag } from "./tag";
-import { Text } from "./typography/text";
-
-numbro.setLanguage("en");
-
-const SuccessTag = withUnistyles(Tag, (theme) => ({
-  color: theme.colors.success,
-}));
+import { AdaptiveTag, PrimaryTag, SecondaryTag, SuccessTag } from "../tag/presets";
+import { Text } from "../typography/text";
 
 const TrendUpIcon = withUnistyles(FontAwesome6, (theme) => ({
   color: theme.colors.success,
@@ -18,9 +12,9 @@ const TrendUpIcon = withUnistyles(FontAwesome6, (theme) => ({
   name: "arrow-trend-up",
 }));
 
-export const LPCard = function () {
+export const LPPositionBlock = function () {
   return (
-    <Box style={styles.container} rowGap={6}>
+    <Box style={styles.container} rowGap={8}>
       <Stack space={2}>
         <Columns alignY="center">
           <Column flex="fluid">
@@ -28,32 +22,25 @@ export const LPCard = function () {
           </Column>
 
           <Column flex="content">
-            <SuccessTag>in Range</SuccessTag>
+            <SuccessTag glow>in range</SuccessTag>
           </Column>
         </Columns>
 
         <Inline space={2}>
-          <Tag
-            // prefix={
-            //   <Box height={12} width={12}>
-            //     <Octicons name="dot-fill" size={12} color="red" />
-            //   </Box>
-            // }
-            color="red"
-          >
-            OP
-          </Tag>
-          <Tag>0.3%</Tag>
-          <Tag color="#FF007A">V3</Tag>
+          <AdaptiveTag color="red">OP</AdaptiveTag>
+          <SecondaryTag>0.3%</SecondaryTag>
+          <PrimaryTag>V3</PrimaryTag>
         </Inline>
       </Stack>
 
-      <Columns space={10} defaultFlex="content" alignX="left">
+      <Columns space={6} defaultFlex="content" alignX="left">
         <Column flex="content" style={{ flexShrink: 1 }}>
-          <Box rowGap={2}>
-            <Text type="caption">Value</Text>
+          <Box rowGap={1}>
+            <Text type="caption" color="onSurfaceVariant">
+              Value
+            </Text>
 
-            <Text type="headline5" color="onSurface" numberOfLines={1} style={{ flexShrink: 1 }}>
+            <Text type="headline4" numberOfLines={1} style={{ flexShrink: 1 }}>
               {numbro(1234980).formatCurrency({
                 average: true,
                 mantissa: 2,
@@ -65,10 +52,12 @@ export const LPCard = function () {
         </Column>
 
         <Column flex="content">
-          <Box rowGap={2}>
-            <Text type="caption">Unclaimed</Text>
+          <Box rowGap={1}>
+            <Text type="caption" color="onSurfaceVariant">
+              Unclaimed
+            </Text>
 
-            <Text type="headline5" color="onSurface" numberOfLines={1}>
+            <Text type="headline6" numberOfLines={1}>
               {numbro(100.1).formatCurrency({
                 average: true,
                 mantissa: 2,
@@ -80,13 +69,15 @@ export const LPCard = function () {
         </Column>
 
         <Column>
-          <Box rowGap={2}>
-            <Text type="caption">APR</Text>
+          <Box rowGap={1}>
+            <Text type="caption" color="onSurfaceVariant">
+              APR
+            </Text>
 
             <Inline space={2} alignY="center">
               <TrendUpIcon />
 
-              <Text type="headline5" color="success" numberOfLines={1}>
+              <Text type="headline6" numberOfLines={1}>
                 {numbro(0.0312).format({
                   output: "percent",
                   mantissa: 2,
@@ -105,8 +96,11 @@ export const LPCard = function () {
 const styles = StyleSheet.create((theme) => ({
   container: {
     backgroundColor: theme.colors.surface,
-    borderRadius: theme.spacing.md,
-    paddingHorizontal: theme.spacing.lg,
-    paddingVertical: theme.spacing.lg,
+    borderWidth: 2,
+    borderRadius: 12,
+    borderColor: theme.colors.outline,
+
+    paddingHorizontal: theme.spacing.md,
+    paddingVertical: theme.spacing.md,
   },
 }));

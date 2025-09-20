@@ -1,19 +1,28 @@
+import React from "react";
+
 import { Text as RNText, TextProps as RNTextProps } from "react-native";
 import { StyleSheet, UnistylesVariants } from "react-native-unistyles";
 
 export type TComponentVariants = UnistylesVariants<typeof styles>;
 
-export const Text = function ({ style, type, color, ...props }: RNTextProps & TComponentVariants) {
-  styles.useVariants({ type, color });
-
-  return <RNText {...props} style={[styles.text, style]} />;
-};
+export const Text = React.forwardRef<RNText, RNTextProps & TComponentVariants>(function Text(
+  { style, type, color, underline, ...props },
+  ref,
+) {
+  styles.useVariants({ type, color, underline });
+  return <RNText {...props} style={[styles.text, style]} ref={ref} />;
+});
 
 const styles = StyleSheet.create((theme) => ({
   text: {
-    color: theme.colors.onBackground,
-
     variants: {
+      underline: {
+        true: {
+          textDecorationLine: "underline",
+          textDecorationColor: theme.colors.outlineVariant,
+        },
+      },
+
       color: {
         primary: {
           color: theme.colors.primary,
@@ -23,50 +32,23 @@ const styles = StyleSheet.create((theme) => ({
           color: theme.colors.onPrimary,
         },
 
-        onSecondary: {
-          color: theme.colors.onSecondary,
+        onPrimaryContainer: {
+          color: theme.colors.onPrimaryContainer,
         },
 
-        onSurface: {
-          color: theme.colors.onSurface,
-        },
-
-        success: {
-          color: theme.colors.success,
-        },
-
-        surface: {
-          color: theme.colors.surface,
-        },
-
-        outline: {
-          color: theme.colors.outline,
-        },
-
-        tertiary: {
-          color: theme.colors.tertiary,
+        onSurfaceVariant: {
+          color: theme.colors.onSurfaceVariant,
         },
 
         default: {
-          color: theme.colors.onBackground,
+          color: theme.colors.onSurface,
         },
       },
-      type: theme.typography.variants,
-      // type: {
-      //   primary: {
-      //     color: theme.colors.onPrimary,
-      //   },
-      //   secondary: {
-      //     color: theme.colors.onSecondary,
-      //   },
-      //   tertiary: {
-      //     color: theme.colors.onTertiary,
-      //   },
 
-      //   default: {
-      //     color: theme.colors.onBackground,
-      //   },
-      // },
+      type: {
+        ...theme.typography,
+        default: theme.typography.body1,
+      },
     },
   },
 }));

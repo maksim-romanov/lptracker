@@ -1,45 +1,41 @@
 import { StyleSheet } from "react-native-unistyles";
 
-import { breakpoints, darkTheme, lightTheme } from "./themes";
+import { breakpoints } from "./theme/breakpoints";
+import { ColorsPaletteDark } from "./theme/colors";
+import { spacing } from "./theme/spacing";
+import { typography } from "./theme/typography";
+
+const stacks = { spacing: 4, debug: false };
 
 // Configure Unistyles with themes, breakpoints, and spacing
 StyleSheet.configure({
   themes: {
-    light: lightTheme,
-    dark: darkTheme,
+    dark: { colors: ColorsPaletteDark, spacing, typography, stacks },
   },
   breakpoints,
   settings: {
-    adaptiveThemes: true,
+    // adaptiveThemes: true,
   },
 });
 
-// UnistylesGrid.init((theme) => ({
-//   // containerPaddingVertical: 0,
-//   // containerPaddingHorizontal: 0,
-//   containerStyles: {
-//     paddingVertical: theme.spacing.md,
-//     paddingHorizontal: theme.spacing.lg,
-//   },
-//   rowGap: theme.spacing.sm,
-//   columnGap: {
-//     medium: theme.spacing.sm,
-//     large: 100,
-//   },
-// }));
-
-// TypeScript module augmentation
 declare module "react-native-unistyles" {
-  export interface UnistylesThemes {
-    light: typeof lightTheme;
-    dark: typeof darkTheme;
-  }
-
   type AppBreakpoints = typeof breakpoints;
+
+  type AppTheme = {
+    colors: typeof ColorsPaletteDark;
+    spacing: typeof spacing;
+    typography: typeof typography;
+    stacks: typeof stacks;
+  };
+
+  type AppThemes = { dark: AppTheme };
+
   export interface UnistylesBreakpoints extends AppBreakpoints {}
+  export interface UnistylesThemes extends AppThemes {}
 }
 
 declare module "@grapp/stacks" {
+  // export interface StacksBreakpoints extends Breakpoints {}
   type AppBreakpoints = typeof breakpoints;
   export interface StacksBreakpoints extends AppBreakpoints {}
 }

@@ -1,74 +1,55 @@
-import React from "react";
-
-import { Box, Stack } from "@grapp/stacks";
-import { FlatList, RefreshControl } from "react-native";
+import { Box } from "@grapp/stacks";
+import { FlatList, TouchableOpacity } from "react-native";
 import { StyleSheet, withUnistyles } from "react-native-unistyles";
-import tinycolor from "tinycolor2";
 
-import { BaseStats } from "components/base-stats";
-import { EmptyState } from "components/empty-state";
-import { LPCard } from "components/lp-card";
-import { TotalBalance } from "components/total-balance";
-import { Text } from "components/typography/text";
+import { LPPositionBlock } from "components/blocks/lp-position";
+import { TotalLockedBlock } from "components/blocks/total-locked";
 
 const Separator = withUnistyles(Box, (theme) => ({ height: theme.spacing.md }));
-const BrandRefreshControl = withUnistyles(RefreshControl, (theme) => ({
-  tintColor: tinycolor(theme.colors.primary).darken(10).toRgbString(),
-}));
 
 const ListHeader = function () {
   return (
-    <Box rowGap={6}>
-      <Stack space={4}>
-        <TotalBalance />
-        <BaseStats />
-      </Stack>
-
-      <Text type="headline4">Your positions</Text>
+    <Box marginBottom={6}>
+      <TotalLockedBlock />
     </Box>
   );
 };
 
-export const Positions = function () {
-  const [refreshing, setRefreshing] = React.useState(false);
-  // Simulate empty state - change this to [] to see the empty state
-  const positions: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-
-  const onRefresh = React.useCallback(() => {
-    setRefreshing(true);
-    setTimeout(() => {
-      setRefreshing(false);
-    }, 2000);
-  }, []);
-
+export const PositionsScreen = function () {
   return (
-    <FlatList<number>
-      ref={null}
-      contentContainerStyle={[styles.container]}
-      data={positions}
-      renderItem={({ item }) => <LPCard />}
-      ListHeaderComponent={positions.length > 0 ? ListHeader : null}
-      ListEmptyComponent={EmptyState}
-      // stickyHeaderIndices={[0]}
-      ListHeaderComponentStyle={styles.header}
+    <FlatList
+      style={styles.container}
+      contentContainerStyle={styles.contentContainer}
+      data={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}
+      renderItem={({ item }) => (
+        <TouchableOpacity>
+          <LPPositionBlock />
+        </TouchableOpacity>
+      )}
+      ListHeaderComponent={ListHeader}
       ItemSeparatorComponent={Separator}
-      showsVerticalScrollIndicator={false}
-      contentInsetAdjustmentBehavior="automatic"
-      // contentInset={{ top: headerHeight }}
-      refreshControl={<BrandRefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
     />
   );
 };
 
 const styles = StyleSheet.create((theme, rt) => ({
-  container: {
-    // paddingTop: rt.insets.top,
+  contentContainer: {
     paddingHorizontal: theme.spacing.lg,
-    // paddingBottom: rt.insets.bottom,
     paddingBottom: theme.spacing.lg,
-    flexGrow: 0.5,
   },
+
+  container: {
+    paddingTop: theme.spacing.lg,
+    backgroundColor: theme.colors.surface,
+  },
+
   header: {
-    marginBottom: theme.spacing.lg,
+    paddingBottom: theme.spacing.lg,
+  },
+
+  bgHeader: {
+    width: 200,
+    height: 200,
+    position: "absolute",
   },
 }));
