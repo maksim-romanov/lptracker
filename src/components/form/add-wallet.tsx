@@ -3,21 +3,24 @@ import React from "react";
 import { BottomSheetTextInput, useBottomSheet } from "@gorhom/bottom-sheet";
 import { Box, Stack } from "@grapp/stacks";
 import { classValidatorResolver } from "@hookform/resolvers/class-validator";
-import { IsEthereumAddress, IsNotEmpty, IsString } from "class-validator";
+import { IsEthereumAddress, IsNotEmpty, IsOptional, IsString } from "class-validator";
 import { Controller, useForm } from "react-hook-form";
 import { Keyboard, TextInput as RNTextInput } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
+import { Address } from "viem";
 
 import { Button } from "components/button/button";
 import { Text } from "components/typography/text";
+import { addressesStore } from "presentation/stores/addresses-store";
 
 import { TextInput } from "./adapters/text-input";
 
 class NewWalletForm {
   @IsNotEmpty()
   @IsEthereumAddress()
-  walletAddress?: string;
+  walletAddress?: Address;
 
+  @IsOptional()
   @IsString()
   walletName?: string;
 }
@@ -34,12 +37,14 @@ export const AddWalletForm = () => {
     formState: { isValid },
   } = useForm({
     mode: "onChange",
-    defaultValues: { walletAddress: "", walletName: "" },
     resolver,
   });
 
   const onSubmit = (data: NewWalletForm) => {
-    console.log(data);
+    if (!data.walletAddress) throw new Error("Wallet address is required");
+
+    console.log("data.walletAddress: ", data.walletAddress);
+    addressesStore.add({ address: data.walletAddress, name: data.walletName });
     handleClose();
   };
 

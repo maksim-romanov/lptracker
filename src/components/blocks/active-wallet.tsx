@@ -1,10 +1,12 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Box, Column, Columns } from "@grapp/stacks";
 import { LinearGradient } from "expo-linear-gradient";
+import { observer } from "mobx-react-lite";
 import { ImageBackground } from "react-native";
 import { StyleSheet, withUnistyles } from "react-native-unistyles";
 
 import { Text } from "components/typography/text";
+import { addressesStore } from "presentation/stores/addresses-store";
 import { formatAddress } from "utils/hash";
 
 const bgBase64 =
@@ -23,10 +25,9 @@ const UniLinearGradient = withUnistyles(LinearGradient, (theme) => ({
   start: { x: 1, y: 0 },
 }));
 
-// const address = addressesStore.activeAddress;
-const address = "0x1234567890123456789012345678901234567890";
+export const ActiveWalletBlock = observer(function () {
+  const address = addressesStore.activeAddress;
 
-export const ActiveWalletBlock = function () {
   return (
     <ImageBackground source={{ uri: bgBase64 }} style={styles.wrapper}>
       <UniLinearGradient>
@@ -50,7 +51,7 @@ export const ActiveWalletBlock = function () {
       </UniLinearGradient>
     </ImageBackground>
   );
-};
+});
 
 const styles = StyleSheet.create((theme) => ({
   wrapper: {

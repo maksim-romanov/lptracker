@@ -1,3 +1,5 @@
+import { Address } from "viem";
+
 import { appStorage, STORAGE_KEYS } from "data/mmkv/storage";
 import type { AddressesState, ERC20Address } from "domain/entities/addresses";
 import type { AddressesRepository } from "domain/repositories/addresses-repository";
@@ -37,7 +39,7 @@ export class AddressesRepositoryImpl implements AddressesRepository {
     await this.setState(next);
   }
 
-  async remove(address: string): Promise<void> {
+  async remove(address: Address): Promise<void> {
     const state = await this.getState();
     const filtered = state.items.filter((it) => it.address !== address);
     const next: AddressesState = {
@@ -47,7 +49,7 @@ export class AddressesRepositoryImpl implements AddressesRepository {
     await this.setState(next);
   }
 
-  async setActive(address: string | undefined): Promise<void> {
+  async setActive(address: Address): Promise<void> {
     const state = await this.getState();
     if (address && !state.items.some((it) => it.address === address)) return;
     await this.setState({ ...state, activeAddress: address });

@@ -28,5 +28,3 @@ export class SetActiveAddressUseCase {
     return this.repository.setActive(address);
   }
 }
-
-

@@ -31,6 +31,7 @@ export class AddressesStore {
     this.loading = true;
     try {
       const state = await this.getState.execute();
+
       runInAction(() => {
         this.items = state.items;
         this.activeAddress = state.activeAddress;
@@ -54,9 +55,7 @@ export class AddressesStore {
 
   async setActive(address: string | undefined): Promise<void> {
     await this.setActiveUseCase.execute(address);
-    runInAction(() => {
-      this.activeAddress = address;
-    });
+    await this.hydrate();
   }
 }
 

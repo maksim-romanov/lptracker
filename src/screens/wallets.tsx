@@ -2,15 +2,17 @@ import React from "react";
 
 import { BottomSheetBackdrop, BottomSheetBackdropProps, BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 import { Box } from "@grapp/stacks";
+import { observer } from "mobx-react-lite";
 import { FlatList, Keyboard, TouchableOpacity } from "react-native";
 import { StyleSheet, withUnistyles } from "react-native-unistyles";
-import { Address } from "viem";
 
 import { ActiveWalletBlock } from "components/blocks/active-wallet";
 import { InfoBlock } from "components/blocks/info-block";
 import { AddWalletItemBlock, WalletItemBlock } from "components/blocks/wallet-item";
 import { AddWalletForm } from "components/form/add-wallet";
 import { Text } from "components/typography/text";
+import { ERC20Address } from "domain/entities/addresses";
+import { addressesStore } from "presentation/stores/addresses-store";
 
 const ListFooter = function () {
   return (
@@ -78,21 +80,13 @@ const ListHeader = function () {
 
 const Separator = withUnistyles(Box, (theme) => ({ height: theme.spacing.md }));
 
-const addresses = [
-  "0x1234567890123456789012345678901234567890",
-  "0x1234567890123456789012345678901234567891",
-  "0x1234567890123456789012345678901234567892",
-] as const;
-
-export const WalletsScreen = function () {
-  const [activeAddress, setActiveAddress] = React.useState<Address>(addresses[0]);
-
+export const WalletsScreen = observer(function () {
   return (
-    <FlatList
-      data={addresses}
+    <FlatList<ERC20Address>
+      data={addressesStore.items}
       renderItem={({ item }) => (
-        <TouchableOpacity onPress={() => setActiveAddress(item)}>
-          <WalletItemBlock isActive={activeAddress === item} address={item} />
+        <TouchableOpacity onPress={() => addressesStore.setActive(item.address)}>
+          <WalletItemBlock isActive={addressesStore.activeAddress === item.address} address={item.address} />
         </TouchableOpacity>
       )}
       ListFooterComponent={ListFooter}
@@ -102,7 +96,7 @@ export const WalletsScreen = function () {
       contentContainerStyle={styles.contentContainer}
     />
   );
-};
+});
 
 const styles = StyleSheet.create((theme, rt) => ({
   contentContainer: {
