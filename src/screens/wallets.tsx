@@ -10,6 +10,7 @@ import { ActiveWalletBlock } from "components/blocks/active-wallet";
 import { InfoBlock } from "components/blocks/info-block";
 import { AddWalletItemBlock, WalletItemBlock } from "components/blocks/wallet-item";
 import { AddWalletForm } from "components/form/add-wallet";
+import { ContextMenuButton } from "components/menu/context-menu";
 import { Text } from "components/typography/text";
 import { ERC20Address } from "domain/entities/addresses";
 import { addressesStore } from "presentation/stores/addresses-store";
@@ -85,9 +86,24 @@ export const WalletsScreen = observer(function () {
     <FlatList<ERC20Address>
       data={addressesStore.items}
       renderItem={({ item }) => (
-        <TouchableOpacity onPress={() => addressesStore.setActive(item.address)}>
-          <WalletItemBlock isActive={addressesStore.activeAddress === item.address} {...item} />
-        </TouchableOpacity>
+        <ContextMenuButton
+          sections={[
+            {
+              label: "Wallet",
+              actions: [
+                {
+                  key: "delete",
+                  label: "Delete",
+                  onSelect: () => addressesStore.remove(item.address),
+                },
+              ],
+            },
+          ]}
+        >
+          <TouchableOpacity onPress={() => addressesStore.setActive(item.address)}>
+            <WalletItemBlock isActive={addressesStore.activeAddress === item.address} {...item} />
+          </TouchableOpacity>
+        </ContextMenuButton>
       )}
       ListFooterComponent={ListFooter}
       ItemSeparatorComponent={Separator}
