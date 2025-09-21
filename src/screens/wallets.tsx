@@ -32,7 +32,9 @@ const ListFooter = function () {
   );
 };
 
-const ListHeader = function () {
+const ListHeader = observer(function () {
+  const isWalletsNotEmpty = walletsStore.wallets.length > 0;
+
   return (
     <>
       <Box gap={6} marginBottom={4} marginX={4} marginTop={6}>
@@ -46,11 +48,11 @@ const ListHeader = function () {
           </TouchableOpacity>
         </Box>
 
-        <Text type="headline5">Saved Wallets</Text>
+        {isWalletsNotEmpty && <Text type="headline5">Saved Wallets</Text>}
       </Box>
     </>
   );
-};
+});
 
 const Separator = () => <Box marginBottom={3} />;
 
