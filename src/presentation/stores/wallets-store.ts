@@ -72,6 +72,7 @@ export class WalletsStore {
       this.updateState(state);
     } catch (error) {
       console.error("Failed to add wallet:", error);
+      throw error;
     } finally {
       runInAction(() => {
         this.loading = false;
@@ -116,6 +117,7 @@ export class WalletsStore {
       this.updateState(state);
     } catch (error) {
       console.error("Failed to update wallet:", error);
+      throw error;
     } finally {
       runInAction(() => {
         this.loading = false;

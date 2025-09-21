@@ -3,21 +3,32 @@ import { Address, isAddress } from "viem";
 
 import type { WalletsState, Wallet } from "domain/entities/wallets";
 import type { WalletsRepository } from "domain/repositories/wallets-repository";
+import type { NotificationsUseCase } from "domain/use-cases/notifications";
 
 export class WalletsUseCase {
-  constructor(private readonly repository: WalletsRepository) {}
+  constructor(
+    private readonly repository: WalletsRepository,
+    private readonly notificationsUseCase: NotificationsUseCase,
+  ) {}
 
   async getState(): Promise<WalletsState> {
     return this.repository.getState();
   }
 
   async addWallet(wallet: Wallet): Promise<WalletsState> {
-    if (!this.validateWalletAddress(wallet.address)) {
-      throw new Error("Invalid wallet address");
-    }
+    try {
+      if (!this.validateWalletAddress(wallet.address)) {
+        throw new Error("Invalid wallet address");
+      }
 
-    await this.repository.add(wallet);
-    return this.repository.getState();
+      await this.repository.add(wallet);
+      await this.notificationsUseCase.showSuccess("Wallet Added", "Wallet has been successfully added");
+      return this.repository.getState();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown error occurred";
+      await this.notificationsUseCase.showError("Failed to Add Wallet", message);
+      throw error;
+    }
   }
 
   async removeWallet(address: Address): Promise<WalletsState> {
@@ -51,12 +62,19 @@ export class WalletsUseCase {
   }
 
   async updateWallet(oldAddress: Address, newWallet: Wallet): Promise<WalletsState> {
-    if (!this.validateWalletAddress(newWallet.address)) {
-      throw new Error("Invalid wallet address");
-    }
+    try {
+      if (!this.validateWalletAddress(newWallet.address)) {
+        throw new Error("Invalid wallet address");
+      }
 
-    await this.repository.updateWallet(oldAddress, newWallet);
-    return this.repository.getState();
+      await this.repository.updateWallet(oldAddress, newWallet);
+      await this.notificationsUseCase.showSuccess("Wallet Updated", "Wallet has been successfully updated");
+      return this.repository.getState();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown error occurred";
+      await this.notificationsUseCase.showError("Failed to Update Wallet", message);
+      throw error;
+    }
   }
 
   private validateWalletAddress(address: string): boolean {
