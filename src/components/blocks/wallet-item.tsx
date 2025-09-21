@@ -42,26 +42,28 @@ export const WalletItemBlock = function ({ isActive, address, name, containerSty
   styles.useVariants({ isActive });
 
   const contStyle = useAnimatedStyle(() => ({
-    // transform: [{ scale: withSpring(isActive ? 1.01 : 1) }],
+    transform: [{ scale: withSpring(isActive ? 1.01 : 1) }],
     opacity: withSpring(isActive ? 1 : 0.6),
   }));
 
   return (
-    <UniShadow disabled={!isActive}>
-      <Box style={[styles.container, containerStyle]}>
-        <Columns alignY="center" space={2}>
-          <Column flex="content">{isActive ? <WalletIconActive /> : <WalletIcon />}</Column>
+    <Animated.View style={contStyle}>
+      <UniShadow disabled={!isActive}>
+        <Box style={[styles.container, containerStyle]}>
+          <Columns alignY="center" space={2}>
+            <Column flex="content">{isActive ? <WalletIconActive /> : <WalletIcon />}</Column>
 
-          <Column flex="fluid">
-            <Box gap={1}>
-              <Text type="subtitle1">{formatAddress(address)}</Text>
-            </Box>
-          </Column>
+            <Column flex="fluid">
+              <Box gap={1}>
+                <Text type="subtitle1">{formatAddress(address)}</Text>
+              </Box>
+            </Column>
 
-          <Column flex="content">{isActive && <PrimaryTag>Active</PrimaryTag>}</Column>
-        </Columns>
-      </Box>
-    </UniShadow>
+            <Column flex="content">{isActive && <PrimaryTag>Active</PrimaryTag>}</Column>
+          </Columns>
+        </Box>
+      </UniShadow>
+    </Animated.View>
   );
 };
 
