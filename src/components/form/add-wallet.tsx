@@ -34,12 +34,15 @@ type TAddWalletForm = {
   walletName?: string;
   onSubmit: (data: NewWalletForm) => void;
   onClose: () => void;
+  isEditing?: boolean;
 };
 
 const withDataProvider = (Component: React.ComponentType<TAddWalletForm>) => {
-  return observer(({ address }: Pick<TAddWalletForm, "address">) => {
+  return observer(({ address, ...rest }: Pick<TAddWalletForm, "address" | "isEditing">) => {
+    const isExistingAddress = address && addressesStore.isExistingAddress(address);
     const existingName = address && getAddressName(address);
-    const isEditing = !!address;
+
+    const isEditing = isExistingAddress || rest.isEditing;
 
     const handleClose = () => {
       Keyboard.dismiss();
@@ -60,87 +63,95 @@ const withDataProvider = (Component: React.ComponentType<TAddWalletForm>) => {
       handleClose();
     };
 
-    return <Component onSubmit={handleSubmit} onClose={handleClose} walletName={existingName} address={address} />;
+    return (
+      <Component
+        onSubmit={handleSubmit}
+        onClose={handleClose}
+        walletName={existingName}
+        address={address}
+        isEditing={isEditing}
+      />
+    );
   });
 };
 
-export const AddWalletForm = withDataProvider(({ address, walletName, onSubmit, onClose }: TAddWalletForm) => {
-  // const { close } = useBottomSheet();
+export const AddWalletForm = withDataProvider(
+  ({ address, walletName, onSubmit, onClose, isEditing }: TAddWalletForm) => {
+    // const { close } = useBottomSheet();
 
-  const isEditing = !!address;
+    const {
+      control,
+      handleSubmit,
+      formState: { isValid },
+    } = useForm({
+      mode: "onChange",
+      resolver,
+      defaultValues: {
+        walletAddress: address,
+        walletName: walletName,
+      },
+    });
+    return (
+      <Box gap={4} style={styles.container}>
+        <Box gap={4}>
+          <Text type="headline5">{isEditing ? "Update Wallet" : "Add New Wallet"}</Text>
 
-  const {
-    control,
-    handleSubmit,
-    formState: { isValid },
-  } = useForm({
-    mode: "onChange",
-    resolver,
-    defaultValues: {
-      walletAddress: address,
-      walletName: walletName,
-    },
-  });
-  return (
-    <Box gap={4} style={styles.container}>
-      <Box gap={4}>
-        <Text type="headline5">{isEditing ? "Edit Wallet" : "Add New Wallet"}</Text>
+          <Controller
+            control={control}
+            name="walletAddress"
+            render={({ field, fieldState }) => (
+              <TextInput
+                {...field}
+                autoFocus={!isEditing}
+                disabled={isEditing}
+                // ref={addressRef}
+                // Component={BottomSheetTextInput}
+                error={fieldState.error?.message}
+                onChangeText={field.onChange}
+                placeholder="Address (e.g., 0x1234...7890)"
+                autoCapitalize="none"
+                autoCorrect={false}
+                keyboardType="default"
+              />
+            )}
+          />
 
-        <Controller
-          control={control}
-          name="walletAddress"
-          render={({ field, fieldState }) => (
-            <TextInput
-              {...field}
-              autoFocus={!isEditing}
-              disabled={isEditing}
-              // ref={addressRef}
-              // Component={BottomSheetTextInput}
-              error={fieldState.error?.message}
-              onChangeText={field.onChange}
-              placeholder="Address (e.g., 0x1234...7890)"
-              autoCapitalize="none"
-              autoCorrect={false}
-              keyboardType="default"
-            />
-          )}
-        />
+          <Controller
+            control={control}
+            name="walletName"
+            render={({ field, fieldState }) => (
+              <TextInput
+                {...field}
+                autoFocus={isEditing}
+                // Component={BottomSheetTextInput}
+                error={fieldState.error?.message}
+                onChangeText={field.onChange}
+                placeholder="Wallet name (e.g., My Wallet)"
+                autoCapitalize="none"
+                autoCorrect={false}
+                keyboardType="default"
+              />
+            )}
+          />
+        </Box>
 
-        <Controller
-          control={control}
-          name="walletName"
-          render={({ field, fieldState }) => (
-            <TextInput
-              {...field}
-              autoFocus={isEditing}
-              // Component={BottomSheetTextInput}
-              error={fieldState.error?.message}
-              onChangeText={field.onChange}
-              placeholder="Wallet name (e.g., My Wallet)"
-              autoCapitalize="none"
-              autoCorrect={false}
-              keyboardType="default"
-            />
-          )}
-        />
+        <Stack horizontal space={4}>
+          <Box flex="fluid">
+            <Button type="secondary" onPress={onClose}>
+              Cancel
+            </Button>
+          </Box>
+
+          <Box flex="fluid">
+            <Button type="primary" onPress={handleSubmit(onSubmit)} disabled={!isValid}>
+              {isEditing ? "Update Wallet" : "Add Wallet"}
+            </Button>
+          </Box>
+        </Stack>
       </Box>
-
-      <Stack horizontal space={4}>
-        <Box flex="fluid">
-          <Button type="secondary" onPress={onClose}>
-            Cancel
-          </Button>
-        </Box>
-
-        <Box flex="fluid">
-          <Button type="primary" onPress={handleSubmit(onSubmit)} disabled={!isValid}>
-            {isEditing ? "Update Wallet" : "Add Wallet"}
-          </Button>
-        </Box>
-      </Stack>
-    </Box>
-  );
-});
+    );
+  },
+);
 
 const styles = StyleSheet.create((theme) => ({
   container: {

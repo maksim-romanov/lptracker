@@ -6,5 +6,5 @@ import { AddWalletForm } from "components/form/add-wallet";
 export default function EditWallet() {
   const { id } = useLocalSearchParams();
 
-  return <AddWalletForm address={id as Address} />;
+  return <AddWalletForm address={id as Address} isEditing />;
 }

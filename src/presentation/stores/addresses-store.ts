@@ -20,6 +20,10 @@ export class AddressesStore {
     return this.activeAddress;
   }
 
+  isExistingAddress(address: Address): boolean {
+    return this.items.some((item) => item.address.toLowerCase() === address.toLowerCase());
+  }
+
   getAddressName(address: Address): string | undefined {
     const item = this.items.find((item) => item.address.toLowerCase() === address.toLowerCase());
     return item?.name;
