@@ -3,12 +3,12 @@ import { Address, isAddress } from "viem";
 
 import type { WalletsState, Wallet } from "domain/entities/wallets";
 import type { WalletsRepository } from "domain/repositories/wallets-repository";
-import type { NotificationsUseCase } from "domain/use-cases/notifications";
+import type { ToastService } from "domain/use-cases/toast";
 
 export class WalletsUseCase {
   constructor(
     private readonly repository: WalletsRepository,
-    private readonly notificationsUseCase: NotificationsUseCase,
+    private readonly toastService: ToastService,
   ) {}
 
   async getState(): Promise<WalletsState> {
@@ -22,11 +22,11 @@ export class WalletsUseCase {
       }
 
       await this.repository.add(wallet);
-      await this.notificationsUseCase.showSuccess("Wallet Added", "Wallet has been successfully added");
+      await this.toastService.showSuccess("Wallet Added", "Wallet has been successfully added");
       return this.repository.getState();
     } catch (error) {
       const message = error instanceof Error ? error.message : "Unknown error occurred";
-      await this.notificationsUseCase.showError("Failed to Add Wallet", message);
+      await this.toastService.showError("Failed to Add Wallet", message);
       throw error;
     }
   }
@@ -68,11 +68,11 @@ export class WalletsUseCase {
       }
 
       await this.repository.updateWallet(oldAddress, newWallet);
-      await this.notificationsUseCase.showSuccess("Wallet Updated", "Wallet has been successfully updated");
+      await this.toastService.showSuccess("Wallet Updated", "Wallet has been successfully updated");
       return this.repository.getState();
     } catch (error) {
       const message = error instanceof Error ? error.message : "Unknown error occurred";
-      await this.notificationsUseCase.showError("Failed to Update Wallet", message);
+      await this.toastService.showError("Failed to Update Wallet", message);
       throw error;
     }
   }

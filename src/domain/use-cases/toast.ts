@@ -1,10 +1,10 @@
-import { type NotificationConfig, NotificationType } from "domain/entities/notifications";
-import type { NotificationsRepository } from "domain/repositories/notifications-repository";
+import type { ToastConfig, ToastType } from "domain/entities/toast";
+import type { ToastRepository } from "domain/repositories/toast-repository";
 
-export class NotificationsUseCase {
-  constructor(private readonly repository: NotificationsRepository) {}
+export class ToastService {
+  constructor(private readonly repository: ToastRepository) {}
 
-  async show(config: NotificationConfig): Promise<void> {
+  async show(config: ToastConfig): Promise<void> {
     return this.repository.show(config);
   }
 
@@ -12,7 +12,7 @@ export class NotificationsUseCase {
     return this.show({
       title,
       message,
-      type: NotificationType.SUCCESS,
+      type: "success" as ToastType,
     });
   }
 
@@ -20,8 +20,8 @@ export class NotificationsUseCase {
     return this.show({
       title,
       message,
-      type: NotificationType.ERROR,
-      duration: 1,
+      type: "error" as ToastType,
+      duration: 4,
     });
   }
 
@@ -29,7 +29,7 @@ export class NotificationsUseCase {
     return this.show({
       title,
       message,
-      type: NotificationType.WARNING,
+      type: "warning" as ToastType,
     });
   }
 
@@ -37,7 +37,7 @@ export class NotificationsUseCase {
     return this.show({
       title,
       message,
-      type: NotificationType.INFO,
+      type: "info" as ToastType,
     });
   }
 }

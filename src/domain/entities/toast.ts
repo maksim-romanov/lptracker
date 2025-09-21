@@ -1,13 +1,13 @@
-export enum NotificationType {
+export enum ToastType {
   SUCCESS = "success",
   ERROR = "error",
   WARNING = "warning",
   INFO = "info",
 }
 
-export interface NotificationConfig {
+export interface ToastConfig {
   title: string;
   message?: string;
-  type: NotificationType;
+  type: ToastType;
   duration?: number;
 }

@@ -49,6 +49,8 @@ const withDataProvider = (Component: React.ComponentType<TAddWalletForm>) => {
     };
 
     const handleSubmit = async (data: NewWalletForm) => {
+      Keyboard.dismiss();
+
       if (!data.walletAddress) throw new Error("Wallet address is required");
 
       if (isEditing && address) {
