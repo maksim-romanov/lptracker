@@ -3,7 +3,9 @@ import React from "react";
 import { TextInput as RNTextInput, TextInputProps as RNTextInputProps } from "react-native";
 import { StyleSheet, withUnistyles } from "react-native-unistyles";
 
-const UniTextInput = withUnistyles(RNTextInput, (theme) => ({}));
+const UniTextInput = withUnistyles(RNTextInput, (theme) => ({
+  placeholderTextColor: theme.colors.onSurfaceVariant,
+}));
 
 type TextInputProps = RNTextInputProps & {
   error?: string;
@@ -17,7 +19,7 @@ export const TextInput = React.forwardRef<RNTextInput, TextInputProps>(function 
 ) {
   styles.useVariants({ error: !!error, disabled });
 
-  return <Component ref={ref} style={[styles.input, style]} {...props} />;
+  return <Component ref={ref} style={[styles.input, style]} editable={!disabled} {...props} />;
 });
 
 const styles = StyleSheet.create((theme) => ({

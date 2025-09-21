@@ -94,7 +94,9 @@ export const AddWalletForm = withDataProvider(
     return (
       <Box gap={4} style={styles.container}>
         <Box gap={4}>
-          <Text type="headline5">{isEditing ? "Update Wallet" : "Add New Wallet"}</Text>
+          <Box marginX={2}>
+            <Text type="headline5">{isEditing ? "Update Wallet" : "Add New Wallet"}</Text>
+          </Box>
 
           <Controller
             control={control}
