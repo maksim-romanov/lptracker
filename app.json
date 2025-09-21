@@ -33,17 +33,6 @@
         }
       ],
       [
-        "react-native-keys",
-        {
-          "android": {
-            "defaultKeyFile": "keys.development.json"
-          },
-          "ios": {
-            "defaultKeyFile": "keys.development.json"
-          }
-        }
-      ],
-      [
         "expo-screen-orientation",
         {
           "initialOrientation": "DEFAULT"
