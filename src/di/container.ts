@@ -1,15 +1,21 @@
 import "reflect-metadata";
 import { container } from "tsyringe";
 
+import { ClipboardRepositoryImpl } from "data/repositories/clipboard-repository-impl";
 import { SettingsRepositoryImpl } from "data/repositories/settings-repository-impl";
 import { WalletsRepositoryImpl } from "data/repositories/wallets-repository-impl";
+import type { ClipboardRepository } from "domain/repositories/clipboard-repository";
 import type { SettingsRepository } from "domain/repositories/settings-repository";
 import type { WalletsRepository } from "domain/repositories/wallets-repository";
 import { AppInitializeUseCase } from "domain/use-cases/app-initialize";
+import { ClipboardUseCase } from "domain/use-cases/clipboard";
 import { SettingsManagementUseCase } from "domain/use-cases/settings";
 import { WalletsUseCase } from "domain/use-cases/wallets";
 
 // Repository bindings
+container.register<ClipboardRepository>("ClipboardRepository", {
+  useClass: ClipboardRepositoryImpl,
+});
 container.register<SettingsRepository>("SettingsRepository", {
   useClass: SettingsRepositoryImpl,
 });
@@ -18,6 +24,10 @@ container.register<WalletsRepository>("WalletsRepository", {
 });
 
 // UseCase bindings
+container.register(ClipboardUseCase, {
+  useFactory: (c) => new ClipboardUseCase(c.resolve("ClipboardRepository")),
+});
+
 container.register(SettingsManagementUseCase, {
   useFactory: (c) => new SettingsManagementUseCase(c.resolve("SettingsRepository")),
 });

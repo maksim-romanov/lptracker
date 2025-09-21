@@ -82,6 +82,7 @@ export const AddWalletForm = withDataProvider(
       control,
       handleSubmit,
       formState: { isValid },
+      setValue,
     } = useForm({
       mode: "onChange",
       resolver,
@@ -90,6 +91,11 @@ export const AddWalletForm = withDataProvider(
         walletName: walletName,
       },
     });
+
+    React.useEffect(() => {
+      if (address) setValue("walletAddress", address, { shouldValidate: true });
+    }, [address]);
+
     return (
       <Box gap={4} style={styles.container}>
         <Box gap={4}>
