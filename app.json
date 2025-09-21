@@ -16,7 +16,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#131313"
       },
       "edgeToEdgeEnabled": true,
       "package": "com.maksimromanov.sparklr"
@@ -123,10 +123,10 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#ffffff",
+          "backgroundColor": "#131313",
           "image": "./assets/images/splash-icon.png",
           "dark": {
-            "backgroundColor": "#0D111C"
+            "backgroundColor": "#131313"
           },
           "imageWidth": 200,
           "resizeMode": "contain"
