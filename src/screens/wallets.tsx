@@ -11,8 +11,8 @@ import { InfoBlock } from "components/blocks/info-block";
 import { AddWalletItemBlock, WalletItemBlock } from "components/blocks/wallet-item";
 import { ContextMenuButton } from "components/menu/context-menu";
 import { Text } from "components/typography/text";
-import { ERC20Address } from "domain/entities/addresses";
-import { addressesStore } from "presentation/stores/addresses-store";
+import { Wallet } from "domain/entities/wallets";
+import { walletsStore } from "presentation/stores/wallets-store";
 
 const ListFooter = function () {
   return (
@@ -56,10 +56,10 @@ const Separator = () => <Box marginBottom={3} />;
 
 export const WalletsScreen = observer(function () {
   return (
-    <FlatList<ERC20Address>
-      data={addressesStore.items}
+    <FlatList<Wallet>
+      data={walletsStore.wallets}
       renderItem={({ item }) => {
-        const deleteAddress = () => addressesStore.remove(item.address);
+        const deleteWallet = () => walletsStore.remove(item.address);
 
         const actions = [
           {
@@ -67,14 +67,14 @@ export const WalletsScreen = observer(function () {
             label: "Update Name",
             onSelect: () => router.push({ pathname: "/wallets/[id]", params: { id: item.address } }),
           },
-          { destructive: true, key: "delete", label: "Delete Wallet", onSelect: deleteAddress },
+          { destructive: true, key: "delete", label: "Delete Wallet", onSelect: deleteWallet },
         ];
 
         return (
           <ContextMenuButton sections={[{ actions }]}>
             <Box marginX={4}>
-              <TouchableOpacity onPress={() => addressesStore.setActive(item.address)}>
-                <WalletItemBlock isActive={addressesStore.activeAddress === item.address} {...item} />
+              <TouchableOpacity onPress={() => walletsStore.setActive(item.address)}>
+                <WalletItemBlock isActive={walletsStore.activeWallet === item.address} {...item} />
               </TouchableOpacity>
             </Box>
           </ContextMenuButton>

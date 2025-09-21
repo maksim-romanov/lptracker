@@ -9,8 +9,8 @@ import numbro from "numbro";
 import { container } from "tsyringe";
 
 import { AppInitializeUseCase } from "domain/use-cases/app-initialize";
-import { addressesStore } from "presentation/stores/addresses-store";
+import { walletsStore } from "presentation/stores/wallets-store";
 numbro.setLanguage("en");
 
 container.resolve(AppInitializeUseCase).execute();
-addressesStore.hydrate();
+walletsStore.hydrate();

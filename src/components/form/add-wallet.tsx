@@ -12,8 +12,7 @@ import { Address } from "viem";
 
 import { Button } from "components/button/button";
 import { Text } from "components/typography/text";
-import { addressesStore } from "presentation/stores/addresses-store";
-import { getAddressName } from "utils/address";
+import { walletsStore } from "presentation/stores/wallets-store";
 
 import { TextInput } from "./adapters/text-input";
 
@@ -39,10 +38,10 @@ type TAddWalletForm = {
 
 const withDataProvider = (Component: React.ComponentType<TAddWalletForm>) => {
   return observer(({ address, ...rest }: Pick<TAddWalletForm, "address" | "isEditing">) => {
-    const isExistingAddress = address && addressesStore.isExistingAddress(address);
-    const existingName = address && getAddressName(address);
+    const isExistingWallet = address && walletsStore.isExistingWallet(address);
+    const existingName = address && walletsStore.getWalletName(address);
 
-    const isEditing = isExistingAddress || rest.isEditing;
+    const isEditing = isExistingWallet || rest.isEditing;
 
     const handleClose = () => {
       Keyboard.dismiss();
@@ -53,11 +52,11 @@ const withDataProvider = (Component: React.ComponentType<TAddWalletForm>) => {
       if (!data.walletAddress) throw new Error("Wallet address is required");
 
       if (isEditing && address) {
-        // When editing: update the address
-        await addressesStore.update(address, { address: data.walletAddress, name: data.walletName });
+        // When editing: update the wallet
+        await walletsStore.update(address, { address: data.walletAddress, name: data.walletName });
       } else {
-        // When adding: just add new address
-        await addressesStore.add({ address: data.walletAddress, name: data.walletName });
+        // When adding: just add new wallet
+        await walletsStore.add({ address: data.walletAddress, name: data.walletName });
       }
 
       handleClose();

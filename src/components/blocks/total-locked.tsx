@@ -9,7 +9,7 @@ import { Address } from "viem";
 
 import { TertiaryTag } from "components/tag/presets";
 import { Text } from "components/typography/text";
-import { addressesStore } from "presentation/stores/addresses-store";
+import { walletsStore } from "presentation/stores/wallets-store";
 import { formatAddress } from "utils/hash";
 
 const bgBase64 =
@@ -36,7 +36,7 @@ type TProps = {
 const withDataProvider = (Component: React.ComponentType<TProps>) => {
   return observer(function () {
     const totalLocked = 5460.23;
-    const address = addressesStore.activeAddress;
+    const address = walletsStore.activeWallet;
     if (!address) return null;
 
     return <Component totalLocked={totalLocked} address={address} />;
