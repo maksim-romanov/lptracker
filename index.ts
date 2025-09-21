@@ -12,5 +12,5 @@ import { AppInitializeUseCase } from "domain/use-cases/app-initialize";
 import { walletsStore } from "presentation/stores/wallets-store";
 numbro.setLanguage("en");
 
-container.resolve(AppInitializeUseCase).execute();
+container.resolve(AppInitializeUseCase).initialize();
 walletsStore.hydrate();

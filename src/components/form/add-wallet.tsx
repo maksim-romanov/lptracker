@@ -2,7 +2,9 @@ import React from "react";
 
 import { Box, Stack } from "@grapp/stacks";
 import { classValidatorResolver } from "@hookform/resolvers/class-validator";
-import { IsEthereumAddress, IsNotEmpty, IsOptional, IsString } from "class-validator";
+import { IsNotEmpty, IsOptional, IsString } from "class-validator";
+
+import { IsEthereumAddress } from "utils/form";
 import { router } from "expo-router";
 import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";

@@ -1,7 +1,8 @@
 import type { ToastConfig, ToastType } from "domain/entities/toast";
 import type { ToastRepository } from "domain/repositories/toast-repository";
+import type { ToastService } from "domain/services/toast-service";
 
-export class ToastService {
+export class ToastServiceImpl implements ToastService {
   constructor(private readonly repository: ToastRepository) {}
 
   async show(config: ToastConfig): Promise<void> {

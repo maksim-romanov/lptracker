@@ -1,83 +1,96 @@
-import { Alert } from "react-native";
-import { Address, isAddress } from "viem";
+import { Address } from "viem";
 
 import type { WalletsState, Wallet } from "domain/entities/wallets";
 import type { WalletsRepository } from "domain/repositories/wallets-repository";
-import type { ToastService } from "domain/use-cases/toast";
+import type { AlertService } from "domain/services/alert-service";
+import type { ToastService } from "domain/services/toast-service";
+import { AddressDto, UpdateWalletDto, WalletDto } from "domain/dto/wallet.dto";
 
-export class WalletsUseCase {
+import { BaseUseCase } from "./base-use-case";
+
+export class WalletsUseCase extends BaseUseCase {
   constructor(
     private readonly repository: WalletsRepository,
     private readonly toastService: ToastService,
-  ) {}
+    private readonly alertService: AlertService,
+  ) {
+    super();
+  }
 
   async getState(): Promise<WalletsState> {
     return this.repository.getState();
   }
 
   async addWallet(wallet: Wallet): Promise<WalletsState> {
-    try {
-      if (!this.validateWalletAddress(wallet.address)) {
-        throw new Error("Invalid wallet address");
-      }
+    return this.execute(async () => {
+      const validatedWallet = await this.validateDto(WalletDto, wallet);
 
-      await this.repository.add(wallet);
+      await this.repository.add({
+        address: validatedWallet.address,
+        name: validatedWallet.name,
+      });
       await this.toastService.showSuccess("Wallet Added", "Wallet has been successfully added");
       return this.repository.getState();
-    } catch (error) {
-      const message = error instanceof Error ? error.message : "Unknown error occurred";
-      await this.toastService.showError("Failed to Add Wallet", message);
-      throw error;
-    }
+    });
   }
 
   async removeWallet(address: Address): Promise<WalletsState> {
+    const validatedAddress = await this.validateDto(AddressDto, { address });
+
     return new Promise((resolve, reject) => {
-      Alert.alert("Delete Wallet", "Are you sure you want to delete this wallet? This action cannot be undone.", [
-        {
-          text: "Cancel",
-          style: "cancel",
-          onPress: () => reject(new Error("User cancelled deletion")),
-        },
-        {
-          text: "Delete",
-          style: "destructive",
-          onPress: async () => {
-            try {
-              await this.repository.remove(address);
-              const state = await this.repository.getState();
-              resolve(state);
-            } catch (error) {
-              reject(error);
-            }
+      this.alertService.show({
+        title: "Delete Wallet",
+        message: "Are you sure you want to delete this wallet? This action cannot be undone.",
+        buttons: [
+          {
+            text: "Cancel",
+            style: "cancel",
+            onPress: () => reject(new Error("User cancelled deletion")),
           },
-        },
-      ]);
+          {
+            text: "Delete",
+            style: "destructive",
+            onPress: async () => {
+              try {
+                await this.repository.remove(validatedAddress.address);
+                const state = await this.repository.getState();
+                resolve(state);
+              } catch (error) {
+                this.logError(error);
+                reject(this.handleError(error, "Failed to delete wallet"));
+              }
+            },
+          },
+        ],
+      });
     });
   }
 
   async setActiveWallet(address: Address | undefined): Promise<WalletsState> {
-    await this.repository.setActive(address);
-    return this.repository.getState();
+    if (address) {
+      await this.validateDto(AddressDto, { address });
+    }
+
+    return this.execute(async () => {
+      await this.repository.setActive(address);
+      return this.repository.getState();
+    });
   }
 
   async updateWallet(oldAddress: Address, newWallet: Wallet): Promise<WalletsState> {
-    try {
-      if (!this.validateWalletAddress(newWallet.address)) {
-        throw new Error("Invalid wallet address");
-      }
+    return this.execute(async () => {
+      const validatedData = await this.validateDto(UpdateWalletDto, {
+        oldAddress,
+        newAddress: newWallet.address,
+        name: newWallet.name,
+      });
 
-      await this.repository.updateWallet(oldAddress, newWallet);
+      await this.repository.updateWallet(validatedData.oldAddress, {
+        address: validatedData.newAddress,
+        name: validatedData.name,
+      });
       await this.toastService.showSuccess("Wallet Updated", "Wallet has been successfully updated");
       return this.repository.getState();
-    } catch (error) {
-      const message = error instanceof Error ? error.message : "Unknown error occurred";
-      await this.toastService.showError("Failed to Update Wallet", message);
-      throw error;
-    }
-  }
-
-  private validateWalletAddress(address: string): boolean {
-    return isAddress(address);
+    });
   }
 }
