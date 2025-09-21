@@ -7,7 +7,7 @@ const StyledNativeTabs = withUnistyles(NativeTabs, (theme) => ({
 
 export default function TabLayout() {
   return (
-    <StyledNativeTabs>
+    <StyledNativeTabs minimizeBehavior="onScrollDown">
       <NativeTabs.Trigger name="index">
         <Label>Positions</Label>
         <Icon sf="chart.bar.fill" drawable="stat_sys_download" />
