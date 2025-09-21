@@ -1,10 +1,10 @@
 import { Address } from "viem";
 
+import { AddressDto, UpdateWalletDto, WalletDto } from "domain/dto/wallet.dto";
 import type { WalletsState, Wallet } from "domain/entities/wallets";
 import type { WalletsRepository } from "domain/repositories/wallets-repository";
 import type { AlertService } from "domain/services/alert-service";
 import type { ToastService } from "domain/services/toast-service";
-import { AddressDto, UpdateWalletDto, WalletDto } from "domain/dto/wallet.dto";
 
 import { BaseUseCase } from "./base-use-case";
 

@@ -36,7 +36,7 @@ export class NativeAlertRepository implements AlertRepository {
             onPress: () => resolve(true),
           },
         ],
-        { cancelable: true, onDismiss: () => resolve(false) }
+        { cancelable: true, onDismiss: () => resolve(false) },
       );
     });
   }
@@ -55,7 +55,7 @@ export class NativeAlertRepository implements AlertRepository {
             onPress: () => resolve(),
           },
         ],
-        { cancelable: false }
+        { cancelable: false },
       );
     });
   }
@@ -74,7 +74,7 @@ export class NativeAlertRepository implements AlertRepository {
             onPress: () => resolve(),
           },
         ],
-        { cancelable: true, onDismiss: () => resolve() }
+        { cancelable: true, onDismiss: () => resolve() },
       );
     });
   }

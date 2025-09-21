@@ -1,4 +1,5 @@
 import { SettingsManagementUseCase } from "domain/use-cases/settings";
+
 import { BaseUseCase } from "./base-use-case";
 
 export class AppInitializeUseCase extends BaseUseCase {

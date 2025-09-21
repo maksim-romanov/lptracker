@@ -11,14 +11,14 @@ export interface AlertConfig {
   duration?: number;
 }
 
-export interface ConfirmationConfig extends Omit<AlertConfig, 'type'> {
+export interface ConfirmationConfig extends Omit<AlertConfig, "type"> {
   type: AlertType.CONFIRMATION;
 }
 
-export interface ErrorConfig extends Omit<AlertConfig, 'type'> {
+export interface ErrorConfig extends Omit<AlertConfig, "type"> {
   type: AlertType.ERROR;
 }
 
-export interface InfoConfig extends Omit<AlertConfig, 'type'> {
+export interface InfoConfig extends Omit<AlertConfig, "type"> {
   type: AlertType.INFO;
 }

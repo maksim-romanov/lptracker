@@ -1,6 +1,7 @@
+import { ThemeDto } from "domain/dto/settings.dto";
 import type { AppSettings, ThemePreference } from "domain/entities/settings";
 import type { SettingsRepository } from "domain/repositories/settings-repository";
-import { ThemeDto } from "domain/dto/settings.dto";
+
 import { BaseUseCase } from "./base-use-case";
 
 export class SettingsManagementUseCase extends BaseUseCase {

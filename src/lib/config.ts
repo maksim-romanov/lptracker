@@ -9,5 +9,3 @@ type AppExtra = {
 const extra: AppExtra = (Constants?.expoConfig?.extra ?? {}) as AppExtra;
 
 export const SUPPORTED_CHAINS: SupportedChain[] = extra.supportedChains ?? ["ethereum", "arbitrum"];
-
-

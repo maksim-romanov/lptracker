@@ -1,10 +1,9 @@
-import { Address } from "viem";
-
-import type { ClipboardData, AddWalletSuggestion } from "domain/entities/clipboard";
-import type { ClipboardRepository } from "domain/repositories/clipboard-repository";
-import { isAddress } from "viem";
+import { Address, isAddress } from "viem";
 
 import { ClipboardContentDto } from "domain/dto/clipboard.dto";
+import type { ClipboardData, AddWalletSuggestion } from "domain/entities/clipboard";
+import type { ClipboardRepository } from "domain/repositories/clipboard-repository";
+
 import { BaseUseCase } from "./base-use-case";
 
 export class ClipboardUseCase extends BaseUseCase {

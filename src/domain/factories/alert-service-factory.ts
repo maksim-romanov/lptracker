@@ -1,5 +1,5 @@
-import { AlertService } from "domain/use-cases/alert";
 import type { AlertRepository } from "domain/repositories/alert-repository";
+import { AlertService } from "domain/use-cases/alert";
 
 export class AlertServiceFactory {
   private services = new Map<AlertRepository, AlertService>();

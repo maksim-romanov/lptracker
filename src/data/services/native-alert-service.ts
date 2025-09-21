@@ -24,7 +24,7 @@ export class NativeAlertService implements AlertService {
     title: string,
     message?: string,
     onConfirm?: () => void | Promise<void>,
-    onCancel?: () => void | Promise<void>
+    onCancel?: () => void | Promise<void>,
   ): Promise<void> {
     return this.show({
       title,

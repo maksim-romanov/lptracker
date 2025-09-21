@@ -5,6 +5,7 @@ This document explains how React Query is configured in the application.
 ## Overview
 
 React Query (TanStack Query) is used for:
+
 - Automatic caching of API responses
 - Background refetching
 - Error handling and retries
@@ -24,7 +25,7 @@ export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       staleTime: 5 * 60 * 1000, // 5 minutes
-      gcTime: 10 * 60 * 1000,   // 10 minutes
+      gcTime: 10 * 60 * 1000, // 10 minutes
       retry: 3,
       retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
       refetchOnWindowFocus: false,
@@ -121,13 +122,19 @@ Query keys are structured hierarchically for efficient cache management:
 export const uniswapV4QueryKeys = {
   all: ["uniswap-v4"],
   positions: () => [...uniswapV4QueryKeys.all, "positions"],
-  positionsByUser: (userAddress: Address) => [...uniswapV4QueryKeys.positions(), userAddress],
-  positionsByUserAndChain: (userAddress: Address, chain: SupportedChain) => 
-    [...uniswapV4QueryKeys.positionsByUser(userAddress), chain],
+  positionsByUser: (userAddress: Address) => [
+    ...uniswapV4QueryKeys.positions(),
+    userAddress,
+  ],
+  positionsByUserAndChain: (userAddress: Address, chain: SupportedChain) => [
+    ...uniswapV4QueryKeys.positionsByUser(userAddress),
+    chain,
+  ],
 };
 ```
 
 This structure allows for:
+
 - Invalidating all Uniswap V4 queries
 - Invalidating all positions for a user
 - Invalidating positions for a specific user and chain

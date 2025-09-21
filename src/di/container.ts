@@ -58,11 +58,8 @@ container.register(SettingsManagementUseCase, {
 });
 
 container.register(WalletsUseCase, {
-  useFactory: (c) => new WalletsUseCase(
-    c.resolve("WalletsRepository"),
-    c.resolve("ToastService"),
-    c.resolve("AlertService")
-  ),
+  useFactory: (c) =>
+    new WalletsUseCase(c.resolve("WalletsRepository"), c.resolve("ToastService"), c.resolve("AlertService")),
 });
 
 container.register(AppInitializeUseCase, {
