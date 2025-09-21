@@ -48,6 +48,11 @@ const styles = StyleSheet.create((theme) => ({
           backgroundColor: theme.colors.secondaryContainer,
           borderColor: theme.colors.secondaryContainerVariant,
         },
+
+        destructive: {
+          backgroundColor: theme.colors.errorContainer,
+          borderColor: theme.colors.errorContainerVariant,
+        },
       },
     },
   },
@@ -57,6 +62,10 @@ const styles = StyleSheet.create((theme) => ({
 
     variants: {
       type: {
+        destructive: {
+          color: theme.colors.onErrorContainer,
+        },
+
         primary: {
           color: theme.colors.onPrimaryContainer,
         },

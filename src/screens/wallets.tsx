@@ -1,15 +1,14 @@
 import React from "react";
 
-import { BottomSheetBackdrop, BottomSheetBackdropProps, BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 import { Box } from "@grapp/stacks";
+import { router } from "expo-router";
 import { observer } from "mobx-react-lite";
-import { FlatList, Keyboard, TouchableOpacity } from "react-native";
+import { FlatList, TouchableOpacity } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
 import { ActiveWalletBlock } from "components/blocks/active-wallet";
 import { InfoBlock } from "components/blocks/info-block";
 import { AddWalletItemBlock, WalletItemBlock } from "components/blocks/wallet-item";
-import { AddWalletForm } from "components/form/add-wallet";
 import { ContextMenuButton } from "components/menu/context-menu";
 import { Text } from "components/typography/text";
 import { ERC20Address } from "domain/entities/addresses";
@@ -33,17 +32,7 @@ const ListFooter = function () {
   );
 };
 
-const renderBackdrop = (props: BottomSheetBackdropProps) => (
-  <BottomSheetBackdrop {...props} onPress={() => Keyboard.dismiss()} appearsOnIndex={0} disappearsOnIndex={-1} />
-);
-
 const ListHeader = function () {
-  const bottomSheetModalRef = React.useRef<BottomSheetModal>(null);
-
-  const openSheet = React.useCallback(() => {
-    bottomSheetModalRef.current?.present?.();
-  }, []);
-
   return (
     <>
       <Box gap={6} marginBottom={4} marginX={4} marginTop={6}>
@@ -52,29 +41,13 @@ const ListHeader = function () {
         <Box gap={4}>
           <Text type="headline5">Add Wallet</Text>
 
-          <TouchableOpacity onPress={openSheet}>
+          <TouchableOpacity onPress={() => router.push("/wallets/new")}>
             <AddWalletItemBlock />
           </TouchableOpacity>
         </Box>
 
         <Text type="headline5">Saved Wallets</Text>
       </Box>
-
-      <BottomSheetModal
-        ref={bottomSheetModalRef}
-        backgroundStyle={styles.bottomSheetBackground}
-        style={styles.bottomSheet}
-        handleIndicatorStyle={styles.handleIndicator}
-        keyboardBlurBehavior="restore"
-        keyboardBehavior="interactive"
-        enableBlurKeyboardOnGesture
-        backdropComponent={renderBackdrop}
-        animateOnMount={false}
-      >
-        <BottomSheetView style={styles.bottomSheetView}>
-          <AddWalletForm />
-        </BottomSheetView>
-      </BottomSheetModal>
     </>
   );
 };
@@ -89,8 +62,12 @@ export const WalletsScreen = observer(function () {
         const deleteAddress = () => addressesStore.remove(item.address);
 
         const actions = [
-          { key: "edit", label: "Edit", onSelect: () => null },
-          { destructive: true, key: "delete", label: "Delete", onSelect: deleteAddress },
+          {
+            key: "edit",
+            label: "Update Name",
+            onSelect: () => router.push({ pathname: "/wallets/[id]", params: { id: item.address } }),
+          },
+          { destructive: true, key: "delete", label: "Delete Wallet", onSelect: deleteAddress },
         ];
 
         return (

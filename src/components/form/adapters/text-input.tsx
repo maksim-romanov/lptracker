@@ -8,13 +8,16 @@ const UniTextInput = withUnistyles(RNTextInput, (theme) => ({}));
 type TextInputProps = RNTextInputProps & {
   error?: string;
   Component?: React.ComponentType<TextInputProps>;
+  disabled?: boolean;
 };
 
 export const TextInput = React.forwardRef<RNTextInput, TextInputProps>(function TextInput(
-  { style, error, Component = UniTextInput, ...props },
+  { style, error, Component = UniTextInput, disabled, ...props },
   ref,
 ) {
-  return <Component ref={ref} style={[styles.input, error && styles.error, style]} {...props} />;
+  styles.useVariants({ error: !!error, disabled });
+
+  return <Component ref={ref} style={[styles.input, style]} {...props} />;
 });
 
 const styles = StyleSheet.create((theme) => ({
@@ -27,9 +30,19 @@ const styles = StyleSheet.create((theme) => ({
     borderWidth: 1,
     borderColor: theme.colors.outline,
     fontFamily: theme.typography.body1.fontFamily,
-  },
 
-  error: {
-    borderColor: theme.colors.error,
+    variants: {
+      error: {
+        true: {
+          borderColor: theme.colors.error,
+        },
+      },
+
+      disabled: {
+        true: {
+          opacity: 0.3,
+        },
+      },
+    },
   },
 }));

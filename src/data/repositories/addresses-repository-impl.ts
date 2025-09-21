@@ -49,6 +49,19 @@ export class AddressesRepositoryImpl implements AddressesRepository {
     await this.setState(next);
   }
 
+  async updateAddress(oldAddress: Address, newAddress: ERC20Address): Promise<void> {
+    const state = await this.getState();
+    const updatedItems = state.items.map((item) =>
+      item.address === oldAddress ? { address: newAddress.address, name: newAddress.name } : item,
+    );
+
+    const next: AddressesState = {
+      items: updatedItems,
+      activeAddress: state.activeAddress === oldAddress ? newAddress.address : state.activeAddress,
+    };
+    await this.setState(next);
+  }
+
   async setActive(address: Address): Promise<void> {
     const state = await this.getState();
     if (address && !state.items.some((it) => it.address === address)) return;

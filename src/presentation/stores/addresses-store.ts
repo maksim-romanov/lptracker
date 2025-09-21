@@ -20,6 +20,11 @@ export class AddressesStore {
     return this.activeAddress;
   }
 
+  getAddressName(address: Address): string | undefined {
+    const item = this.items.find((item) => item.address.toLowerCase() === address.toLowerCase());
+    return item?.name;
+  }
+
   async hydrate(): Promise<void> {
     this.loading = true;
     try {
@@ -48,13 +53,16 @@ export class AddressesStore {
     }
   }
 
-  async remove(address: string): Promise<void> {
+  async remove(address: Address): Promise<void> {
     this.loading = true;
     try {
       const state = await this.addressesManagement.removeAddress(address);
       this.updateState(state);
     } catch (error) {
-      console.error("Failed to remove address:", error);
+      // Don't log error if user cancelled the deletion
+      if (error instanceof Error && error.message !== "User cancelled deletion") {
+        console.error("Failed to remove address:", error);
+      }
     } finally {
       runInAction(() => {
         this.loading = false;
@@ -62,7 +70,7 @@ export class AddressesStore {
     }
   }
 
-  async setActive(address: string | undefined): Promise<void> {
+  async setActive(address: Address | undefined): Promise<void> {
     this.loading = true;
     try {
       const state = await this.addressesManagement.setActiveAddress(address);
@@ -76,7 +84,21 @@ export class AddressesStore {
     }
   }
 
-  private updateState(state: { items: ERC20Address[]; activeAddress?: string | undefined }): void {
+  async update(oldAddress: Address, newAddress: ERC20Address): Promise<void> {
+    this.loading = true;
+    try {
+      const state = await this.addressesManagement.updateAddress(oldAddress, newAddress);
+      this.updateState(state);
+    } catch (error) {
+      console.error("Failed to update address:", error);
+    } finally {
+      runInAction(() => {
+        this.loading = false;
+      });
+    }
+  }
+
+  private updateState(state: { items: ERC20Address[]; activeAddress?: Address | undefined }): void {
     runInAction(() => {
       this.items = state.items;
       this.activeAddress = state.activeAddress;
