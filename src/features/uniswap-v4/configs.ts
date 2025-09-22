@@ -1,5 +1,4 @@
-import { Chain } from "viem";
-import { arbitrum, mainnet } from "viem/chains";
+import { arbitrum } from "viem/chains";
 
 export type ChainId = number;
 

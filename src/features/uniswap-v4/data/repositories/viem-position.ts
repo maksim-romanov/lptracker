@@ -57,7 +57,13 @@ export class ViemPositionRepository implements PositionRepository {
       address: config.stateViewAddress,
       abi: STATE_VIEW_ABI,
       functionName: "getPositionInfo",
-      args: [this.getPoolId(details), config.positionManagerAddress, details.tickLower, details.tickUpper, salt],
+      args: [
+        this.getPoolId(details, chainId),
+        config.positionManagerAddress,
+        details.tickLower,
+        details.tickUpper,
+        salt,
+      ],
     })) as readonly [bigint, bigint, bigint];
 
     return { liquidity, feeGrowthInside0X128, feeGrowthInside1X128 };
@@ -78,9 +84,10 @@ export class ViemPositionRepository implements PositionRepository {
     };
   }
 
-  private getPoolId(details: PositionDetails): Address {
-    const currency0 = createCurrency(details.poolKey.currency0, 42161, { decimals: 18, symbol: "UNKNOWN" });
-    const currency1 = createCurrency(details.poolKey.currency1, 42161, { decimals: 18, symbol: "UNKNOWN" });
+  private getPoolId(details: PositionDetails, chainId: SupportedChainId): Address {
+    const config = getChainConfig(chainId);
+    const currency0 = createCurrency(details.poolKey.currency0, config.chainId, { decimals: 18, symbol: "UNKNOWN" });
+    const currency1 = createCurrency(details.poolKey.currency1, config.chainId, { decimals: 18, symbol: "UNKNOWN" });
 
     return Pool.getPoolId(
       currency0,

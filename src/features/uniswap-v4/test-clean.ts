@@ -7,7 +7,7 @@ import { GetPositionCardUseCase } from "./application/use-cases/get-position-car
 import { GetPositionIdsUseCase } from "./application/use-cases/get-position-ids";
 import { GetPositionSummaryUseCase } from "./application/use-cases/get-position-summary";
 import { getChainConfig } from "./configs";
-import { configureDI, container } from "./infrastructure/di-container";
+import { configureDI, container } from "./config/di-container";
 
 const owner = "0xeCa0b7CDd7F2fE6389Ee3720aE415D07ABe0Ed58" as Address;
 
