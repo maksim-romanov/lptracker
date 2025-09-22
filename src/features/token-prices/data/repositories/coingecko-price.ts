@@ -1,6 +1,7 @@
 import { injectable } from "tsyringe";
 import type { Address } from "viem";
 
+import { ApiClient } from "../../../../infrastructure/api/api-client";
 import { SUPPORTED_CHAIN_IDS, PRICE_PROVIDER_CONFIGS } from "../../configs";
 import type { PriceProviderRepository } from "../../domain/repositories";
 import type { TokenPrice } from "../../domain/types";
@@ -15,6 +16,17 @@ interface CoinGeckoResponse {
 @injectable()
 export class CoinGeckoPriceRepository implements PriceProviderRepository {
   private readonly config = PRICE_PROVIDER_CONFIGS.coingecko;
+  private readonly apiClient: ApiClient;
+
+  constructor() {
+    this.apiClient = new ApiClient({
+      baseURL: this.config.baseUrl,
+      headers: {
+        Accept: "application/json",
+      },
+      timeout: 10000,
+    });
+  }
 
   async getTokenPrice(tokenAddress: Address, chainId: number): Promise<TokenPrice> {
     if (!this.isChainSupported(chainId)) {
@@ -22,36 +34,36 @@ export class CoinGeckoPriceRepository implements PriceProviderRepository {
     }
 
     const platformId = this.getChainPlatformId(chainId);
-    const url = `${this.config.baseUrl}/simple/token_price/${platformId}?contract_addresses=${tokenAddress}&vs_currencies=usd&include_24hr_change=true`;
 
-    const response = await fetch(url, {
-      headers: {
-        Accept: "application/json",
-      },
-    });
+    try {
+      const data = await this.apiClient.get<CoinGeckoResponse>(`/simple/token_price/${platformId}`, {
+        params: {
+          contract_addresses: tokenAddress,
+          vs_currencies: "usd",
+          include_24hr_change: true,
+        },
+      });
 
-    if (!response.ok) {
-      if (response.status === 429) {
+      const tokenData = data[tokenAddress.toLowerCase()];
+
+      if (!tokenData || typeof tokenData.usd !== "number") {
+        throw new Error(`Price not found for token ${tokenAddress} on chain ${chainId}`);
+      }
+
+      return {
+        tokenAddress,
+        chainId,
+        price: tokenData.usd,
+        priceChange24h: tokenData.usd_24h_change,
+        timestamp: new Date(),
+        source: this.config.name,
+      };
+    } catch (error: any) {
+      if (error.status === 429) {
         throw new Error("CoinGecko rate limit exceeded");
       }
-      throw new Error(`CoinGecko API error: ${response.status} ${response.statusText}`);
+      throw error;
     }
-
-    const data: CoinGeckoResponse = await response.json();
-    const tokenData = data[tokenAddress.toLowerCase()];
-
-    if (!tokenData || typeof tokenData.usd !== "number") {
-      throw new Error(`Price not found for token ${tokenAddress} on chain ${chainId}`);
-    }
-
-    return {
-      tokenAddress,
-      chainId,
-      price: tokenData.usd,
-      priceChange24h: tokenData.usd_24h_change,
-      timestamp: new Date(),
-      source: this.config.name,
-    };
   }
 
   async isAvailable(): Promise<boolean> {

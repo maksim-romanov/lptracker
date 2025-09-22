@@ -2,6 +2,7 @@ import { injectable } from "tsyringe";
 import type { Address } from "viem";
 import { toHex } from "viem";
 
+import { ApiClient } from "../../../../infrastructure/api/api-client";
 import { SUPPORTED_CHAIN_IDS, PRICE_PROVIDER_CONFIGS } from "../../configs";
 import type { PriceProviderRepository } from "../../domain/repositories";
 import type { TokenPrice } from "../../domain/types";
@@ -17,6 +18,18 @@ interface MoralisResponse {
 @injectable()
 export class MoralisPriceRepository implements PriceProviderRepository {
   private readonly config = PRICE_PROVIDER_CONFIGS.moralis;
+  private readonly apiClient: ApiClient;
+
+  constructor() {
+    this.apiClient = new ApiClient({
+      baseURL: this.config.baseUrl,
+      headers: {
+        Accept: "application/json",
+        ...(this.config.apiKey && { "X-API-Key": this.config.apiKey }),
+      },
+      timeout: 15000,
+    });
+  }
 
   async getTokenPrice(tokenAddress: Address, chainId: number): Promise<TokenPrice> {
     if (!this.config.apiKey) {
@@ -28,41 +41,37 @@ export class MoralisPriceRepository implements PriceProviderRepository {
     }
 
     const chainHex = toHex(chainId);
-    const url = `${this.config.baseUrl}/erc20/${tokenAddress}/price?chain=${chainHex}`;
 
-    const response = await fetch(url, {
-      headers: {
-        Accept: "application/json",
-        "X-API-Key": this.config.apiKey,
-      },
-    });
+    try {
+      const data = await this.apiClient.get<MoralisResponse>(`/erc20/${tokenAddress}/price`, {
+        params: {
+          chain: chainHex,
+        },
+      });
 
-    if (!response.ok) {
-      if (response.status === 429) {
+      if (!data.usdPrice || typeof data.usdPrice !== "number") {
+        throw new Error(`Price not found for token ${tokenAddress} on chain ${chainId}`);
+      }
+
+      const priceChange24h = data["24hrPercentChange"] ? parseFloat(data["24hrPercentChange"]) : undefined;
+
+      return {
+        tokenAddress,
+        chainId,
+        price: data.usdPrice,
+        priceChange24h,
+        timestamp: new Date(),
+        source: this.config.name,
+      };
+    } catch (error: any) {
+      if (error.status === 429) {
         throw new Error("Moralis rate limit exceeded");
       }
-      if (response.status === 401) {
+      if (error.status === 401) {
         throw new Error("Moralis API key invalid");
       }
-      throw new Error(`Moralis API error: ${response.status} ${response.statusText}`);
+      throw error;
     }
-
-    const data: MoralisResponse = await response.json();
-
-    if (!data.usdPrice || typeof data.usdPrice !== "number") {
-      throw new Error(`Price not found for token ${tokenAddress} on chain ${chainId}`);
-    }
-
-    const priceChange24h = data["24hrPercentChange"] ? parseFloat(data["24hrPercentChange"]) : undefined;
-
-    return {
-      tokenAddress,
-      chainId,
-      price: data.usdPrice,
-      priceChange24h,
-      timestamp: new Date(),
-      source: this.config.name,
-    };
   }
 
   async isAvailable(): Promise<boolean> {
