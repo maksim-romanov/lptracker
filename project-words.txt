@@ -12,3 +12,4 @@ ofetch
 numbro
 xlarge
 swipeable
+viem

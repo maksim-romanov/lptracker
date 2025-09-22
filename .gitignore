@@ -46,3 +46,5 @@ ios
 # env files
 .env
 keys.*.json
+
+__generated__

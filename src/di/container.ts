@@ -1,4 +1,3 @@
-import "reflect-metadata";
 import { container } from "tsyringe";
 
 import { BurntAlertRepository } from "data/repositories/burnt-alert-repository";

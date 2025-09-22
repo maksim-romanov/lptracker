@@ -35,7 +35,7 @@
     "burnt": "^0.13.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
-    "ethers": "^6.15.0",
+    "ethers": "5",
     "expo": "^54.0.0",
     "expo-blur": "~15.0.7",
     "expo-build-properties": "~1.0.9",
