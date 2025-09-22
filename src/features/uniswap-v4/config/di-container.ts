@@ -1,10 +1,10 @@
 import { container } from "tsyringe";
 
-import type { PositionRepository, PoolRepository, TokenRepository } from "../domain/repositories";
 import { SubgraphPositionRepository } from "../data/repositories/subgraph-position";
 import { ViemPoolRepository } from "../data/repositories/viem-pool";
 import { ViemPositionRepository } from "../data/repositories/viem-position";
 import { ViemTokenRepository } from "../data/repositories/viem-token";
+import type { PositionRepository, PoolRepository, TokenRepository } from "../domain/repositories";
 
 export function configureDI(): void {
   container.register<PositionRepository>("PositionRepository", {

@@ -6,8 +6,8 @@ import * as chains from "viem/chains";
 import { GetPositionCardUseCase } from "./application/use-cases/get-position-card";
 import { GetPositionIdsUseCase } from "./application/use-cases/get-position-ids";
 import { GetPositionSummaryUseCase } from "./application/use-cases/get-position-summary";
-import { getChainConfig } from "./configs";
 import { configureDI, container } from "./config/di-container";
+import { getChainConfig } from "./configs";
 
 const owner = "0xeCa0b7CDd7F2fE6389Ee3720aE415D07ABe0Ed58" as Address;
 
