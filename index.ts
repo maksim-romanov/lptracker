@@ -1,3 +1,6 @@
+// Crypto polyfill for ethers.js and other crypto libraries
+// Must be imported before any crypto-dependent modules
+import "react-native-get-random-values";
 import "reflect-metadata";
 
 import "di/container";

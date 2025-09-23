@@ -41,15 +41,8 @@ export class GetMultiChainPositionIdsUseCase extends BaseUseCase<
     // Fetch positions from all chains in parallel
     const chainPromises = params.chainIds.map(async (chainId): Promise<ChainPositionResult> => {
       try {
-        const positions = await this.getPositionIdsUseCase.execute({
-          owner: params.owner,
-          chainId,
-        });
-
-        return {
-          chainId,
-          positions,
-        };
+        const positions = await this.getPositionIdsUseCase.execute({ owner: params.owner, chainId });
+        return { chainId, positions };
       } catch (error) {
         return {
           chainId,

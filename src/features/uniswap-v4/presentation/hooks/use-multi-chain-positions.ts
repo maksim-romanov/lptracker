@@ -14,10 +14,8 @@ export function useMultiChainPositions(owner: Address | null, chainIds: Supporte
       chainIds: chainIds.length > 0 ? chainIds : undefined,
     }),
     queryFn: async () => {
-      if (!owner || chainIds.length === 0) {
-        throw new Error("Owner and at least one chain ID are required");
-      }
-      const useCase = container.resolve("GetMultiChainPositionIdsUseCase") as GetMultiChainPositionIdsUseCase;
+      if (!owner || chainIds.length === 0) throw new Error("Owner and at least one chain ID are required");
+      const useCase = container.resolve<GetMultiChainPositionIdsUseCase>("GetMultiChainPositionIdsUseCase");
       return useCase.execute({ owner, chainIds });
     },
     staleTime: 10 * 60 * 1000, // 10 minutes - position IDs rarely change
