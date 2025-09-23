@@ -6,17 +6,22 @@ import type { SupportedChainId } from "../../configs";
 import { GetPositionIdsDto } from "../../domain/dto/position.dto";
 import type { PositionRepository } from "../../domain/repositories";
 
+interface GetPositionIdsParams {
+  owner: Address;
+  chainId: SupportedChainId;
+}
+
 @injectable()
-export class GetPositionIdsUseCase extends BaseUseCase {
+export class GetPositionIdsUseCase extends BaseUseCase<GetPositionIdsParams, bigint[]> {
   constructor(@inject("PositionRepository") private positionRepository: PositionRepository) {
     super();
   }
 
-  async execute(owner: Address, chainId: SupportedChainId): Promise<bigint[]> {
-    return super.execute(async () => {
-      const dto = await this.validateDto(GetPositionIdsDto, { owner, chainId });
+  async execute(params: GetPositionIdsParams): Promise<bigint[]> {
+    return this.executeWithErrorHandling(async () => {
+      const dto = await this.validateDto(GetPositionIdsDto, params);
 
-      return this.positionRepository.getPositionIds(dto.owner, dto.chainId);
+      return this.positionRepository.getPositionIds(dto.owner, dto.chainId as SupportedChainId);
     });
   }
 }

@@ -8,7 +8,7 @@ import type { ToastService } from "domain/services/toast-service";
 
 import { BaseUseCase } from "./base-use-case";
 
-export class WalletsUseCase extends BaseUseCase {
+export class WalletsUseCase extends BaseUseCase<void, void> {
   constructor(
     private readonly repository: WalletsRepository,
     private readonly toastService: ToastService,
@@ -17,12 +17,16 @@ export class WalletsUseCase extends BaseUseCase {
     super();
   }
 
+  execute(): Promise<void> {
+    throw new Error("This use case doesn't implement the abstract execute method");
+  }
+
   async getState(): Promise<WalletsState> {
     return this.repository.getState();
   }
 
   async addWallet(wallet: Wallet): Promise<WalletsState> {
-    return this.execute(async () => {
+    return this.executeWithErrorHandling(async () => {
       const validatedWallet = await this.validateDto(WalletDto, wallet);
 
       await this.repository.add({
@@ -71,14 +75,14 @@ export class WalletsUseCase extends BaseUseCase {
       await this.validateDto(AddressDto, { address });
     }
 
-    return this.execute(async () => {
+    return this.executeWithErrorHandling(async () => {
       await this.repository.setActive(address);
       return this.repository.getState();
     });
   }
 
   async updateWallet(oldAddress: Address, newWallet: Wallet): Promise<WalletsState> {
-    return this.execute(async () => {
+    return this.executeWithErrorHandling(async () => {
       const validatedData = await this.validateDto(UpdateWalletDto, {
         oldAddress,
         newAddress: newWallet.address,

@@ -4,13 +4,17 @@ import type { SettingsRepository } from "domain/repositories/settings-repository
 
 import { BaseUseCase } from "./base-use-case";
 
-export class SettingsManagementUseCase extends BaseUseCase {
+export class SettingsManagementUseCase extends BaseUseCase<void, void> {
   constructor(private readonly repository: SettingsRepository) {
     super();
   }
 
+  execute(): Promise<void> {
+    throw new Error("This use case doesn't implement the abstract execute method");
+  }
+
   async getSettings(): Promise<AppSettings> {
-    return this.execute(async () => {
+    return this.executeWithErrorHandling(async () => {
       return this.repository.getSettings();
     });
   }
@@ -20,7 +24,7 @@ export class SettingsManagementUseCase extends BaseUseCase {
       await this.validateDto(ThemeDto, { theme });
     }
 
-    return this.execute(async () => {
+    return this.executeWithErrorHandling(async () => {
       await this.repository.setTheme(theme);
       return this.repository.getSettings();
     });

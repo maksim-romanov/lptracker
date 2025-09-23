@@ -15,7 +15,9 @@ export class ValidationException extends Error {
   }
 }
 
-export abstract class BaseUseCase {
+export abstract class BaseUseCase<TParams, TResult> {
+  abstract execute(params: TParams): Promise<TResult>;
+
   protected async validateDto<T extends object>(dtoClass: new () => T, data: any): Promise<T> {
     const dto = plainToClass(dtoClass, data);
     const errors = await validate(dto);
@@ -27,7 +29,7 @@ export abstract class BaseUseCase {
     return dto;
   }
 
-  protected async execute<T>(operation: () => Promise<T>): Promise<T> {
+  protected async executeWithErrorHandling<T>(operation: () => Promise<T>): Promise<T> {
     try {
       return await operation();
     } catch (error) {

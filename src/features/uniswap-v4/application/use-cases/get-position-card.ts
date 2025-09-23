@@ -12,8 +12,13 @@ import type { PositionRepository, PoolRepository, TokenRepository } from "../../
 import type { PositionCard } from "../../domain/types";
 import { createCurrency } from "../../utils/currency";
 
+interface GetPositionCardParams {
+  tokenId: bigint;
+  chainId: SupportedChainId;
+}
+
 @injectable()
-export class GetPositionCardUseCase extends BaseUseCase {
+export class GetPositionCardUseCase extends BaseUseCase<GetPositionCardParams, PositionCard> {
   constructor(
     @inject("PositionRepository") private positionRepository: PositionRepository,
     @inject("PoolRepository") private poolRepository: PoolRepository,
@@ -22,29 +27,29 @@ export class GetPositionCardUseCase extends BaseUseCase {
     super();
   }
 
-  async execute(tokenId: bigint, chainId: SupportedChainId): Promise<PositionCard> {
-    return super.execute(async () => {
-      await this.validateDto(GetPositionCardDto, { tokenId: tokenId.toString(), chainId });
+  async execute(params: GetPositionCardParams): Promise<PositionCard> {
+    return this.executeWithErrorHandling(async () => {
+      await this.validateDto(GetPositionCardDto, { tokenId: params.tokenId, chainId: params.chainId });
 
       const [details, stored] = await Promise.all([
-        this.positionRepository.getPositionDetails(tokenId, chainId),
-        this.positionRepository.getStoredPositionInfo(tokenId, chainId),
+        this.positionRepository.getPositionDetails(params.tokenId, params.chainId),
+        this.positionRepository.getStoredPositionInfo(params.tokenId, params.chainId),
       ]);
 
       const [currency0Meta, currency1Meta] = await Promise.all([
-        this.tokenRepository.getTokenMetadata(details.poolKey.currency0, chainId),
-        this.tokenRepository.getTokenMetadata(details.poolKey.currency1, chainId),
+        this.tokenRepository.getTokenMetadata(details.poolKey.currency0, params.chainId),
+        this.tokenRepository.getTokenMetadata(details.poolKey.currency1, params.chainId),
       ]);
 
       const { poolId, currency0, currency1 } = this.createPoolTokens(
         details.poolKey,
         currency0Meta,
         currency1Meta,
-        chainId,
+        params.chainId,
       );
       const [slot0, currentFeeGrowth] = await Promise.all([
-        this.poolRepository.getSlot0State(poolId, chainId),
-        this.poolRepository.getFeeGrowthInside(poolId, details.tickLower, details.tickUpper, chainId),
+        this.poolRepository.getSlot0State(poolId, params.chainId),
+        this.poolRepository.getFeeGrowthInside(poolId, details.tickLower, details.tickUpper, params.chainId),
       ]);
 
       const unclaimed = {
@@ -68,7 +73,7 @@ export class GetPositionCardUseCase extends BaseUseCase {
       );
 
       return {
-        tokenId,
+        tokenId: params.tokenId,
         poolKey: details.poolKey,
         tickRange: { lower: details.tickLower, upper: details.tickUpper },
         tokens: { currency0, currency1 },

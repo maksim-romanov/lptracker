@@ -24,7 +24,7 @@ const getPositionIdsUseCase = container.resolve(GetPositionIdsUseCase);
 const getPositionCardUseCase = container.resolve(GetPositionCardUseCase);
 const getPositionSummaryUseCase = container.resolve(GetPositionSummaryUseCase);
 
-const positionIds = await getPositionIdsUseCase.execute(owner, chainId);
+const positionIds = await getPositionIdsUseCase.execute({ owner, chainId });
 console.log(`Found ${positionIds.length} positions for ${owner} on chain ${chainId}`);
 console.log("IDs:", positionIds.map(String));
 
@@ -32,9 +32,9 @@ console.log("IDs:", positionIds.map(String));
 
 console.log("------------");
 if (positionIds.length > 0) {
-  const card = await getPositionCardUseCase.execute(positionIds[0], chainId);
+  const card = await getPositionCardUseCase.execute({ tokenId: positionIds[0], chainId });
   console.log("Position Card:", card);
 
-  const summary = await getPositionSummaryUseCase.execute(positionIds[0], chainId);
+  const summary = await getPositionSummaryUseCase.execute({ tokenId: positionIds[0], chainId });
   console.log("Position Summary:", summary);
 }

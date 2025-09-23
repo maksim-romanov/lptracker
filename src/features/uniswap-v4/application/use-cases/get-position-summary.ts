@@ -11,8 +11,13 @@ import type { PositionRepository, PoolRepository, TokenRepository } from "../../
 import type { PositionSummary, PositionDetails } from "../../domain/types";
 import { createCurrency } from "../../utils/currency";
 
+interface GetPositionSummaryParams {
+  tokenId: bigint;
+  chainId: SupportedChainId;
+}
+
 @injectable()
-export class GetPositionSummaryUseCase extends BaseUseCase {
+export class GetPositionSummaryUseCase extends BaseUseCase<GetPositionSummaryParams, PositionSummary> {
   constructor(
     @inject("PositionRepository") private positionRepository: PositionRepository,
     @inject("PoolRepository") private poolRepository: PoolRepository,
@@ -21,25 +26,25 @@ export class GetPositionSummaryUseCase extends BaseUseCase {
     super();
   }
 
-  async execute(tokenId: bigint, chainId: SupportedChainId): Promise<PositionSummary> {
-    return super.execute(async () => {
-      await this.validateDto(GetPositionSummaryDto, { tokenId: tokenId.toString(), chainId });
+  async execute(params: GetPositionSummaryParams): Promise<PositionSummary> {
+    return this.executeWithErrorHandling(async () => {
+      await this.validateDto(GetPositionSummaryDto, { tokenId: params.tokenId, chainId: params.chainId });
 
       const [details, stored] = await Promise.all([
-        this.positionRepository.getPositionDetails(tokenId, chainId),
-        this.positionRepository.getStoredPositionInfo(tokenId, chainId),
+        this.positionRepository.getPositionDetails(params.tokenId, params.chainId),
+        this.positionRepository.getStoredPositionInfo(params.tokenId, params.chainId),
       ]);
 
       const [currency0Meta, currency1Meta] = await Promise.all([
-        this.tokenRepository.getTokenMetadata(details.poolKey.currency0, chainId),
-        this.tokenRepository.getTokenMetadata(details.poolKey.currency1, chainId),
+        this.tokenRepository.getTokenMetadata(details.poolKey.currency0, params.chainId),
+        this.tokenRepository.getTokenMetadata(details.poolKey.currency1, params.chainId),
       ]);
 
-      const { poolId, currency0, currency1 } = this.createPoolTokens(details, currency0Meta, currency1Meta, chainId);
+      const { poolId, currency0, currency1 } = this.createPoolTokens(details, currency0Meta, currency1Meta, params.chainId);
 
       const [slot0, currentFeeGrowth] = await Promise.all([
-        this.poolRepository.getSlot0State(poolId, chainId),
-        this.poolRepository.getFeeGrowthInside(poolId, details.tickLower, details.tickUpper, chainId),
+        this.poolRepository.getSlot0State(poolId, params.chainId),
+        this.poolRepository.getFeeGrowthInside(poolId, details.tickLower, details.tickUpper, params.chainId),
       ]);
 
       const unclaimed = {

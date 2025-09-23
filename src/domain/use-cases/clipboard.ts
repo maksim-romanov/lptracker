@@ -6,19 +6,23 @@ import type { ClipboardRepository } from "domain/repositories/clipboard-reposito
 
 import { BaseUseCase } from "./base-use-case";
 
-export class ClipboardUseCase extends BaseUseCase {
+export class ClipboardUseCase extends BaseUseCase<void, void> {
   constructor(private readonly repository: ClipboardRepository) {
     super();
   }
 
+  execute(): Promise<void> {
+    throw new Error("This use case doesn't implement the abstract execute method");
+  }
+
   async getClipboardText(): Promise<string> {
-    return this.execute(async () => {
+    return this.executeWithErrorHandling(async () => {
       return this.repository.getClipboardContent();
     });
   }
 
   async getClipboardAddress(): Promise<Address | null> {
-    return this.execute(async () => {
+    return this.executeWithErrorHandling(async () => {
       const content = await this.repository.getClipboardContent();
       const trimmedContent = content.trim();
 
@@ -32,7 +36,7 @@ export class ClipboardUseCase extends BaseUseCase {
   }
 
   async checkForValidAddress(): Promise<ClipboardData | null> {
-    return this.execute(async () => {
+    return this.executeWithErrorHandling(async () => {
       const content = await this.repository.getClipboardContent();
       const trimmedContent = content.trim();
 
@@ -48,7 +52,7 @@ export class ClipboardUseCase extends BaseUseCase {
   }
 
   async shouldShowAddWalletSuggestion(): Promise<AddWalletSuggestion> {
-    return this.execute(async () => {
+    return this.executeWithErrorHandling(async () => {
       const address = await this.getClipboardAddress();
 
       return {
