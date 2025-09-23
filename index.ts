@@ -4,6 +4,8 @@ import "react-native-get-random-values";
 import "reflect-metadata";
 
 import "di/container";
+import "features/uniswap-v4/config/di-container";
+
 import "expo-router/entry";
 
 import "./src/styles/unistyles";

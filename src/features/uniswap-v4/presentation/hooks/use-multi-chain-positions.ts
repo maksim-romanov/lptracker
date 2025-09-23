@@ -16,15 +16,23 @@ export function useMultiChainPositions(owner: Address | null, chainIds: Supporte
       chainIds: chainIds.length > 0 ? chainIds : undefined,
     }),
     queryFn: async () => {
-      if (!owner || chainIds.length === 0) throw new Error("Owner and at least one chain ID are required");
-      const useCase = container.resolve<GetMultiChainPositionIdsUseCase>("GetMultiChainPositionIdsUseCase");
-      return useCase.execute({ owner, chainIds });
+      try {
+        console.log("QUERY start 111");
+        if (!owner || chainIds.length === 0) throw new Error("Owner and at least one chain ID are required");
+        console.log("QUERY start 222");
+        const useCase = container.resolve<GetMultiChainPositionIdsUseCase>("GetMultiChainPositionIdsUseCase");
+        console.log("QUERY start 333");
+        return useCase.execute({ owner, chainIds });
+      } catch (error) {
+        console.error(error);
+        throw error;
+      }
     },
     staleTime: 10 * 60 * 1000, // 10 minutes - position IDs rarely change
     gcTime: 30 * 60 * 1000, // 30 minutes in cache
     enabled: !!owner && chainIds.length > 0,
     refetchOnWindowFocus: false,
-    refetchOnMount: false,
+    refetchOnMount: true,
     retry: (failureCount, error: QueryError) => {
       // Don't retry on 404 or authentication errors
       if (error?.status === 404 || error?.status === 401) return false;

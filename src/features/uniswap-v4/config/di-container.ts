@@ -31,7 +31,7 @@ export function configureDI(): void {
   });
 
   container.register("GetMultiChainPositionIdsUseCase", {
-    useClass: GetMultiChainPositionIdsUseCase,
+    useFactory: (c) => new GetMultiChainPositionIdsUseCase(c.resolve("GetPositionIdsUseCase")),
   });
 }
 
