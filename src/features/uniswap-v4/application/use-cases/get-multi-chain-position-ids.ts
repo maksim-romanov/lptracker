@@ -21,6 +21,7 @@ interface ChainPositionResult {
 interface PositionWithChainId {
   positionId: bigint;
   chainId: SupportedChainId;
+  protocol: "uniswap-v4";
 }
 
 interface MultiChainPositionIdsResult {
@@ -63,7 +64,7 @@ export class GetMultiChainPositionIdsUseCase extends BaseUseCase<
     // Aggregate results
     const allPositions = chainResults.flatMap((result) => result.positions);
     const positionsWithChain = chainResults.flatMap((result) =>
-      result.positions.map((positionId) => ({ positionId, chainId: result.chainId })),
+      result.positions.map((positionId) => ({ positionId, chainId: result.chainId, protocol: "uniswap-v4" as const })),
     );
     const successfulChains = chainResults.filter((result) => !result.error).map((result) => result.chainId);
     const failedChains = chainResults.filter((result) => result.error).map((result) => result.chainId);

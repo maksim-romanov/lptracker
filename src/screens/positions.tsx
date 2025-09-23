@@ -3,10 +3,12 @@ import { observer } from "mobx-react-lite";
 import { FlatList, TouchableOpacity } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
-import { LPPositionBlock } from "components/blocks/lp-position";
 import { TotalLockedBlock } from "components/blocks/total-locked";
+import { PositionCardFactory } from "components/position-cards/factory";
 import { useMultiChainPositionsAuto } from "features/uniswap-v4/presentation/hooks";
 import { walletsStore } from "presentation/stores/wallets-store";
+
+import "features/uniswap-v4/presentation/components/position-card";
 
 const Separator = () => <Box marginBottom={3} />;
 
@@ -32,7 +34,7 @@ export const PositionsScreen = observer(function () {
       renderItem={({ item }) => (
         <Box marginX={4}>
           <TouchableOpacity>
-            <LPPositionBlock {...item} />
+            <PositionCardFactory data={item} />
           </TouchableOpacity>
         </Box>
       )}
