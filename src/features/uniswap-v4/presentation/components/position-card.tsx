@@ -27,7 +27,10 @@ export const withUniswapV4Provider = (Component: React.ComponentType<TUniswapV4L
     // todo: add skeleton loader
     if (!res.data) return <ActivityIndicator />;
 
-    const tokens = [res.data.tokens.currency0.wrapped, res.data.tokens.currency1.wrapped];
+    const tokens = [
+      { address: res.data.details.poolKey.currency0, symbol: res.data.tokens.currency0.symbol },
+      { address: res.data.details.poolKey.currency1, symbol: res.data.tokens.currency1.symbol },
+    ];
 
     return (
       <Component
