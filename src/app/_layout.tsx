@@ -12,6 +12,13 @@ import { Header } from "components/navigation/glass-header";
 import { queryClient } from "infrastructure/query";
 import { DarkTheme } from "styles/theme/navigation";
 
+// Initialize DI containers
+import "features/uniswap-v4/config/di-container";
+import { configureDI as configureUniswapV4 } from "features/uniswap-v4/config/di-container";
+
+// Initialize feature DI containers
+configureUniswapV4();
+
 const ModalHeader = () => <Box paddingY={4} />;
 
 export default function RootLayout() {

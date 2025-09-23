@@ -10,6 +10,9 @@ export const uniswapV4QueryKeys = {
   positionsList: (filters: { owner?: Address; chainId?: SupportedChainId }) =>
     [...uniswapV4QueryKeys.positions(), "list", filters] as const,
 
+  multiChainPositionsList: (filters: { owner?: Address; chainIds?: SupportedChainId[] }) =>
+    [...uniswapV4QueryKeys.positions(), "multi-chain-list", filters] as const,
+
   positionDetail: (tokenId: string | bigint, chainId: SupportedChainId) =>
     [
       ...uniswapV4QueryKeys.positions(),

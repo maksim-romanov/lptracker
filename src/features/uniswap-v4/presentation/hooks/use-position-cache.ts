@@ -22,11 +22,20 @@ export function usePositionCache() {
       },
 
       /**
-       * Invalidate user's positions list
+       * Invalidate user's positions list for single chain
        */
       invalidatePositionsList: (owner: Address, chainId: SupportedChainId) => {
         return queryClient.invalidateQueries({
           queryKey: uniswapV4QueryKeys.positionsList({ owner, chainId }),
+        });
+      },
+
+      /**
+       * Invalidate user's multi-chain positions
+       */
+      invalidateMultiChainPositions: (owner: Address, chainIds: SupportedChainId[]) => {
+        return queryClient.invalidateQueries({
+          queryKey: uniswapV4QueryKeys.multiChainPositionsList({ owner, chainIds }),
         });
       },
 
