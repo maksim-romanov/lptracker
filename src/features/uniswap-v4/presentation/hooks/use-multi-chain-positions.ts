@@ -2,10 +2,10 @@ import { useQuery } from "@tanstack/react-query";
 import { container } from "tsyringe";
 import type { Address } from "viem";
 
+import { uniswapV4QueryKeys } from "./query-keys";
+import type { QueryError } from "../../../../infrastructure/query/types";
 import { GetMultiChainPositionIdsUseCase } from "../../application/use-cases/get-multi-chain-position-ids";
 import type { SupportedChainId } from "../../configs";
-import type { QueryError } from "../../../../infrastructure/query/types";
-import { uniswapV4QueryKeys } from "./query-keys";
 
 export function useMultiChainPositions(owner: Address | null, chainIds: SupportedChainId[]) {
   return useQuery({

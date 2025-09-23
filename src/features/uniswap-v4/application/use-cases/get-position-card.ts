@@ -3,6 +3,7 @@ import { Pool } from "@uniswap/v4-sdk";
 import { injectable, inject } from "tsyringe";
 import type { Address } from "viem";
 
+import { LogErrors } from "../../../../domain/decorators";
 import { BaseUseCase } from "../../../../domain/use-cases/base-use-case";
 import type { SupportedChainId } from "../../configs";
 import { GetPositionCardDto } from "../../domain/dto/position.dto";
@@ -27,62 +28,61 @@ export class GetPositionCardUseCase extends BaseUseCase<GetPositionCardParams, P
     super();
   }
 
+  @LogErrors()
   async execute(params: GetPositionCardParams): Promise<PositionCard> {
-    return this.executeWithErrorHandling(async () => {
-      await this.validateDto(GetPositionCardDto, { tokenId: params.tokenId, chainId: params.chainId });
+    await this.validateDto(GetPositionCardDto, { tokenId: params.tokenId, chainId: params.chainId });
 
-      const [details, stored] = await Promise.all([
-        this.positionRepository.getPositionDetails(params.tokenId, params.chainId),
-        this.positionRepository.getStoredPositionInfo(params.tokenId, params.chainId),
-      ]);
+    const [details, stored] = await Promise.all([
+      this.positionRepository.getPositionDetails(params.tokenId, params.chainId),
+      this.positionRepository.getStoredPositionInfo(params.tokenId, params.chainId),
+    ]);
 
-      const [currency0Meta, currency1Meta] = await Promise.all([
-        this.tokenRepository.getTokenMetadata(details.poolKey.currency0, params.chainId),
-        this.tokenRepository.getTokenMetadata(details.poolKey.currency1, params.chainId),
-      ]);
+    const [currency0Meta, currency1Meta] = await Promise.all([
+      this.tokenRepository.getTokenMetadata(details.poolKey.currency0, params.chainId),
+      this.tokenRepository.getTokenMetadata(details.poolKey.currency1, params.chainId),
+    ]);
 
-      const { poolId, currency0, currency1 } = this.createPoolTokens(
-        details.poolKey,
-        currency0Meta,
-        currency1Meta,
-        params.chainId,
-      );
-      const [slot0, currentFeeGrowth] = await Promise.all([
-        this.poolRepository.getSlot0State(poolId, params.chainId),
-        this.poolRepository.getFeeGrowthInside(poolId, details.tickLower, details.tickUpper, params.chainId),
-      ]);
+    const { poolId, currency0, currency1 } = this.createPoolTokens(
+      details.poolKey,
+      currency0Meta,
+      currency1Meta,
+      params.chainId,
+    );
+    const [slot0, currentFeeGrowth] = await Promise.all([
+      this.poolRepository.getSlot0State(poolId, params.chainId),
+      this.poolRepository.getFeeGrowthInside(poolId, details.tickLower, details.tickUpper, params.chainId),
+    ]);
 
-      const unclaimed = {
-        token0: calculateUnclaimedFees(
-          stored.liquidity,
-          currentFeeGrowth.feeGrowthInside0X128,
-          stored.feeGrowthInside0X128,
-        ),
-        token1: calculateUnclaimedFees(
-          stored.liquidity,
-          currentFeeGrowth.feeGrowthInside1X128,
-          stored.feeGrowthInside1X128,
-        ),
-      };
-
-      const tokenAmounts = getTokenAmountsFromLiquidity(
+    const unclaimed = {
+      token0: calculateUnclaimedFees(
         stored.liquidity,
-        details.tickLower,
-        details.tickUpper,
-        slot0.sqrtPriceX96,
-      );
+        currentFeeGrowth.feeGrowthInside0X128,
+        stored.feeGrowthInside0X128,
+      ),
+      token1: calculateUnclaimedFees(
+        stored.liquidity,
+        currentFeeGrowth.feeGrowthInside1X128,
+        stored.feeGrowthInside1X128,
+      ),
+    };
 
-      return {
-        tokenId: params.tokenId,
-        poolKey: details.poolKey,
-        tickRange: { lower: details.tickLower, upper: details.tickUpper },
-        tokens: { currency0, currency1 },
-        currentTick: slot0.tickCurrent,
-        feeBps: details.poolKey.fee,
-        unclaimed,
-        tokenAmounts,
-      };
-    });
+    const tokenAmounts = getTokenAmountsFromLiquidity(
+      stored.liquidity,
+      details.tickLower,
+      details.tickUpper,
+      slot0.sqrtPriceX96,
+    );
+
+    return {
+      tokenId: params.tokenId,
+      poolKey: details.poolKey,
+      tickRange: { lower: details.tickLower, upper: details.tickUpper },
+      tokens: { currency0, currency1 },
+      currentTick: slot0.tickCurrent,
+      feeBps: details.poolKey.fee,
+      unclaimed,
+      tokenAmounts,
+    };
   }
 
   private createPoolTokens(

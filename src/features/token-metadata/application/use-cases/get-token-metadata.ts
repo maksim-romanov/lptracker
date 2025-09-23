@@ -1,6 +1,7 @@
 import { injectable, inject } from "tsyringe";
 import type { Address } from "viem";
 
+import { LogErrors } from "../../../../domain/decorators";
 import { BaseUseCase } from "../../../../domain/use-cases/base-use-case";
 import { GetTokenMetadataDto } from "../../domain/dto/get-token-metadata.dto";
 import type { MetadataRepository } from "../../domain/repositories";
@@ -17,11 +18,10 @@ export class GetTokenMetadataUseCase extends BaseUseCase<GetTokenMetadataParams,
     super();
   }
 
+  @LogErrors()
   async execute(params: GetTokenMetadataParams): Promise<TokenMetadata> {
-    return this.executeWithErrorHandling(async () => {
-      await this.validateDto(GetTokenMetadataDto, params);
+    await this.validateDto(GetTokenMetadataDto, params);
 
-      return this.metadataRepository.getTokenMetadata(params.tokenAddress, params.chainId);
-    });
+    return this.metadataRepository.getTokenMetadata(params.tokenAddress, params.chainId);
   }
 }

@@ -4,6 +4,7 @@ import { ClipboardContentDto } from "domain/dto/clipboard.dto";
 import type { ClipboardData, AddWalletSuggestion } from "domain/entities/clipboard";
 import type { ClipboardRepository } from "domain/repositories/clipboard-repository";
 
+import { LogErrors } from "../decorators";
 import { BaseUseCase } from "./base-use-case";
 
 export class ClipboardUseCase extends BaseUseCase<void, void> {
@@ -15,50 +16,46 @@ export class ClipboardUseCase extends BaseUseCase<void, void> {
     throw new Error("This use case doesn't implement the abstract execute method");
   }
 
+  @LogErrors()
   async getClipboardText(): Promise<string> {
-    return this.executeWithErrorHandling(async () => {
-      return this.repository.getClipboardContent();
-    });
+    return this.repository.getClipboardContent();
   }
 
+  @LogErrors()
   async getClipboardAddress(): Promise<Address | null> {
-    return this.executeWithErrorHandling(async () => {
-      const content = await this.repository.getClipboardContent();
-      const trimmedContent = content.trim();
+    const content = await this.repository.getClipboardContent();
+    const trimmedContent = content.trim();
 
-      // Use viem's more reliable address validation
-      if (isAddress(trimmedContent)) {
-        return trimmedContent as Address;
-      }
+    // Use viem's more reliable address validation
+    if (isAddress(trimmedContent)) {
+      return trimmedContent as Address;
+    }
 
-      return null;
-    });
+    return null;
   }
 
+  @LogErrors()
   async checkForValidAddress(): Promise<ClipboardData | null> {
-    return this.executeWithErrorHandling(async () => {
-      const content = await this.repository.getClipboardContent();
-      const trimmedContent = content.trim();
+    const content = await this.repository.getClipboardContent();
+    const trimmedContent = content.trim();
 
-      // Use viem's more reliable address validation
-      const isValid = isAddress(trimmedContent);
+    // Use viem's more reliable address validation
+    const isValid = isAddress(trimmedContent);
 
-      return {
-        content: trimmedContent,
-        isValidAddress: isValid,
-        timestamp: Date.now(),
-      };
-    });
+    return {
+      content: trimmedContent,
+      isValidAddress: isValid,
+      timestamp: Date.now(),
+    };
   }
 
+  @LogErrors()
   async shouldShowAddWalletSuggestion(): Promise<AddWalletSuggestion> {
-    return this.executeWithErrorHandling(async () => {
-      const address = await this.getClipboardAddress();
+    const address = await this.getClipboardAddress();
 
-      return {
-        show: !!address,
-        address: address || undefined,
-      };
-    });
+    return {
+      show: !!address,
+      address: address || undefined,
+    };
   }
 }

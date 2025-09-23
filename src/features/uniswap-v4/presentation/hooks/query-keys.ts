@@ -22,4 +22,9 @@ export const uniswapV4QueryKeys = {
     ] as const,
 } as const;
 
-export type UniswapV4QueryKey = ReturnType<(typeof uniswapV4QueryKeys)[keyof typeof uniswapV4QueryKeys]>;
+export type UniswapV4QueryKey =
+  | typeof uniswapV4QueryKeys.all
+  | ReturnType<typeof uniswapV4QueryKeys.positions>
+  | ReturnType<typeof uniswapV4QueryKeys.positionsList>
+  | ReturnType<typeof uniswapV4QueryKeys.multiChainPositionsList>
+  | ReturnType<typeof uniswapV4QueryKeys.positionDetail>;

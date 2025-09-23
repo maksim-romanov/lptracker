@@ -1,7 +1,7 @@
 import { container } from "tsyringe";
 
-import { GetPositionIdsUseCase } from "../application/use-cases/get-position-ids";
 import { GetMultiChainPositionIdsUseCase } from "../application/use-cases/get-multi-chain-position-ids";
+import { GetPositionIdsUseCase } from "../application/use-cases/get-position-ids";
 import { SubgraphPositionRepository } from "../data/repositories/subgraph-position";
 import { ViemPoolRepository } from "../data/repositories/viem-pool";
 import { ViemPositionRepository } from "../data/repositories/viem-position";

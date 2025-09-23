@@ -1,6 +1,7 @@
 import { injectable, inject } from "tsyringe";
 import type { Address } from "viem";
 
+import { LogErrors } from "../../../../domain/decorators";
 import { BaseUseCase } from "../../../../domain/use-cases/base-use-case";
 import { GetTokenPriceDto } from "../../domain/dto/get-token-price.dto";
 import type { PriceRepository } from "../../domain/repositories";
@@ -17,11 +18,10 @@ export class GetTokenPriceUseCase extends BaseUseCase<GetTokenPriceParams, Token
     super();
   }
 
+  @LogErrors()
   async execute(params: GetTokenPriceParams): Promise<TokenPrice> {
-    return this.executeWithErrorHandling(async () => {
-      await this.validateDto(GetTokenPriceDto, params);
+    await this.validateDto(GetTokenPriceDto, params);
 
-      return this.priceRepository.getTokenPrice(params.tokenAddress, params.chainId);
-    });
+    return this.priceRepository.getTokenPrice(params.tokenAddress, params.chainId);
   }
 }

@@ -28,28 +28,4 @@ export abstract class BaseUseCase<TParams, TResult> {
 
     return dto;
   }
-
-  protected async executeWithErrorHandling<T>(operation: () => Promise<T>): Promise<T> {
-    try {
-      return await operation();
-    } catch (error) {
-      this.logError(error);
-      throw error;
-    }
-  }
-
-  protected logError(error: unknown): void {
-    const message = error instanceof Error ? error.message : "Unknown error";
-    const stack = error instanceof Error ? error.stack : undefined;
-
-    console.error(`[${this.constructor.name}] Error:`, message, stack);
-  }
-
-  protected handleError(error: unknown, defaultMessage = "An unexpected error occurred"): Error {
-    if (error instanceof Error) {
-      return error;
-    }
-
-    return new Error(defaultMessage);
-  }
 }

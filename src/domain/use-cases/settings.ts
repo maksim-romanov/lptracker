@@ -2,6 +2,7 @@ import { ThemeDto } from "domain/dto/settings.dto";
 import type { AppSettings, ThemePreference } from "domain/entities/settings";
 import type { SettingsRepository } from "domain/repositories/settings-repository";
 
+import { LogErrors } from "../decorators";
 import { BaseUseCase } from "./base-use-case";
 
 export class SettingsManagementUseCase extends BaseUseCase<void, void> {
@@ -13,20 +14,18 @@ export class SettingsManagementUseCase extends BaseUseCase<void, void> {
     throw new Error("This use case doesn't implement the abstract execute method");
   }
 
+  @LogErrors()
   async getSettings(): Promise<AppSettings> {
-    return this.executeWithErrorHandling(async () => {
-      return this.repository.getSettings();
-    });
+    return this.repository.getSettings();
   }
 
+  @LogErrors()
   async setTheme(theme: ThemePreference | undefined): Promise<AppSettings> {
     if (theme) {
       await this.validateDto(ThemeDto, { theme });
     }
 
-    return this.executeWithErrorHandling(async () => {
-      await this.repository.setTheme(theme);
-      return this.repository.getSettings();
-    });
+    await this.repository.setTheme(theme);
+    return this.repository.getSettings();
   }
 }
