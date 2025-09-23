@@ -1,7 +1,7 @@
 import { injectable, inject } from "tsyringe";
 import type { Address } from "viem";
 
-import { LogErrors } from "../../../../domain/decorators";
+import { LogErrors, ValidateParams } from "../../../../domain/decorators";
 import { BaseUseCase } from "../../../../domain/use-cases/base-use-case";
 import type { SupportedChainId } from "../../configs";
 import { GetPositionIdsDto } from "../../domain/dto/position.dto";
@@ -19,10 +19,9 @@ export class GetPositionIdsUseCase extends BaseUseCase<GetPositionIdsParams, big
   }
 
   @LogErrors()
+  @ValidateParams(GetPositionIdsDto)
   async execute(params: GetPositionIdsParams): Promise<bigint[]> {
-    const dto = await this.validateDto(GetPositionIdsDto, params);
-
-    return this.positionRepository.getPositionIds(dto.owner, dto.chainId as SupportedChainId);
+    return this.positionRepository.getPositionIds(params.owner, params.chainId);
   }
 }
 

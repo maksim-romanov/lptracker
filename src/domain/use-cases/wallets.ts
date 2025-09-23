@@ -6,7 +6,7 @@ import type { WalletsRepository } from "domain/repositories/wallets-repository";
 import type { AlertService } from "domain/services/alert-service";
 import type { ToastService } from "domain/services/toast-service";
 
-import { LogErrors } from "../decorators";
+import { LogErrors, ValidateParams } from "../decorators";
 import { BaseUseCase } from "./base-use-case";
 
 export class WalletsUseCase extends BaseUseCase<void, void> {
@@ -27,19 +27,19 @@ export class WalletsUseCase extends BaseUseCase<void, void> {
   }
 
   @LogErrors()
+  @ValidateParams(WalletDto)
   async addWallet(wallet: Wallet): Promise<WalletsState> {
-    const validatedWallet = await this.validateDto(WalletDto, wallet);
-
     await this.repository.add({
-      address: validatedWallet.address,
-      name: validatedWallet.name,
+      address: wallet.address,
+      name: wallet.name,
     });
     await this.toastService.showSuccess("Wallet Added", "Wallet has been successfully added");
     return this.repository.getState();
   }
 
-  async removeWallet(address: Address): Promise<WalletsState> {
-    const validatedAddress = await this.validateDto(AddressDto, { address });
+  @ValidateParams(AddressDto)
+  async removeWallet(addressData: { address: Address }): Promise<WalletsState> {
+    const { address } = addressData;
 
     return new Promise((resolve, reject) => {
       this.alertService.show({
@@ -56,7 +56,7 @@ export class WalletsUseCase extends BaseUseCase<void, void> {
             style: "destructive",
             onPress: async () => {
               try {
-                await this.repository.remove(validatedAddress.address);
+                await this.repository.remove(address);
                 const state = await this.repository.getState();
                 resolve(state);
               } catch (error) {
@@ -71,25 +71,16 @@ export class WalletsUseCase extends BaseUseCase<void, void> {
 
   @LogErrors()
   async setActiveWallet(address: Address | undefined): Promise<WalletsState> {
-    if (address) {
-      await this.validateDto(AddressDto, { address });
-    }
-
     await this.repository.setActive(address);
     return this.repository.getState();
   }
 
   @LogErrors()
-  async updateWallet(oldAddress: Address, newWallet: Wallet): Promise<WalletsState> {
-    const validatedData = await this.validateDto(UpdateWalletDto, {
-      oldAddress,
-      newAddress: newWallet.address,
-      name: newWallet.name,
-    });
-
-    await this.repository.updateWallet(validatedData.oldAddress, {
-      address: validatedData.newAddress,
-      name: validatedData.name,
+  @ValidateParams(UpdateWalletDto)
+  async updateWallet(data: { oldAddress: Address; newAddress: Address; name?: string }): Promise<WalletsState> {
+    await this.repository.updateWallet(data.oldAddress, {
+      address: data.newAddress,
+      name: data.name,
     });
     await this.toastService.showSuccess("Wallet Updated", "Wallet has been successfully updated");
     return this.repository.getState();

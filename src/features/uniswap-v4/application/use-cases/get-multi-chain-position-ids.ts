@@ -2,7 +2,7 @@ import { injectable, inject } from "tsyringe";
 import type { Address } from "viem";
 
 import { GetPositionIdsUseCase } from "./get-position-ids";
-import { LogErrors } from "../../../../domain/decorators";
+import { LogErrors, ValidateParams } from "../../../../domain/decorators";
 import { BaseUseCase } from "../../../../domain/use-cases/base-use-case";
 import type { SupportedChainId } from "../../configs";
 import { GetMultiChainPositionIdsDto } from "../../domain/dto/position.dto";
@@ -36,12 +36,8 @@ export class GetMultiChainPositionIdsUseCase extends BaseUseCase<
   }
 
   @LogErrors()
+  @ValidateParams(GetMultiChainPositionIdsDto)
   async execute(params: GetMultiChainPositionIdsParams): Promise<MultiChainPositionIdsResult> {
-    await this.validateDto(GetMultiChainPositionIdsDto, {
-      owner: params.owner,
-      chainIds: params.chainIds,
-    });
-
     // Fetch positions from all chains in parallel
     const chainPromises = params.chainIds.map(async (chainId): Promise<ChainPositionResult> => {
       try {

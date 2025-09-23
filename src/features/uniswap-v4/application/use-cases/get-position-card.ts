@@ -3,7 +3,7 @@ import { Pool } from "@uniswap/v4-sdk";
 import { injectable, inject } from "tsyringe";
 import type { Address } from "viem";
 
-import { LogErrors } from "../../../../domain/decorators";
+import { LogErrors, ValidateParams } from "../../../../domain/decorators";
 import { BaseUseCase } from "../../../../domain/use-cases/base-use-case";
 import type { SupportedChainId } from "../../configs";
 import { GetPositionCardDto } from "../../domain/dto/position.dto";
@@ -29,9 +29,8 @@ export class GetPositionCardUseCase extends BaseUseCase<GetPositionCardParams, P
   }
 
   @LogErrors()
+  @ValidateParams(GetPositionCardDto)
   async execute(params: GetPositionCardParams): Promise<PositionCard> {
-    await this.validateDto(GetPositionCardDto, { tokenId: params.tokenId, chainId: params.chainId });
-
     const [details, stored] = await Promise.all([
       this.positionRepository.getPositionDetails(params.tokenId, params.chainId),
       this.positionRepository.getStoredPositionInfo(params.tokenId, params.chainId),

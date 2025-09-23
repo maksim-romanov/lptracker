@@ -83,7 +83,7 @@ export class WalletsStore {
   async remove(address: Address): Promise<void> {
     this.loading = true;
     try {
-      const state = await this.walletsUseCase.removeWallet(address);
+      const state = await this.walletsUseCase.removeWallet({ address });
       this.updateState(state);
     } catch (error) {
       if (error instanceof Error && error.message !== "User cancelled deletion") {
@@ -113,7 +113,11 @@ export class WalletsStore {
   async update(oldAddress: Address, newWallet: Wallet): Promise<void> {
     this.loading = true;
     try {
-      const state = await this.walletsUseCase.updateWallet(oldAddress, newWallet);
+      const state = await this.walletsUseCase.updateWallet({
+        oldAddress,
+        newAddress: newWallet.address,
+        name: newWallet.name,
+      });
       this.updateState(state);
     } catch (error) {
       console.error("Failed to update wallet:", error);

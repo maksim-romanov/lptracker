@@ -2,7 +2,7 @@ import type { Currency } from "@uniswap/sdk-core";
 import { Pool } from "@uniswap/v4-sdk";
 import { injectable, inject } from "tsyringe";
 
-import { LogErrors } from "../../../../domain/decorators";
+import { LogErrors, ValidateParams } from "../../../../domain/decorators";
 import { BaseUseCase } from "../../../../domain/use-cases/base-use-case";
 import type { SupportedChainId } from "../../configs";
 import { GetPositionSummaryDto } from "../../domain/dto/position.dto";
@@ -28,9 +28,8 @@ export class GetPositionSummaryUseCase extends BaseUseCase<GetPositionSummaryPar
   }
 
   @LogErrors()
+  @ValidateParams(GetPositionSummaryDto)
   async execute(params: GetPositionSummaryParams): Promise<PositionSummary> {
-    await this.validateDto(GetPositionSummaryDto, { tokenId: params.tokenId, chainId: params.chainId });
-
     const [details, stored] = await Promise.all([
       this.positionRepository.getPositionDetails(params.tokenId, params.chainId),
       this.positionRepository.getStoredPositionInfo(params.tokenId, params.chainId),

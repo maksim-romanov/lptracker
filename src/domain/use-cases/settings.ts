@@ -1,4 +1,3 @@
-import { ThemeDto } from "domain/dto/settings.dto";
 import type { AppSettings, ThemePreference } from "domain/entities/settings";
 import type { SettingsRepository } from "domain/repositories/settings-repository";
 
@@ -21,10 +20,6 @@ export class SettingsManagementUseCase extends BaseUseCase<void, void> {
 
   @LogErrors()
   async setTheme(theme: ThemePreference | undefined): Promise<AppSettings> {
-    if (theme) {
-      await this.validateDto(ThemeDto, { theme });
-    }
-
     await this.repository.setTheme(theme);
     return this.repository.getSettings();
   }
