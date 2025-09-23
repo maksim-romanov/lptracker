@@ -1,3 +1,4 @@
+import type { QueryClient } from "@tanstack/react-query";
 import { container } from "tsyringe";
 
 import { BurntAlertRepository } from "data/repositories/burnt-alert-repository";
@@ -18,6 +19,12 @@ import { AppInitializeUseCase } from "domain/use-cases/app-initialize";
 import { ClipboardUseCase } from "domain/use-cases/clipboard";
 import { SettingsManagementUseCase } from "domain/use-cases/settings";
 import { WalletsUseCase } from "domain/use-cases/wallets";
+import { queryClient } from "infrastructure/query";
+
+// Infrastructure bindings
+container.register<QueryClient>("QueryClient", {
+  useValue: queryClient,
+});
 
 // Repository bindings
 container.register<ClipboardRepository>("ClipboardRepository", {
