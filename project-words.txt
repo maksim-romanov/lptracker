@@ -13,3 +13,4 @@ numbro
 xlarge
 swipeable
 viem
+moralis

@@ -40,7 +40,12 @@ export class GetPositionSummaryUseCase extends BaseUseCase<GetPositionSummaryPar
         this.tokenRepository.getTokenMetadata(details.poolKey.currency1, params.chainId),
       ]);
 
-      const { poolId, currency0, currency1 } = this.createPoolTokens(details, currency0Meta, currency1Meta, params.chainId);
+      const { poolId, currency0, currency1 } = this.createPoolTokens(
+        details,
+        currency0Meta,
+        currency1Meta,
+        params.chainId,
+      );
 
       const [slot0, currentFeeGrowth] = await Promise.all([
         this.poolRepository.getSlot0State(poolId, params.chainId),
