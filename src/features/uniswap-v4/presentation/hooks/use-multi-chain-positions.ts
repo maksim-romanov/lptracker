@@ -4,9 +4,11 @@ import type { Address } from "viem";
 
 import { uniswapV4QueryKeys } from "./query-keys";
 import type { QueryError } from "../../../../infrastructure/query/types";
+import { blockchainStore } from "../../../../presentation/stores/blockchain-store";
 import { GetMultiChainPositionIdsUseCase } from "../../application/use-cases/get-multi-chain-position-ids";
-import type { SupportedChainId } from "../../configs";
+import { isUniswapV4SupportedChain, type SupportedChainId } from "../../configs";
 
+// Hook that uses manually specified chain IDs
 export function useMultiChainPositions(owner: Address | null, chainIds: SupportedChainId[]) {
   return useQuery({
     queryKey: uniswapV4QueryKeys.multiChainPositionsList({
@@ -47,4 +49,12 @@ export function useMultiChainPositions(owner: Address | null, chainIds: Supporte
       isPartialSuccess: data.successfulChains.length > 0 && data.failedChains.length > 0,
     }),
   });
+}
+
+// Hook that automatically uses active chains from blockchain store
+export function useMultiChainPositionsAuto(owner: Address | null) {
+  // Filter active chains to only include those supported by Uniswap V4
+  const supportedActiveChains = blockchainStore.activeChainIds.filter(isUniswapV4SupportedChain);
+
+  return useMultiChainPositions(owner, supportedActiveChains);
 }

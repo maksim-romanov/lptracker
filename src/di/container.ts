@@ -1,6 +1,7 @@
 import type { QueryClient } from "@tanstack/react-query";
 import { container } from "tsyringe";
 
+import { BlockchainRepositoryImpl } from "data/repositories/blockchain-repository-impl";
 import { BurntAlertRepository } from "data/repositories/burnt-alert-repository";
 import { BurntToastRepository } from "data/repositories/burnt-toast-repository";
 import { ClipboardRepositoryImpl } from "data/repositories/clipboard-repository-impl";
@@ -10,12 +11,14 @@ import { WalletsRepositoryImpl } from "data/repositories/wallets-repository-impl
 import { NativeAlertService } from "data/services/native-alert-service";
 import { ToastServiceImpl } from "data/services/toast-service-impl";
 import { AlertServiceFactory } from "domain/factories/alert-service-factory";
+import type { BlockchainRepository } from "domain/repositories/blockchain-repository";
 import type { ClipboardRepository } from "domain/repositories/clipboard-repository";
 import type { SettingsRepository } from "domain/repositories/settings-repository";
 import type { WalletsRepository } from "domain/repositories/wallets-repository";
 import type { AlertService } from "domain/services/alert-service";
 import type { ToastService } from "domain/services/toast-service";
 import { AppInitializeUseCase } from "domain/use-cases/app-initialize";
+import { BlockchainManagementUseCase } from "domain/use-cases/blockchain";
 import { ClipboardUseCase } from "domain/use-cases/clipboard";
 import { SettingsManagementUseCase } from "domain/use-cases/settings";
 import { WalletsUseCase } from "domain/use-cases/wallets";
@@ -27,6 +30,9 @@ container.register<QueryClient>("QueryClient", {
 });
 
 // Repository bindings
+container.register<BlockchainRepository>("BlockchainRepository", {
+  useClass: BlockchainRepositoryImpl,
+});
 container.register<ClipboardRepository>("ClipboardRepository", {
   useClass: ClipboardRepositoryImpl,
 });
@@ -66,6 +72,10 @@ container.register(SettingsManagementUseCase, {
 container.register(WalletsUseCase, {
   useFactory: (c) =>
     new WalletsUseCase(c.resolve("WalletsRepository"), c.resolve("ToastService"), c.resolve("AlertService")),
+});
+
+container.register(BlockchainManagementUseCase, {
+  useFactory: (c) => new BlockchainManagementUseCase(c.resolve("BlockchainRepository")),
 });
 
 container.register(AppInitializeUseCase, {

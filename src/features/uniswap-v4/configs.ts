@@ -1,6 +1,6 @@
-import { arbitrum, mainnet } from "viem/chains";
+import { arbitrum } from "viem/chains";
 
-export type ChainId = number;
+import type { ChainId } from "../../domain/entities/blockchain";
 
 export const UNISWAP_V4_CONFIGS = {
   42_161: {
@@ -18,7 +18,8 @@ export const UNISWAP_V4_CONFIGS = {
   },
 } as const;
 
-export const CHAIN_IDS = [arbitrum.id];
+// Chain IDs supported by Uniswap V4
+export const UNISWAP_V4_SUPPORTED_CHAIN_IDS = [arbitrum.id] as const satisfies readonly ChainId[];
 
 export type SupportedChainId = keyof typeof UNISWAP_V4_CONFIGS;
 export type UniswapV4Config = (typeof UNISWAP_V4_CONFIGS)[SupportedChainId];
@@ -33,4 +34,9 @@ export function getChainConfig(chainId: number): UniswapV4Config {
     throw new Error(`Unsupported chain ID: ${chainId}`);
   }
   return UNISWAP_V4_CONFIGS[chainId];
+}
+
+// Type guard function to check if a chain ID is supported by Uniswap V4
+export function isUniswapV4SupportedChain(chainId: ChainId): chainId is SupportedChainId {
+  return (UNISWAP_V4_SUPPORTED_CHAIN_IDS as readonly ChainId[]).includes(chainId);
 }

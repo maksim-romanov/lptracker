@@ -11,10 +11,14 @@ import { StyleSheet } from "react-native-unistyles";
 import { Header } from "components/navigation/glass-header";
 import { configureDI as configureUniswapV4 } from "features/uniswap-v4/config/di-container";
 import { queryClient } from "infrastructure/query";
+import { blockchainStore } from "presentation/stores/blockchain-store";
 import { DarkTheme } from "styles/theme/navigation";
 
 // Initialize feature DI containers
 configureUniswapV4();
+
+// Initialize blockchain store
+blockchainStore.hydrate();
 
 const ModalHeader = () => <Box paddingY={4} />;
 
