@@ -31,7 +31,7 @@ export const LPPositionBlockBase = ({ tokens, chainId, inRange, protocol, feeBps
         <Columns alignY="center">
           <Column flex="fluid">
             <Inline space={2} alignY="center">
-              <TokensImages tokens={tokens} />
+              <TokensImages tokens={tokens} chainId={chainId} />
               <Text type="headline4">{tokens.map((token) => token.symbol).join("/")}</Text>
             </Inline>
           </Column>

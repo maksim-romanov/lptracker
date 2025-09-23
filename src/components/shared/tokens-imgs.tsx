@@ -1,25 +1,47 @@
+import React from "react";
+
+import { Image } from "expo-image";
 import { View } from "react-native";
 import { StyleSheet } from "react-native-unistyles";
 
+import { ChainId } from "domain/entities/blockchain";
+import { useTokenMetadata } from "features/token-metadata/presentation/hooks";
+
 type TProps = {
+  chainId: ChainId;
   tokens: { address: string; symbol?: string }[];
 };
 
-export const TokensImages = function ({ tokens }: TProps) {
+const TokenImage = React.memo(function TokenImage({
+  token,
+  chainId,
+}: {
+  token: { address: string; symbol?: string };
+  chainId: ChainId;
+}) {
+  const { data: metadata, isLoading } = useTokenMetadata(token.address as `0x${string}`, chainId);
+  if (isLoading) return <View style={[styles.image, styles.placeholder]} />;
+  if (!metadata) return <View style={[styles.image, styles.fallback]} />;
+  return <Image contentFit="contain" style={[styles.image]} source={{ uri: metadata.logoUrl }} />;
+});
+
+export const TokensImages = React.memo(function TokensImages({ tokens, chainId }: TProps) {
   styles.useVariants({ size: "sm" });
 
   return (
     <View style={[styles.itemsContainer({ tokens })]}>
       {tokens.map((token, index) => (
-        <View key={token.address} style={[styles.itemContainer, { transform: [{ translateX: index * 21 * -1 }] }]} />
+        <View key={token.address} style={[styles.itemContainer({ index })]}>
+          <TokenImage token={token} chainId={chainId} />
+        </View>
       ))}
     </View>
   );
-};
+});
 
 const SMALL = {
-  SIZE: 45,
-  BORDER_WIDTH: 5,
+  SIZE: 46,
+  BORDER_WIDTH: 4,
 };
 
 const styles = StyleSheet.create((theme) => ({
@@ -40,19 +62,37 @@ const styles = StyleSheet.create((theme) => ({
     },
   }),
 
-  itemContainer: {
+  itemContainer: ({ index }: { index: number }) => ({
     borderColor: theme.colors.surface,
     backgroundColor: theme.colors.surfaceContainerHighest,
 
     variants: {
       size: {
         sm: {
+          borderWidth: SMALL.BORDER_WIDTH,
           width: SMALL.SIZE,
           height: SMALL.SIZE,
           borderRadius: SMALL.SIZE,
-          borderWidth: SMALL.BORDER_WIDTH,
+
+          transform: [{ translateX: index * (SMALL.SIZE / 2) * -1 }],
         },
       },
     },
+  }),
+
+  image: {
+    flex: 1,
+    backgroundColor: theme.colors.surfaceContainerHighest,
+    borderRadius: 9999,
+  },
+
+  placeholder: {
+    backgroundColor: theme.colors.surfaceContainerHigh,
+  },
+
+  fallback: {
+    backgroundColor: theme.colors.primaryContainer,
+    justifyContent: "center",
+    alignItems: "center",
   },
 }));

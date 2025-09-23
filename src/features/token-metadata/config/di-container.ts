@@ -1,5 +1,6 @@
 import { container } from "tsyringe";
 
+import { GetTokenMetadataUseCase } from "../application/use-cases/get-token-metadata";
 import { CachedMetadataRepository } from "../data/repositories/cached-metadata";
 import { CoinGeckoMetadataRepository } from "../data/repositories/coingecko-metadata";
 import { FallbackMetadataRepository } from "../data/repositories/fallback-metadata";
@@ -23,6 +24,11 @@ export function configureDI(): void {
       const fallbackRepository = new FallbackMetadataRepository(providers);
       return new CachedMetadataRepository(fallbackRepository);
     },
+  });
+
+  // Register use case
+  container.register<GetTokenMetadataUseCase>("GetTokenMetadataUseCase", {
+    useClass: GetTokenMetadataUseCase,
   });
 }
 
