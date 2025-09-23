@@ -20,6 +20,14 @@ export const uniswapV4QueryKeys = {
       typeof tokenId === "bigint" ? tokenId.toString() : tokenId,
       chainId,
     ] as const,
+
+  positionCard: (tokenId: string | bigint, chainId: SupportedChainId) =>
+    [
+      ...uniswapV4QueryKeys.positions(),
+      "card",
+      typeof tokenId === "bigint" ? tokenId.toString() : tokenId,
+      chainId,
+    ] as const,
 } as const;
 
 export type UniswapV4QueryKey =

@@ -22,7 +22,7 @@ export const PositionsScreen = observer(function () {
   const activeWallet = walletsStore.activeWallet || null;
   const { data } = useMultiChainPositionsAuto(activeWallet);
 
-  const positionsIds = data?.allPositions || [];
+  const positionsIds = data?.positionsWithChain || [];
 
   return (
     <FlatList
@@ -32,7 +32,7 @@ export const PositionsScreen = observer(function () {
       renderItem={({ item }) => (
         <Box marginX={4}>
           <TouchableOpacity>
-            <LPPositionBlock />
+            <LPPositionBlock {...item} />
           </TouchableOpacity>
         </Box>
       )}

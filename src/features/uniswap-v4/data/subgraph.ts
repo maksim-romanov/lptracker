@@ -7,7 +7,7 @@ import { getSdk } from "./__generated__/subgraph";
 function createSubgraphClient(chainId: SupportedChainId) {
   const config = getChainConfig(chainId);
   return new GraphQLClient(config.subgraphUrl, {
-    headers: { Authorization: "Bearer " + process.env.GRAPH_KEY },
+    headers: { Authorization: "Bearer " + process.env.EXPO_PUBLIC_GRAPH_KEY },
   });
 }
 

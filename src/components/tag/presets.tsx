@@ -1,5 +1,9 @@
+import numbro from "numbro";
 import { withUnistyles } from "react-native-unistyles";
 import tinycolor from "tinycolor2";
+import { arbitrum } from "viem/chains";
+
+import { ChainId } from "domain/entities/blockchain";
 
 import { Tag, TProps } from "./tag";
 
@@ -58,3 +62,44 @@ export const TertiaryTag = withUnistyles(Tag, (theme) => ({
     shadow: theme.colors.tertiaryContainer,
   },
 }));
+
+export const WarningTag = withUnistyles(Tag, (theme) => ({
+  colors: {
+    surface: theme.colors.warningContainer,
+    onSurface: theme.colors.onWarningContainer,
+    outline: theme.colors.warningContainerVariant,
+    shadow: theme.colors.warningContainer,
+  },
+}));
+
+export const ChainTag = function ({ chainId }: { chainId: ChainId }) {
+  if (chainId === arbitrum.id) {
+    return <AdaptiveTag color="#28A0F0">ARB</AdaptiveTag>;
+  }
+
+  return null;
+};
+
+export const InRangeTag = function ({ inRange }: { inRange: boolean }) {
+  if (inRange) return <SuccessTag glow>In Range</SuccessTag>;
+  return <WarningTag glow>Out of Range</WarningTag>;
+};
+
+export const ProtocolTag = function ({ protocol }: { protocol: string }) {
+  if (protocol === "uniswap-v3") return <SecondaryTag glow>V3</SecondaryTag>;
+  if (protocol === "uniswap-v4") return <PrimaryTag glow>V4</PrimaryTag>;
+  return <WarningTag glow>??</WarningTag>;
+};
+
+export const FeeBpsTag = function ({ feeBps }: { feeBps: number }) {
+  return (
+    <SecondaryTag>
+      {numbro(feeBps / 1_000_000).format({
+        output: "percent",
+        mantissa: 2,
+        trimMantissa: true,
+        spaceSeparated: false,
+      })}
+    </SecondaryTag>
+  );
+};

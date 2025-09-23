@@ -17,11 +17,8 @@ export function useMultiChainPositions(owner: Address | null, chainIds: Supporte
     }),
     queryFn: async () => {
       try {
-        console.log("QUERY start 111");
         if (!owner || chainIds.length === 0) throw new Error("Owner and at least one chain ID are required");
-        console.log("QUERY start 222");
         const useCase = container.resolve<GetMultiChainPositionIdsUseCase>("GetMultiChainPositionIdsUseCase");
-        console.log("QUERY start 333");
         return useCase.execute({ owner, chainIds });
       } catch (error) {
         console.error(error);
@@ -45,6 +42,7 @@ export function useMultiChainPositions(owner: Address | null, chainIds: Supporte
 
       // Results broken down by chain
       chainResults: data.chainResults,
+      positionsWithChain: data.positionsWithChain,
 
       // Summary information
       totalCount: data.totalCount,

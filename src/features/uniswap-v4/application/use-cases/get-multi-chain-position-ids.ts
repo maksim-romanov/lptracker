@@ -18,9 +18,15 @@ interface ChainPositionResult {
   error?: Error;
 }
 
+interface PositionWithChainId {
+  positionId: bigint;
+  chainId: SupportedChainId;
+}
+
 interface MultiChainPositionIdsResult {
   allPositions: bigint[];
   chainResults: ChainPositionResult[];
+  positionsWithChain: PositionWithChainId[];
   totalCount: number;
   successfulChains: SupportedChainId[];
   failedChains: SupportedChainId[];
@@ -56,12 +62,16 @@ export class GetMultiChainPositionIdsUseCase extends BaseUseCase<
 
     // Aggregate results
     const allPositions = chainResults.flatMap((result) => result.positions);
+    const positionsWithChain = chainResults.flatMap((result) =>
+      result.positions.map((positionId) => ({ positionId, chainId: result.chainId })),
+    );
     const successfulChains = chainResults.filter((result) => !result.error).map((result) => result.chainId);
     const failedChains = chainResults.filter((result) => result.error).map((result) => result.chainId);
 
     return {
       allPositions,
       chainResults,
+      positionsWithChain,
       totalCount: allPositions.length,
       successfulChains,
       failedChains,

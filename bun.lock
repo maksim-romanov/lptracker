@@ -93,6 +93,7 @@
         "@graphql-codegen/typescript-react-query": "^6.1.1",
         "@types/react": "~19.1.10",
         "@types/tinycolor2": "^1.4.6",
+        "babel-plugin-transform-typescript-metadata": "^0.3.2",
         "dotenv-cli": "^7.4.2",
         "eslint": "^9.25.0",
         "eslint-config-expo": "~10.0.0",
@@ -1479,6 +1480,8 @@
     "babel-plugin-syntax-trailing-function-commas": ["babel-plugin-syntax-trailing-function-commas@7.0.0-beta.0", "", {}, "sha512-Xj9XuRuz3nTSbaTXWv3itLOcxyF4oPD8douBBmj7U9BBC6nEBYfyOJYQMf/8PJAFotC62UY5dFfIGEPr7WswzQ=="],
 
     "babel-plugin-transform-flow-enums": ["babel-plugin-transform-flow-enums@0.0.2", "", { "dependencies": { "@babel/plugin-syntax-flow": "^7.12.1" } }, "sha512-g4aaCrDDOsWjbm0PUUeVnkcVd6AKJsVc/MbnPhEotEpkeJQP6b8nzewohQi7+QS8UyPehOhGWn0nOwjvWpmMvQ=="],
+
+    "babel-plugin-transform-typescript-metadata": ["babel-plugin-transform-typescript-metadata@0.3.2", "", { "dependencies": { "@babel/helper-plugin-utils": "^7.0.0" } }, "sha512-mWEvCQTgXQf48yDqgN7CH50waTyYBeP2Lpqx4nNWab9sxEpdXVeKgfj1qYI2/TgUPQtNFZ85i3PemRtnXVYYJg=="],
 
     "babel-preset-current-node-syntax": ["babel-preset-current-node-syntax@1.2.0", "", { "dependencies": { "@babel/plugin-syntax-async-generators": "^7.8.4", "@babel/plugin-syntax-bigint": "^7.8.3", "@babel/plugin-syntax-class-properties": "^7.12.13", "@babel/plugin-syntax-class-static-block": "^7.14.5", "@babel/plugin-syntax-import-attributes": "^7.24.7", "@babel/plugin-syntax-import-meta": "^7.10.4", "@babel/plugin-syntax-json-strings": "^7.8.3", "@babel/plugin-syntax-logical-assignment-operators": "^7.10.4", "@babel/plugin-syntax-nullish-coalescing-operator": "^7.8.3", "@babel/plugin-syntax-numeric-separator": "^7.10.4", "@babel/plugin-syntax-object-rest-spread": "^7.8.3", "@babel/plugin-syntax-optional-catch-binding": "^7.8.3", "@babel/plugin-syntax-optional-chaining": "^7.8.3", "@babel/plugin-syntax-private-property-in-object": "^7.14.5", "@babel/plugin-syntax-top-level-await": "^7.14.5" }, "peerDependencies": { "@babel/core": "^7.0.0 || ^8.0.0-0" } }, "sha512-E/VlAEzRrsLEb2+dv8yp3bo4scof3l9nR4lrld+Iy5NyVqgVYUJnDAmunkhPMisRI32Qc4iRiz425d8vM++2fg=="],
 

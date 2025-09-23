@@ -3,6 +3,7 @@ module.exports = function (api) {
   return {
     presets: ["babel-preset-expo"],
     plugins: [
+      "babel-plugin-transform-typescript-metadata",
       [
         "react-native-unistyles/plugin",
         {

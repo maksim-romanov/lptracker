@@ -56,6 +56,6 @@ const styles = StyleSheet.create((theme) => ({
   },
 
   text: {
-    textTransform: "capitalize",
+    textTransform: "uppercase",
   },
 }));

@@ -51,4 +51,10 @@ export const ColorsPaletteDark = {
   successContainer: tinycolor("#40B66B").setAlpha(0.2).toRgbString(),
   successContainerVariant: tinycolor("#40B66B").setAlpha(0.3).toRgbString(),
   onSuccessContainer: "#40B66B",
+
+  warning: "#FF9F0A",
+  onWarning: "#FFFFFF",
+  warningContainer: tinycolor("#FF9F0A").setAlpha(0.2).toRgbString(),
+  warningContainerVariant: tinycolor("#FF9F0A").setAlpha(0.3).toRgbString(),
+  onWarningContainer: "#FF9F0A",
 };
