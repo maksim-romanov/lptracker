@@ -10,7 +10,10 @@ export function useTokenMetadata(tokenAddress: Address | undefined, chainId: num
   return useQuery({
     queryKey: tokenMetadataQueryKeys.tokenMetadata(tokenAddress || "0x0", chainId || 0),
     queryFn: async () => {
-      if (!tokenAddress || !chainId) throw new Error("Token address and chain ID are required");
+      if (!tokenAddress || !chainId) {
+        throw new Error("Token address and chain ID are required");
+      }
+
       const useCase = container.resolve<GetTokenMetadataUseCase>("GetTokenMetadataUseCase");
       return useCase.execute({ tokenAddress, chainId });
     },
@@ -20,8 +23,10 @@ export function useTokenMetadata(tokenAddress: Address | undefined, chainId: num
     refetchOnWindowFocus: false,
     retry: (failureCount, error: QueryError) => {
       // Don't retry on 404 (token not found) or authentication errors
-      if (error?.status === 404 || error?.status === 401) return false;
-      return failureCount < 2; // Limited retries for metadata
+      if (error?.status === 404 || error?.status === 401) {
+        return false;
+      }
+      return failureCount < 2;
     },
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });

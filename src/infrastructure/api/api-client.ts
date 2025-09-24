@@ -32,6 +32,19 @@ export class ApiClient {
     }
   }
 
+  async head(path: string, options?: { params?: Record<string, any> }): Promise<void> {
+    try {
+      await $fetch(`${this.config.baseURL}${path}`, {
+        method: "HEAD",
+        headers: this.config.headers,
+        timeout: this.config.timeout,
+        params: options?.params,
+      });
+    } catch (error: any) {
+      throw this.handleError(error);
+    }
+  }
+
   private handleError(error: any): ApiError {
     const apiError = new Error(error.message || "API request failed") as ApiError;
     apiError.status = error.status || error.statusCode;

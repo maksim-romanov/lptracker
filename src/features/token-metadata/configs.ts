@@ -1,6 +1,11 @@
 import type { MetadataProviderConfig } from "./domain/types";
 
 export const METADATA_PROVIDER_CONFIGS: Record<string, MetadataProviderConfig> = {
+  trustwallet: {
+    name: "Trust Wallet",
+    baseUrl: "https://raw.githubusercontent.com/trustwallet/assets/master",
+    // No rate limits for GitHub raw content
+  },
   coingecko: {
     name: "CoinGecko",
     baseUrl: "https://api.coingecko.com/api/v3",

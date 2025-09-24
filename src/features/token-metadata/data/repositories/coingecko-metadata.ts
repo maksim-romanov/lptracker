@@ -45,18 +45,26 @@ export class CoinGeckoMetadataRepository implements MetadataProviderRepository {
   }
 
   async getTokenMetadata(tokenAddress: Address, chainId: number): Promise<TokenMetadata> {
+    const startTime = Date.now();
+    console.log(`[CoinGecko] Fetching metadata for ${tokenAddress} on chain ${chainId}`);
+
     if (!this.isChainSupported(chainId)) {
+      console.error(`[CoinGecko] Chain ${chainId} not supported`);
       throw new Error(`Chain ID ${chainId} not supported by CoinGecko`);
     }
 
     const platformId = this.getChainPlatformId(chainId);
 
     try {
-      const data = await this.apiClient.get<CoinGeckoTokenResponse>(
-        `/coins/${platformId}/contract/${tokenAddress.toLowerCase()}`,
-      );
+      const endpoint = `/coins/${platformId}/contract/${tokenAddress.toLowerCase()}`;
+      console.log(`[CoinGecko] API request: ${endpoint}`);
+
+      const data = await this.apiClient.get<CoinGeckoTokenResponse>(endpoint);
+
+      const requestTime = Date.now() - startTime;
 
       if (!data.name || !data.symbol) {
+        console.warn(`[CoinGecko] No metadata found for ${tokenAddress} (${requestTime}ms)`);
         throw new Error(`Token metadata not found for ${tokenAddress} on chain ${chainId}`);
       }
 
@@ -64,7 +72,7 @@ export class CoinGeckoMetadataRepository implements MetadataProviderRepository {
       const platformData = data.detail_platforms[platformId];
       const decimals = platformData?.decimal_place || 18;
 
-      return {
+      const metadata = {
         address: tokenAddress,
         chainId,
         name: data.name,
@@ -76,13 +84,27 @@ export class CoinGeckoMetadataRepository implements MetadataProviderRepository {
         timestamp: new Date(),
         source: this.config.name,
       };
+
+      console.log(
+        `[CoinGecko] SUCCESS: ${metadata.symbol} (${metadata.name}) logoUrl=${metadata.logoUrl ? "available" : "none"} website=${metadata.website ? "available" : "none"} (${requestTime}ms)`,
+      );
+      return metadata;
     } catch (error: any) {
+      const requestTime = Date.now() - startTime;
+
       if (error.status === 429) {
+        console.error(`[CoinGecko] Rate limit exceeded (${requestTime}ms)`);
         throw new Error("CoinGecko rate limit exceeded");
       }
       if (error.status === 404) {
+        console.warn(`[CoinGecko] Token not found: ${tokenAddress} (${requestTime}ms)`);
         throw new Error(`Token not found: ${tokenAddress} on chain ${chainId}`);
       }
+
+      console.error(
+        `[CoinGecko] API error (status ${error.status}) for ${tokenAddress} (${requestTime}ms):`,
+        error.message,
+      );
       throw error;
     }
   }

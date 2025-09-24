@@ -20,6 +20,8 @@ const TokenImage = React.memo(function TokenImage({
   token: { address: string; symbol?: string };
   chainId: ChainId;
 }) {
+  styles.useVariants({ size: "sm" });
+
   if (!isAddress(token.address)) throw new Error("Invalid token address");
   const { data: metadata, isLoading } = useTokenMetadata(token.address, chainId);
   if (isLoading) return <View style={[styles.image, styles.placeholder]} />;
@@ -71,7 +73,7 @@ const styles = StyleSheet.create((theme) => ({
     variants: {
       size: {
         sm: {
-          borderWidth: SMALL.BORDER_WIDTH,
+          borderWidth: SMALL.BORDER_WIDTH / 2,
           width: SMALL.SIZE,
           height: SMALL.SIZE,
           borderRadius: SMALL.SIZE,
@@ -86,6 +88,15 @@ const styles = StyleSheet.create((theme) => ({
     flex: 1,
     backgroundColor: theme.colors.surfaceContainerHighest,
     borderRadius: 9999,
+    borderColor: theme.colors.outline,
+
+    variants: {
+      size: {
+        sm: {
+          borderWidth: SMALL.BORDER_WIDTH / 2,
+        },
+      },
+    },
   },
 
   placeholder: {
