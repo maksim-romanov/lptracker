@@ -16,6 +16,7 @@ export function toCurrencyAmount(currency: Currency, rawAmount: bigint): Currenc
   return CurrencyAmount.fromRawAmount(currency, rawAmount.toString());
 }
 
+// DO NOT USE THIS FUNCTION
 export function formatPriceAtTick(base: Currency, quote: Currency, tick: number, significant: number = 6): string {
   const sqrtRatioX96 = TickMath.getSqrtRatioAtTick(tick);
   const Q192 = JSBI.exponentiate(JSBI.BigInt(2), JSBI.BigInt(192));
@@ -26,6 +27,7 @@ export function formatPriceAtTick(base: Currency, quote: Currency, tick: number,
   return `${priceQuotePerBase.toSignificant(significant)} ${symbolQuote} = 1 ${symbolBase}`.trim();
 }
 
+// DO NOT USE THIS FUNCTION
 export function formatPriceRange(
   base: Currency,
   quote: Currency,
@@ -45,6 +47,7 @@ export function getPriceAtTick(base: Currency, quote: Currency, tick: number): P
   return new Price(base, quote, Q192.toString(), ratioX192.toString());
 }
 
+// DO NOT USE THIS FUNCTION
 export function formatReversedPriceAtTick(
   base: Currency,
   quote: Currency,
@@ -57,6 +60,7 @@ export function formatReversedPriceAtTick(
   return `${price.toFixed(fixedDecimals)} ${symbolBase} = 1 ${symbolQuote}`.trim();
 }
 
+// DO NOT USE THIS FUNCTION
 export function formatReversedPriceRange(
   base: Currency,
   quote: Currency,

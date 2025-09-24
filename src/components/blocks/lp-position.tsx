@@ -22,9 +22,20 @@ export interface BaseLPPositionCardProps {
   chainId: ChainId;
   protocol: SupportedProtocol;
   feeBps: number;
+
+  totalValue: number;
+  unclaimedValue: number;
 }
 
-export const LPPositionBlockBase = ({ tokens, chainId, inRange, protocol, feeBps }: BaseLPPositionCardProps) => {
+export const LPPositionBlockBase = ({
+  tokens,
+  chainId,
+  inRange,
+  protocol,
+  feeBps,
+  totalValue,
+  unclaimedValue,
+}: BaseLPPositionCardProps) => {
   return (
     <Box style={styles.container} rowGap={8}>
       <Stack space={4}>
@@ -56,7 +67,7 @@ export const LPPositionBlockBase = ({ tokens, chainId, inRange, protocol, feeBps
             </Text>
 
             <Text type="headline4" numberOfLines={1} style={{ flexShrink: 1 }}>
-              {numbro(1234980).formatCurrency({
+              {numbro(totalValue).formatCurrency({
                 average: true,
                 mantissa: 2,
                 trimMantissa: true,
@@ -73,7 +84,7 @@ export const LPPositionBlockBase = ({ tokens, chainId, inRange, protocol, feeBps
             </Text>
 
             <Text type="headline6" numberOfLines={1}>
-              {numbro(100.1).formatCurrency({
+              {numbro(unclaimedValue).formatCurrency({
                 average: true,
                 mantissa: 2,
                 trimMantissa: true,
@@ -93,7 +104,7 @@ export const LPPositionBlockBase = ({ tokens, chainId, inRange, protocol, feeBps
               <TrendUpIcon />
 
               <Text type="headline6" numberOfLines={1}>
-                {numbro(0.0312).format({
+                {numbro(0.2323).format({
                   output: "percent",
                   mantissa: 2,
                   trimMantissa: true,

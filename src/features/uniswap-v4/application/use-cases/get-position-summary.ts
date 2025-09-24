@@ -81,6 +81,7 @@ export class GetPositionSummaryUseCase extends BaseUseCase<GetPositionSummaryPar
       unclaimed,
       tokenAmounts,
       tokens: { currency0, currency1 },
+      currentTick: slot0.tickCurrent,
     };
   }
 

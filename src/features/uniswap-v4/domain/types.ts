@@ -50,6 +50,7 @@ export interface PositionSummary {
   unclaimed: { token0: bigint; token1: bigint };
   tokenAmounts: TokenAmounts;
   tokens: TokenMetadata;
+  currentTick: number;
 }
 
 export interface PositionCard {

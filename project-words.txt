@@ -15,3 +15,4 @@ swipeable
 viem
 moralis
 uniswap
+jsbi
