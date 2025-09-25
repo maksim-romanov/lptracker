@@ -46,8 +46,8 @@ async function testChainlinkPrice() {
       chainId: 42161,
     },
     {
-      name: "Fallback test (any token on Arbitrum)",
-      tokenAddress: "0x1234567890123456789012345678901234567890" as Address, // Random address - should get fallback feed
+      name: "Unsupported token test (should fail)",
+      tokenAddress: "0x1234567890123456789012345678901234567890" as Address, // Random address - should fail
       chainId: 42161,
     },
   ];
@@ -58,7 +58,7 @@ async function testChainlinkPrice() {
     console.log(`   Chain: ${testCase.chainId}`);
 
     try {
-      const price = await useCase.getTokenPrice(testCase.tokenAddress, testCase.chainId);
+      const price = await useCase.execute({ tokenAddress: testCase.tokenAddress, chainId: testCase.chainId });
 
       console.log("✅ Price fetched successfully!");
       console.log(`   Feed: ${price.feedName}`);
@@ -82,7 +82,7 @@ async function testChainlinkPrice() {
   // Test with unsupported chain
   console.log("🧪 Testing unsupported chain...");
   try {
-    await useCase.getTokenPrice("0x1234567890123456789012345678901234567890" as Address, 1); // Ethereum not supported anymore
+    await useCase.execute({ tokenAddress: "0x1234567890123456789012345678901234567890" as Address, chainId: 1 }); // Ethereum not supported anymore
     console.log("❌ Should have thrown error for unsupported chain");
   } catch (error) {
     console.log("✅ Correctly threw error for unsupported chain:", error instanceof Error ? error.message : error);

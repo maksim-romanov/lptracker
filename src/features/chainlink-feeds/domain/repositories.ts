@@ -1,4 +1,5 @@
 import type { Address } from "viem";
+
 import type { ChainlinkFeedsData, ChainlinkPrice, FeedLookupResult } from "./types";
 
 export interface FeedsMetadataRepository {
@@ -8,7 +9,10 @@ export interface FeedsMetadataRepository {
 }
 
 export interface BlockchainPriceRepository {
-  getLatestPrice(feedAddress: Address, chainId: number): Promise<{
+  getLatestPrice(
+    feedAddress: Address,
+    chainId: number,
+  ): Promise<{
     price: bigint;
     decimals: number;
     roundId: bigint;
@@ -16,4 +20,3 @@ export interface BlockchainPriceRepository {
   }>;
   isContractValid(feedAddress: Address, chainId: number): Promise<boolean>;
 }
-

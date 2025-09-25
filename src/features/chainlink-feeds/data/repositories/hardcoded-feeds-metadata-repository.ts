@@ -57,12 +57,12 @@ export class HardcodedFeedsMetadataRepository implements FeedsMetadataRepository
       return null;
     }
 
-    // Token address to feed name mapping for Arbitrum
+    // Token address to feed name mapping for Arbitrum (all lowercase for consistent lookup)
     const tokenMapping: Record<string, string> = {
       // Arbitrum token addresses to feed names
       "0x82af49447d8a07e3bd95bd0d56f35241523fbab1": "ETH/USD", // ARB_WETH
       "0xaf88d065e77c8cc2239327c5edb3a432268e5831": "USDC/USD", // ARB_USDC
-      "0x62edc0692BD897D2295872a9FFCac5425011c661": "GMX/USD", // ARB_GMX
+      "0x62edc0692bd897d2295872a9ffcac5425011c661": "GMX/USD", // ARB_GMX
       // Add more mappings as needed
     };
 
@@ -70,7 +70,7 @@ export class HardcodedFeedsMetadataRepository implements FeedsMetadataRepository
 
     // If we have specific mapping, use it
     if (targetFeedName) {
-      const feed = networkData.feeds.find(feed => feed.name === targetFeedName);
+      const feed = networkData.feeds.find((feed) => feed.name === targetFeedName);
       if (feed) {
         return {
           feed,
@@ -80,21 +80,8 @@ export class HardcodedFeedsMetadataRepository implements FeedsMetadataRepository
       }
     }
 
-    // Fallback: return any active feed for testing
-    // This allows testing with any token address
-    const fallbackFeed = networkData.feeds.find(feed =>
-      feed.feedCategory !== "hidden" &&
-      feed.feedCategory !== "deprecating"
-    );
-
-    if (fallbackFeed) {
-      return {
-        feed: fallbackFeed,
-        networkName,
-        rpcUrl: networkData.baseUrl,
-      };
-    }
-
+    // No fallback - if we don't have a specific mapping for the token, return null
+    // This ensures we only return accurate price data for supported tokens
     return null;
   }
 

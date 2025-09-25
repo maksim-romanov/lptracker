@@ -27,7 +27,7 @@ export function useChainlinkPrice(
     queryKey: chainlinkQueryKeys.price(tokenAddress, chainId),
     queryFn: async () => {
       const useCase = container.resolve(GetChainlinkPriceUseCase);
-      return await useCase.getTokenPrice(tokenAddress, chainId);
+      return await useCase.execute({ tokenAddress, chainId });
     },
     enabled: enabled && !!tokenAddress && !!chainId,
     refetchInterval,

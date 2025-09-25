@@ -1,4 +1,5 @@
 import { injectable } from "tsyringe";
+
 import type { FeedsCache, CacheEntry } from "../../domain/types";
 
 @injectable()
@@ -64,7 +65,7 @@ export class MemoryFeedsCache implements FeedsCache {
       }
     }
 
-    keysToDelete.forEach(key => this.cache.delete(key));
+    keysToDelete.forEach((key) => this.cache.delete(key));
   }
 
   size(): number {

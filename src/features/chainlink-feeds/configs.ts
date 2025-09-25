@@ -14,6 +14,8 @@ export const CHAINLINK_SUPPORTED_CHAINS = {
 
 export type SupportedChainId = keyof typeof CHAINLINK_SUPPORTED_CHAINS;
 
+export const CHAINLINK_SUPPORTED_CHAIN_IDS = Object.keys(CHAINLINK_SUPPORTED_CHAINS).map(Number);
+
 export const CHAINLINK_CONFIG = {
   // Using hardcoded feeds for now - no external URL needed
   cache: {
