@@ -1,9 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { container } from "tsyringe";
 
+import { GetPositionCardUseCase } from "features/uniswap-v4/application/use-cases/get-position-card";
+
 import { uniswapV4QueryKeys } from "./query-keys";
 import type { QueryError } from "../../../../infrastructure/query/types";
-import { GetPositionSummaryUseCase } from "../../application/use-cases/get-position-summary";
 import type { SupportedChainId } from "../../configs";
 
 export function usePositionCard(tokenId: bigint, chainId: SupportedChainId) {
@@ -11,7 +12,7 @@ export function usePositionCard(tokenId: bigint, chainId: SupportedChainId) {
     queryKey: uniswapV4QueryKeys.positionCard(tokenId?.toString() || "", chainId),
     queryFn: async () => {
       if (!tokenId || !chainId) throw new Error("TokenId and chainId are required");
-      const useCase = container.resolve(GetPositionSummaryUseCase);
+      const useCase = container.resolve(GetPositionCardUseCase);
       return useCase.execute({ tokenId, chainId });
     },
     staleTime: 30 * 1000, // 30 seconds - prices and fees change frequently

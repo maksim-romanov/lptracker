@@ -27,19 +27,20 @@ export const withUniswapV4Provider = (Component: React.ComponentType<TUniswapV4L
     // todo: add skeleton loader
     if (!res.data) return <ActivityIndicator />;
 
-    const tokens = [
-      { address: res.data.details.poolKey.currency0, symbol: res.data.tokens.currency0.symbol },
-      { address: res.data.details.poolKey.currency1, symbol: res.data.tokens.currency1.symbol },
-    ];
+    const { tokens, feeBps, poolKey, currentTick, tickRange } = res.data;
+    const inRange = currentTick >= tickRange.lower && currentTick <= tickRange.upper;
 
     return (
       <Component
-        inRange
+        inRange={inRange}
         protocol="uniswap-v4"
-        feeBps={res.data.details.poolKey.fee}
-        hook={res.data.details.poolKey.hooks}
+        feeBps={feeBps}
+        hook={poolKey.hooks}
         chainId={data.chainId}
-        tokens={tokens}
+        tokens={[
+          { address: poolKey.currency0, symbol: tokens.currency0.symbol },
+          { address: poolKey.currency1, symbol: tokens.currency1.symbol },
+        ]}
       />
     );
   };
