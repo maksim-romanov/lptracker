@@ -1,14 +1,38 @@
 import { createPublicClient, http, type PublicClient } from "viem";
-import { arbitrum } from "viem/chains";
+import { mainnet, bsc, polygon, avalanche, arbitrum, optimism } from "viem/chains";
 
-// For now we focus on Arbitrum as it has proven working feeds
-export type SupportedChainId = 42161;
+import type { SupportedChainId } from "../configs";
 
 export const CHAINLINK_CHAIN_CONFIGS = {
+  1: {
+    chainId: mainnet.id,
+    name: "ethereum" as const,
+    viemChain: mainnet,
+  },
+  56: {
+    chainId: bsc.id,
+    name: "bsc" as const,
+    viemChain: bsc,
+  },
+  137: {
+    chainId: polygon.id,
+    name: "polygon" as const,
+    viemChain: polygon,
+  },
+  43114: {
+    chainId: avalanche.id,
+    name: "avalanche" as const,
+    viemChain: avalanche,
+  },
   42161: {
     chainId: arbitrum.id,
     name: "arbitrum" as const,
     viemChain: arbitrum,
+  },
+  10: {
+    chainId: optimism.id,
+    name: "optimism" as const,
+    viemChain: optimism,
   },
 } as const;
 

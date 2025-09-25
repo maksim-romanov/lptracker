@@ -60,13 +60,7 @@ async function testChainlinkPrice() {
     try {
       const price = await useCase.execute({ tokenAddress: testCase.tokenAddress, chainId: testCase.chainId });
 
-      console.log("✅ Price fetched successfully!");
-      console.log(`   Feed: ${price.feedName}`);
-      console.log(`   Price: $${price.price.toFixed(8)}`); // Show more decimals to see exact price
-      console.log(`   Decimals: ${price.decimals}`);
-      console.log(`   Updated: ${price.updatedAt.toISOString()}`);
-      console.log(`   Feed Address: ${price.feedAddress}`);
-      console.log(`   Source: ${price.source}\n`);
+      console.log("===>", price);
     } catch (error) {
       console.error(`❌ Error fetching price for ${testCase.name}:`);
       if (error instanceof Error) {
@@ -77,15 +71,6 @@ async function testChainlinkPrice() {
         console.error(`   Unknown error\n`);
       }
     }
-  }
-
-  // Test with unsupported chain
-  console.log("🧪 Testing unsupported chain...");
-  try {
-    await useCase.execute({ tokenAddress: "0x1234567890123456789012345678901234567890" as Address, chainId: 1 }); // Ethereum not supported anymore
-    console.log("❌ Should have thrown error for unsupported chain");
-  } catch (error) {
-    console.log("✅ Correctly threw error for unsupported chain:", error instanceof Error ? error.message : error);
   }
 
   console.log("\n🏁 Test completed!");

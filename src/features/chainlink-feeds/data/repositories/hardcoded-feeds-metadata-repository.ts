@@ -1,11 +1,17 @@
-import { injectable } from "tsyringe";
+import { inject, injectable } from "tsyringe";
 import type { Address } from "viem";
 
+import type { Logger, LoggerFactory } from "../../../../infrastructure/logging";
 import type { FeedsMetadataRepository } from "../../domain/repositories";
 import type { ChainlinkFeedsData, FeedLookupResult } from "../../domain/types";
 
 @injectable()
 export class HardcodedFeedsMetadataRepository implements FeedsMetadataRepository {
+  private readonly logger: Logger;
+
+  constructor(@inject("ChainlinkLoggerFactory") loggerFactory: LoggerFactory) {
+    this.logger = loggerFactory.createLogger("HardcodedFeedsMetadata");
+  }
   // Hardcoded proven working feeds from uniswap-v4/test-price.ts
   private readonly hardcodedFeeds: ChainlinkFeedsData = {
     arbitrum: {
@@ -87,6 +93,6 @@ export class HardcodedFeedsMetadataRepository implements FeedsMetadataRepository
 
   async refreshFeeds(): Promise<void> {
     // Nothing to refresh for hardcoded data
-    console.log("Using hardcoded feeds - no refresh needed");
+    this.logger.info("Using hardcoded feeds - no refresh needed");
   }
 }

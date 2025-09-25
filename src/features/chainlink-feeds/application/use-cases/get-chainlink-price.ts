@@ -1,8 +1,9 @@
-import { injectable } from "tsyringe";
+import { inject, injectable } from "tsyringe";
 import type { Address } from "viem";
 
 import { LogErrors, ValidateParams } from "../../../../domain/decorators";
 import { BaseUseCase } from "../../../../domain/use-cases/base-use-case";
+import type { Logger, LoggerFactory } from "../../../../infrastructure/logging";
 import { GetChainlinkPriceDto } from "../../domain/dto/chainlink-price.dto";
 import type { FeedsMetadataRepository, BlockchainPriceRepository } from "../../domain/repositories";
 import type { ChainlinkPrice } from "../../domain/types";
@@ -14,11 +15,15 @@ interface GetChainlinkPriceParams {
 
 @injectable()
 export class GetChainlinkPriceUseCase extends BaseUseCase<GetChainlinkPriceParams, ChainlinkPrice> {
+  private readonly logger: Logger;
+
   constructor(
     private readonly feedsMetadataRepository: FeedsMetadataRepository,
     private readonly blockchainPriceRepository: BlockchainPriceRepository,
+    @inject("ChainlinkLoggerFactory") loggerFactory: LoggerFactory,
   ) {
     super();
+    this.logger = loggerFactory.createLogger("GetChainlinkPrice");
   }
 
   @LogErrors()
@@ -31,7 +36,7 @@ export class GetChainlinkPriceUseCase extends BaseUseCase<GetChainlinkPriceParam
       throw new Error(`No Chainlink feed found for token ${params.tokenAddress} on chain ${params.chainId}`);
     }
 
-    console.log(`🔍 Attempting to get price from feed: ${feedLookup.feed.name} at ${feedLookup.feed.proxyAddress}`);
+    this.logger.info(`Attempting to get price from feed: ${feedLookup.feed.name} at ${feedLookup.feed.proxyAddress}`);
 
     // Get the latest price data using chainId instead of rpcUrl
     const priceData = await this.blockchainPriceRepository.getLatestPrice(feedLookup.feed.proxyAddress, params.chainId);
