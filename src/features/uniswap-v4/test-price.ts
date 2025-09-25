@@ -37,7 +37,10 @@ async function readPrice(client: ReturnType<typeof makePublicClient>, feed: `0x$
       readonly [bigint, bigint, bigint, bigint, bigint]
     >,
   ]);
+
   const answer = latest[1];
+
+  console.log("decimals: ", Number(answer) / 10 ** Number(decimals), decimals);
   return Number(answer) / 10 ** Number(decimals);
 }
 
@@ -102,6 +105,7 @@ async function readRegistryPrice(
       args: [base, quote],
     }) as Promise<readonly [bigint, bigint, bigint, bigint, bigint]>,
   ]);
+  console.log("decimals: ", decimals);
   const answer = latest[1];
   return Number(answer) / 10 ** Number(decimals);
 }
@@ -126,6 +130,7 @@ async function main() {
     }) as Promise<readonly [bigint, bigint, bigint, bigint, bigint]>,
   ]);
 
+  console.log("decimals: ", decimals);
   const answer = latest[1];
   const price = Number(answer) / 10 ** Number(decimals);
 

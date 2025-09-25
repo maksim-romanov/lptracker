@@ -24,6 +24,12 @@ import { SettingsManagementUseCase } from "domain/use-cases/settings";
 import { WalletsUseCase } from "domain/use-cases/wallets";
 import { queryClient } from "infrastructure/query";
 
+// Feature modules
+import { configureChainlinkDI } from "features/chainlink-feeds/config/di-container";
+
+// Initialize feature modules
+configureChainlinkDI();
+
 // Infrastructure bindings
 container.register<QueryClient>("QueryClient", {
   useValue: queryClient,
