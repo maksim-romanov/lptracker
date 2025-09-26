@@ -1,0 +1,25 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "target": "es2020",
+    "lib": ["ES2020"],
+    "types": ["@types/bun"],
+    "skipLibCheck": true,
+    "noEmit": true,
+    "moduleResolution": "bundler",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "baseUrl": "../src",
+    "paths": {
+      "components/*": ["components/*"],
+      "screens/*": ["screens/*"],
+      "assets/*": ["../assets/*"],
+      "data/*": ["data/*"],
+      "domain/*": ["domain/*"],
+      "lib/*": ["lib/*"],
+      "features/*": ["features/*"]
+    }
+  },
+  "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules"]
+}

@@ -8,7 +8,6 @@ import { StyleSheet, withUnistyles } from "react-native-unistyles";
 import { SupportedProtocol } from "components/position-cards";
 import { TokensImages } from "components/shared/tokens-imgs";
 import { ChainId } from "domain/entities/blockchain";
-import { useTokenPrices } from "features/token-prices/presentation/hooks";
 
 import { ChainTag, FeeBpsTag, InRangeTag, ProtocolTag } from "../tag/presets";
 import { Text } from "../typography/text";
@@ -27,11 +26,8 @@ export interface BaseLPPositionCardProps {
   protocol: SupportedProtocol;
   feeBps: number;
 
-  // totalValueTokens: (Token & { amountUSD: number })[];
-  // unclaimedFeesTokens: (Token & { amount: bigint; amountUSD: number })[];
-
-  totalValue?: number;
-  unclaimedFees?: number;
+  totalValue: number;
+  unclaimedFees: number;
 }
 
 export const LPPositionBlockBase = function (props: BaseLPPositionCardProps) {
@@ -66,12 +62,7 @@ export const LPPositionBlockBase = function (props: BaseLPPositionCardProps) {
             </Text>
 
             <Text type="headline4" numberOfLines={1} style={{ flexShrink: 1 }}>
-              {numbro(totalValue).formatCurrency({
-                average: true,
-                mantissa: 2,
-                trimMantissa: true,
-                spaceSeparated: false,
-              })}
+              {numbro(totalValue).formatCurrency({ average: true, mantissa: 2 })}
             </Text>
           </Box>
         </Column>
@@ -83,12 +74,7 @@ export const LPPositionBlockBase = function (props: BaseLPPositionCardProps) {
             </Text>
 
             <Text type="headline6" numberOfLines={1}>
-              {numbro(unclaimedFees).formatCurrency({
-                average: true,
-                mantissa: 2,
-                trimMantissa: true,
-                spaceSeparated: false,
-              })}
+              {numbro(unclaimedFees).formatCurrency({ average: false, mantissa: 2 })}
             </Text>
           </Box>
         </Column>
