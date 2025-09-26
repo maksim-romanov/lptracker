@@ -10,6 +10,7 @@ import { StyleSheet } from "react-native-unistyles";
 
 import { Header } from "components/navigation/glass-header";
 import { configureDI as configureTokenMetadata } from "features/token-metadata/config/di-container";
+import { configureTokenPricesDI } from "features/token-prices/config/di-container";
 import { configureDI as configureUniswapV4 } from "features/uniswap-v4/config/di-container";
 import { queryClient } from "infrastructure/query";
 import { blockchainStore } from "presentation/stores/blockchain-store";
@@ -18,6 +19,7 @@ import { DarkTheme } from "styles/theme/navigation";
 // Initialize feature DI containers
 configureTokenMetadata();
 configureUniswapV4();
+configureTokenPricesDI();
 
 // Initialize blockchain store
 blockchainStore.hydrate();

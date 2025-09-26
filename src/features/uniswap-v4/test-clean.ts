@@ -1,5 +1,6 @@
 import "reflect-metadata";
 
+import { Currency, CurrencyAmount } from "@uniswap/sdk-core";
 import { Address } from "viem";
 import * as chains from "viem/chains";
 
@@ -30,11 +31,20 @@ console.log("IDs:", positionIds.map(String));
 
 // demo below: card + detailed
 
+const formatRawAmount = (currency: Currency, amount: bigint) => {
+  return Number(CurrencyAmount.fromRawAmount(currency, amount.toString()).toSignificant(currency.decimals));
+};
+
 console.log("------------");
 if (positionIds.length > 0) {
   const card = await getPositionCardUseCase.execute({ tokenId: positionIds[0], chainId });
-  console.log("Position Card:", card);
+  // console.log("Position Card:", card);
+  console.log("Position Card total t0:", formatRawAmount(card.tokens.currency0, card.tokenAmounts.amount0));
+  console.log("Position Card total t1:", formatRawAmount(card.tokens.currency1, card.tokenAmounts.amount1));
 
-  const summary = await getPositionSummaryUseCase.execute({ tokenId: positionIds[0], chainId });
-  console.log("Position Summary:", summary);
+  console.log("Position unclaimed t0:", formatRawAmount(card.tokens.currency0, card.unclaimed.token0));
+  console.log("Position unclaimed t1:", formatRawAmount(card.tokens.currency1, card.unclaimed.token1));
+
+  // const summary = await getPositionSummaryUseCase.execute({ tokenId: positionIds[0], chainId });
+  // console.log("Position Summary:", summary);
 }
