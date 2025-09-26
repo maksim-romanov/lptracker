@@ -16,6 +16,7 @@ export const CHAINLINK_SUPPORTED_CHAIN_IDS = Object.keys(CHAINLINK_SUPPORTED_CHA
 export const CHAINLINK_TOKEN_FEED_MAPPING: Record<SupportedChainId, Record<string, string>> = {
   1: {
     // Ethereum mainnet tokens (examples - add more as needed)
+    "0x0000000000000000000000000000000000000000": "ETH/USD", // ETH
     "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2": "ETH/USD", // WETH
     "0xa0b86a33e6411cb66cf0e2b6aad00a0f0b8b2b4f": "BTC/USD", // WBTC
     "0xa0b73e1ff0b80914ab6fe0444e65848c4c34450b": "USDC/USD", // USDC
@@ -37,6 +38,7 @@ export const CHAINLINK_TOKEN_FEED_MAPPING: Record<SupportedChainId, Record<strin
   },
   42161: {
     // Arbitrum tokens
+    "0x0000000000000000000000000000000000000000": "ETH/USD", // ETH
     "0x82af49447d8a07e3bd95bd0d56f35241523fbab1": "ETH/USD", // WETH
     "0xaf88d065e77c8cc2239327c5edb3a432268e5831": "USDC/USD", // USDC
     "0x62edc0692bd897d2295872a9ffcac5425011c661": "GMX/USD", // GMX

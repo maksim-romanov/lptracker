@@ -61,4 +61,7 @@ export interface PositionCard {
   feeBps: number;
   unclaimed: { token0: bigint; token1: bigint };
   tokenAmounts: TokenAmounts;
+
+  // totalValue: { address: Address; symbol?: string; amount: bigint }[];
+  // unclaimedFees: { address: Address; symbol?: string; amount: bigint }[];
 }

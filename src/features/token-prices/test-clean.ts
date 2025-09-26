@@ -3,7 +3,7 @@ import "reflect-metadata";
 import { Address } from "viem";
 
 import { GetTokenPriceUseCase } from "./application/use-cases/get-token-price";
-import { configureDI, container } from "./config/di-container";
+import { configureTokenPricesDI, container } from "./config/di-container";
 
 // USDC on Arbitrum
 const tokenAddress = "0xaf88d065e77c8cC2239327C5EDb3A432268e5831" as Address;
@@ -14,7 +14,7 @@ console.log(`Token: ${tokenAddress}`);
 console.log(`Chain: ${chainId}`);
 console.log("");
 
-configureDI();
+configureTokenPricesDI();
 
 const getTokenPriceUseCase = container.resolve(GetTokenPriceUseCase);
 
