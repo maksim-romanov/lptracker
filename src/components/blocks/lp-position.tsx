@@ -1,3 +1,5 @@
+import React from "react";
+
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { Box, Column, Columns, Inline, Stack } from "@grapp/stacks";
 import numbro from "numbro";
@@ -16,30 +18,35 @@ const TrendUpIcon = withUnistyles(FontAwesome6, (theme) => ({
   name: "arrow-trend-up",
 }));
 
+type Token = { address: string; symbol?: string };
 export interface BaseLPPositionCardProps {
-  tokens: { address: string; symbol?: string }[];
+  tokens: Token[];
   inRange: boolean;
   chainId: ChainId;
   protocol: SupportedProtocol;
   feeBps: number;
+
+  totalValue: number;
+  unclaimedFees: number;
+  apr?: number; // Optional APR field
 }
 
-export const LPPositionBlockBase = ({ tokens, chainId, inRange, protocol, feeBps }: BaseLPPositionCardProps) => {
+export const LPPositionBlockBase = function (props: BaseLPPositionCardProps) {
+  const { tokens, chainId, inRange, protocol, feeBps, totalValue, unclaimedFees, apr } = props;
+
   return (
     <Box style={styles.container} rowGap={8}>
       <Stack space={4}>
-        <Columns alignY="center">
-          <Column flex="fluid">
-            <Inline space={2} alignY="center">
-              <TokensImages tokens={tokens} chainId={chainId} />
-              <Text type="headline4">{tokens.map((token) => token.symbol).join("/")}</Text>
-            </Inline>
-          </Column>
+        <Inline alignY="center">
+          <Inline space={4} alignY="center" flex="fluid">
+            <TokensImages tokens={tokens} chainId={chainId} />
+            <Text type="headline4">{tokens.map((token) => token.symbol).join("/")}</Text>
+          </Inline>
 
-          <Column flex="content">
+          <Box marginRight={2}>
             <InRangeTag inRange={inRange} />
-          </Column>
-        </Columns>
+          </Box>
+        </Inline>
 
         <Inline space={2}>
           <ChainTag chainId={chainId} />
@@ -56,12 +63,7 @@ export const LPPositionBlockBase = ({ tokens, chainId, inRange, protocol, feeBps
             </Text>
 
             <Text type="headline4" numberOfLines={1} style={{ flexShrink: 1 }}>
-              {numbro(1234980).formatCurrency({
-                average: true,
-                mantissa: 2,
-                trimMantissa: true,
-                spaceSeparated: false,
-              })}
+              {numbro(totalValue).formatCurrency({ average: true, mantissa: 2 })}
             </Text>
           </Box>
         </Column>
@@ -73,12 +75,7 @@ export const LPPositionBlockBase = ({ tokens, chainId, inRange, protocol, feeBps
             </Text>
 
             <Text type="headline6" numberOfLines={1}>
-              {numbro(100.1).formatCurrency({
-                average: true,
-                mantissa: 2,
-                trimMantissa: true,
-                spaceSeparated: false,
-              })}
+              {numbro(unclaimedFees).formatCurrency({ average: false, mantissa: 2 })}
             </Text>
           </Box>
         </Column>
@@ -93,12 +90,14 @@ export const LPPositionBlockBase = ({ tokens, chainId, inRange, protocol, feeBps
               <TrendUpIcon />
 
               <Text type="headline6" numberOfLines={1}>
-                {numbro(0.0312).format({
-                  output: "percent",
-                  mantissa: 2,
-                  trimMantissa: true,
-                  spaceSeparated: false,
-                })}
+                {apr !== undefined && apr !== null
+                  ? numbro(apr).format({
+                      output: "percent",
+                      mantissa: 2,
+                      trimMantissa: true,
+                      spaceSeparated: false,
+                    })
+                  : "—"}
               </Text>
             </Inline>
           </Box>

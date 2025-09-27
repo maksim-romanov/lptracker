@@ -31,10 +31,8 @@ export class GetPositionCardUseCase extends BaseUseCase<GetPositionCardParams, P
   @LogErrors()
   @ValidateParams(GetPositionCardDto)
   async execute(params: GetPositionCardParams): Promise<PositionCard> {
-    const [details, stored] = await Promise.all([
-      this.positionRepository.getPositionDetails(params.tokenId, params.chainId),
-      this.positionRepository.getStoredPositionInfo(params.tokenId, params.chainId),
-    ]);
+    // Use consolidated method to reduce RPC calls from 5 to 3
+    const { details, stored } = await this.positionRepository.getFullPositionData(params.tokenId, params.chainId);
 
     const [currency0Meta, currency1Meta] = await Promise.all([
       this.tokenRepository.getTokenMetadata(details.poolKey.currency0, params.chainId),

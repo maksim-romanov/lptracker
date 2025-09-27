@@ -3,7 +3,7 @@ import type { Address } from "viem";
 
 import type { SupportedChainId } from "../../configs";
 import type { PositionRepository } from "../../domain/repositories";
-import type { PositionDetails, StoredPositionInfo } from "../../domain/types";
+import type { PositionDetails, StoredPositionInfo, FullPositionData } from "../../domain/types";
 import { getPositionIds } from "../subgraph";
 import { ViemPositionRepository } from "./viem-position";
 
@@ -21,5 +21,9 @@ export class SubgraphPositionRepository implements PositionRepository {
 
   async getStoredPositionInfo(tokenId: bigint, chainId: SupportedChainId): Promise<StoredPositionInfo> {
     return this.viemRepository.getStoredPositionInfo(tokenId, chainId);
+  }
+
+  async getFullPositionData(tokenId: bigint, chainId: SupportedChainId): Promise<FullPositionData> {
+    return this.viemRepository.getFullPositionData(tokenId, chainId);
   }
 }

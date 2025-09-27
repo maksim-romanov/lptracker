@@ -1,6 +1,11 @@
 import type { PriceProviderConfig } from "./domain/types";
 
 export const PRICE_PROVIDER_CONFIGS: Record<string, PriceProviderConfig> = {
+  chainlink: {
+    name: "Chainlink",
+    baseUrl: "", // No external API - uses blockchain directly
+    // No rate limits - reads directly from blockchain
+  },
   coingecko: {
     name: "CoinGecko",
     baseUrl: "https://api.coingecko.com/api/v3",

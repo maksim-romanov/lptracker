@@ -1,12 +1,13 @@
 import type { Address } from "viem";
 
 import type { SupportedChainId } from "../configs";
-import type { PositionDetails, Slot0State, StoredPositionInfo, FeeGrowthSnapshot } from "./types";
+import type { PositionDetails, Slot0State, StoredPositionInfo, FeeGrowthSnapshot, FullPositionData } from "./types";
 
 export interface PositionRepository {
   getPositionIds(owner: Address, chainId: SupportedChainId): Promise<bigint[]>;
   getPositionDetails(tokenId: bigint, chainId: SupportedChainId): Promise<PositionDetails>;
   getStoredPositionInfo(tokenId: bigint, chainId: SupportedChainId): Promise<StoredPositionInfo>;
+  getFullPositionData(tokenId: bigint, chainId: SupportedChainId): Promise<FullPositionData>;
 }
 
 export interface PoolRepository {
