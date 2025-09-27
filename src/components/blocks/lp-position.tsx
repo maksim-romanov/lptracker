@@ -28,10 +28,11 @@ export interface BaseLPPositionCardProps {
 
   totalValue: number;
   unclaimedFees: number;
+  apr?: number; // Optional APR field
 }
 
 export const LPPositionBlockBase = function (props: BaseLPPositionCardProps) {
-  const { tokens, chainId, inRange, protocol, feeBps, totalValue, unclaimedFees } = props;
+  const { tokens, chainId, inRange, protocol, feeBps, totalValue, unclaimedFees, apr } = props;
 
   return (
     <Box style={styles.container} rowGap={8}>
@@ -89,12 +90,14 @@ export const LPPositionBlockBase = function (props: BaseLPPositionCardProps) {
               <TrendUpIcon />
 
               <Text type="headline6" numberOfLines={1}>
-                {numbro(0.0312).format({
-                  output: "percent",
-                  mantissa: 2,
-                  trimMantissa: true,
-                  spaceSeparated: false,
-                })}
+                {apr !== undefined && apr !== null
+                  ? numbro(apr).format({
+                      output: "percent",
+                      mantissa: 2,
+                      trimMantissa: true,
+                      spaceSeparated: false,
+                    })
+                  : "—"}
               </Text>
             </Inline>
           </Box>

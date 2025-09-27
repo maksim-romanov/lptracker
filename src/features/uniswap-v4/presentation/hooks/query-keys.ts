@@ -28,6 +28,14 @@ export const uniswapV4QueryKeys = {
       typeof tokenId === "bigint" ? tokenId.toString() : tokenId,
       chainId,
     ] as const,
+
+  positionApr: (tokenId: string | bigint, chainId: SupportedChainId) =>
+    [
+      ...uniswapV4QueryKeys.positions(),
+      "apr",
+      typeof tokenId === "bigint" ? tokenId.toString() : tokenId,
+      chainId,
+    ] as const,
 } as const;
 
 export type UniswapV4QueryKey =
@@ -35,4 +43,6 @@ export type UniswapV4QueryKey =
   | ReturnType<typeof uniswapV4QueryKeys.positions>
   | ReturnType<typeof uniswapV4QueryKeys.positionsList>
   | ReturnType<typeof uniswapV4QueryKeys.multiChainPositionsList>
-  | ReturnType<typeof uniswapV4QueryKeys.positionDetail>;
+  | ReturnType<typeof uniswapV4QueryKeys.positionDetail>
+  | ReturnType<typeof uniswapV4QueryKeys.positionCard>
+  | ReturnType<typeof uniswapV4QueryKeys.positionApr>;

@@ -9,6 +9,7 @@ import { LPPositionBlockBase } from "../../../../components/blocks/lp-position";
 import { positionCardRegistry } from "../../../../components/position-cards/registry";
 import type { UniswapV4PositionData } from "../../../../components/position-cards/types";
 import { PositionPriceCalculator } from "../../domain/services/position-price-calculator";
+import { usePositionApr } from "../hooks/use-position-apr";
 import { usePositionCard } from "../hooks/use-position-card";
 
 interface UniswapV4CardProps {
@@ -23,6 +24,7 @@ const UniswapV4PositionCardComponent = function (props: UniswapV4CardProps) {
   if (!isUniswapV4SupportedChain(chainId)) throw new Error("Unsupported chain ID is not supported");
 
   const { data } = usePositionCard(positionId, chainId);
+  const { preferredApr, isLoading: isLoadingApr } = usePositionApr(positionId, chainId);
 
   const prices = useTokenPrices([
     { tokenAddress: data?.poolKey.currency0, chainId },
@@ -68,6 +70,7 @@ const UniswapV4PositionCardComponent = function (props: UniswapV4CardProps) {
       feeBps={feeBps}
       totalValue={totalValueAmount}
       unclaimedFees={unclaimedFeesAmount}
+      apr={isLoadingApr ? undefined : preferredApr}
     />
   );
 };

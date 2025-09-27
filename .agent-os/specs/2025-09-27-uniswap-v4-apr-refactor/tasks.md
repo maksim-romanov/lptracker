@@ -32,19 +32,19 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [x] 3.6 Add cleanup system for snapshots older than 30 days
   - [x] 3.7 Verify all historical data operations and tests pass
 
-- [ ] 4. Create APR Use Case following Clean Architecture
-  - [ ] 4.1 Write tests for CalculatePositionAprUseCase with mocked dependencies
-  - [ ] 4.2 Implement CalculatePositionAprUseCase with dependency injection
-  - [ ] 4.3 Add orchestration logic for data sources and APR calculation
-  - [ ] 4.4 Integrate with existing position repository and price services
-  - [ ] 4.5 Add comprehensive error handling and validation
-  - [ ] 4.6 Verify all use case tests pass
+- [x] 4. Create APR Use Case following Clean Architecture
+  - [x] 4.1 Write tests for CalculatePositionAprUseCase with mocked dependencies
+  - [x] 4.2 Implement CalculatePositionAprUseCase with dependency injection
+  - [x] 4.3 Add orchestration logic for data sources and APR calculation
+  - [x] 4.4 Integrate with existing position repository and price services
+  - [x] 4.5 Add comprehensive error handling and validation
+  - [x] 4.6 Verify all use case tests pass
 
-- [ ] 5. Integrate APR into UI components and create comprehensive testing
-  - [ ] 5.1 Write tests for usePositionApr hook and PositionCard APR display
-  - [ ] 5.2 Extend PositionCard interface to include APR field
-  - [ ] 5.3 Create usePositionApr() hook with loading states and error handling
-  - [ ] 5.4 Update PositionCard component to display APR values
-  - [ ] 5.5 Create comprehensive test-apr.ts file for end-to-end validation
-  - [ ] 5.6 Add integration tests with real Arbitrum position data
-  - [ ] 5.7 Verify all UI components and integration tests pass
+- [x] 5. Integrate APR into UI components and create comprehensive testing
+  - [x] 5.1 Write tests for usePositionApr hook and PositionCard APR display
+  - [x] 5.2 Extend PositionCard interface to include APR field
+  - [x] 5.3 Create usePositionApr() hook with loading states and error handling
+  - [x] 5.4 Update PositionCard component to display APR values
+  - [x] 5.5 Create comprehensive test-apr.ts file for end-to-end validation
+  - [x] 5.6 Add integration tests with real Arbitrum position data
+  - [x] 5.7 Verify all UI components and integration tests pass
