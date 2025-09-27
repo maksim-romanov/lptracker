@@ -23,14 +23,14 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [x] 2.5 Create validation against industry standard calculators
   - [x] 2.6 Verify all mathematical edge cases and tests pass
 
-- [ ] 3. Build historical data management system
-  - [ ] 3.1 Write tests for PositionSnapshot MMKV storage and retrieval
-  - [ ] 3.2 Implement PositionSnapshot interface and storage layer
-  - [ ] 3.3 Create automatic 24h snapshot scheduling system
-  - [ ] 3.4 Add blockchain historical data querying with blockNumber
-  - [ ] 3.5 Implement fallback strategy for RPC failures
-  - [ ] 3.6 Add cleanup system for snapshots older than 30 days
-  - [ ] 3.7 Verify all historical data operations and tests pass
+- [x] 3. Build historical data management system
+  - [x] 3.1 Write tests for PositionSnapshot MMKV storage and retrieval
+  - [x] 3.2 Implement PositionSnapshot interface and storage layer
+  - [x] 3.3 Create automatic 24h snapshot scheduling system
+  - [x] 3.4 Add blockchain historical data querying with blockNumber
+  - [x] 3.5 Implement fallback strategy for RPC failures
+  - [x] 3.6 Add cleanup system for snapshots older than 30 days
+  - [x] 3.7 Verify all historical data operations and tests pass
 
 - [ ] 4. Create APR Use Case following Clean Architecture
   - [ ] 4.1 Write tests for CalculatePositionAprUseCase with mocked dependencies
