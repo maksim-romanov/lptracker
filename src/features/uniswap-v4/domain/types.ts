@@ -65,3 +65,50 @@ export interface PositionCard {
   // totalValue: { address: Address; symbol?: string; amount: bigint }[];
   // unclaimedFees: { address: Address; symbol?: string; amount: bigint }[];
 }
+
+export interface FullPositionData {
+  details: PositionDetails;
+  stored: StoredPositionInfo;
+}
+
+export interface PositionSnapshot {
+  timestamp: number;
+  blockNumber: number;
+  feeGrowthInside0X128: bigint;
+  feeGrowthInside1X128: bigint;
+  positionValueUsd: number;
+}
+
+export interface AprCalculationInput {
+  currentData: {
+    feeGrowthInside0X128: bigint;
+    feeGrowthInside1X128: bigint;
+    timestamp: number;
+    positionValueUsd: number;
+  };
+  historicalData: {
+    feeGrowthInside0X128: bigint;
+    feeGrowthInside1X128: bigint;
+    timestamp: number;
+    positionValueUsd: number;
+  };
+  liquidity: bigint;
+  token0Decimals: number;
+  token1Decimals: number;
+  token0PriceUsd: number;
+  token1PriceUsd: number;
+}
+
+export interface AprResult {
+  apr: number; // Annual percentage rate as a number (e.g., 15.5 for 15.5%)
+  feesEarnedUsd: number; // Total fees earned in USD over the period
+  period: '24h' | '7d' | '30d';
+  annualizationFactor: number; // Factor used to annualize (e.g., 365 for daily)
+}
+
+export interface AprCalculationResult {
+  apr24h?: AprResult;
+  apr7d?: AprResult;
+  apr30d?: AprResult;
+  error?: string;
+}

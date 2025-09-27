@@ -4,7 +4,7 @@ import type { Address } from "viem";
 
 import { getChainConfig, type SupportedChainId } from "../../configs";
 import type { PositionRepository } from "../../domain/repositories";
-import type { PositionDetails, StoredPositionInfo } from "../../domain/types";
+import type { PositionDetails, StoredPositionInfo, FullPositionData } from "../../domain/types";
 import { createCurrency } from "../../utils/currency";
 import { POSITION_MANAGER_ABI, STATE_VIEW_ABI } from "../abis";
 import { makePublicClient } from "../viem";
@@ -67,6 +67,127 @@ export class ViemPositionRepository implements PositionRepository {
     })) as readonly [bigint, bigint, bigint];
 
     return { liquidity, feeGrowthInside0X128, feeGrowthInside1X128 };
+  }
+
+  async getFullPositionData(tokenId: bigint, chainId: SupportedChainId): Promise<FullPositionData> {
+    const config = getChainConfig(chainId);
+    const client = makePublicClient(chainId);
+
+    try {
+      // Step 1: Get position details (2 RPC calls: getPoolAndPositionInfo + getPositionLiquidity)
+      const [poolKey, infoValue] = (await this.retryRpcCall(
+        () =>
+          client.readContract({
+            address: config.positionManagerAddress,
+            abi: POSITION_MANAGER_ABI,
+            functionName: "getPoolAndPositionInfo",
+            args: [tokenId],
+          }),
+        `getPoolAndPositionInfo for token ${tokenId}`,
+      )) as readonly [
+        { currency0: Address; currency1: Address; fee: number; tickSpacing: number; hooks: Address },
+        bigint,
+      ];
+
+      const liquidity = (await this.retryRpcCall(
+        () =>
+          client.readContract({
+            address: config.positionManagerAddress,
+            abi: POSITION_MANAGER_ABI,
+            functionName: "getPositionLiquidity",
+            args: [tokenId],
+          }),
+        `getPositionLiquidity for token ${tokenId}`,
+      )) as bigint;
+
+      const { tickLower, tickUpper } = this.decodePositionInfo(infoValue);
+
+      const details: PositionDetails = {
+        tokenId,
+        tickLower,
+        tickUpper,
+        liquidity,
+        poolKey,
+      };
+
+      // Step 2: Get stored position info (1 RPC call: getPositionInfo)
+      // Calculate poolId using the details we just fetched
+      const poolId = this.getPoolId(details, chainId);
+      const salt = `0x${tokenId.toString(16).padStart(64, "0")}` as `0x${string}`;
+
+      const [storedLiquidity, feeGrowthInside0X128, feeGrowthInside1X128] = (await this.retryRpcCall(
+        () =>
+          client.readContract({
+            address: config.stateViewAddress,
+            abi: STATE_VIEW_ABI,
+            functionName: "getPositionInfo",
+            args: [poolId, config.positionManagerAddress, tickLower, tickUpper, salt],
+          }),
+        `getPositionInfo for token ${tokenId}`,
+      )) as readonly [bigint, bigint, bigint];
+
+      const stored: StoredPositionInfo = {
+        liquidity: storedLiquidity,
+        feeGrowthInside0X128,
+        feeGrowthInside1X128,
+      };
+
+      return {
+        details,
+        stored,
+      };
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      throw new Error(`Failed to fetch full position data for token ${tokenId} on chain ${chainId}: ${errorMessage}`);
+    }
+  }
+
+  private async retryRpcCall<T>(
+    rpcCall: () => Promise<T>,
+    operationName: string,
+    maxRetries: number = 3,
+    baseDelay: number = 1000,
+  ): Promise<T> {
+    let lastError: Error;
+
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        return await rpcCall();
+      } catch (error) {
+        lastError = error instanceof Error ? error : new Error(String(error));
+
+        // Don't retry if it's a contract-level error (position not found, etc.)
+        if (this.isNonRetryableError(lastError)) {
+          throw lastError;
+        }
+
+        if (attempt === maxRetries) {
+          throw new Error(`${operationName} failed after ${maxRetries} attempts: ${lastError.message}`);
+        }
+
+        // Exponential backoff with jitter
+        const delay = baseDelay * Math.pow(2, attempt - 1) + Math.random() * 1000;
+        await new Promise((resolve) => setTimeout(resolve, delay));
+      }
+    }
+
+    throw lastError!;
+  }
+
+  private isNonRetryableError(error: Error): boolean {
+    const message = error.message.toLowerCase();
+
+    // These errors indicate the position doesn't exist or invalid parameters
+    const nonRetryablePatterns = [
+      "position not found",
+      "invalid token id",
+      "execution reverted",
+      "call exception",
+      "invalid address",
+      "missing signature",
+    ];
+
+    return nonRetryablePatterns.some((pattern) => message.includes(pattern));
   }
 
   private decodePositionInfo(value: bigint): { tickLower: number; tickUpper: number } {

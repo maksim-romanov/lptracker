@@ -1,0 +1,3 @@
+# Spec Summary (Lite)
+
+Optimize Uniswap V4 repository architecture by eliminating redundant RPC calls and implement production-ready APR calculation with industry-standard mathematical accuracy. The refactor consolidates data fetching methods and adds comprehensive historical tracking through MMKV snapshots and blockchain queries. Users will see accurate APR values displayed in position cards using Clean Architecture principles.
