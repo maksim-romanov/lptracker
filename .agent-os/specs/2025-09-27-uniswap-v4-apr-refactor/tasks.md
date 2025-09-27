@@ -15,13 +15,13 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [x] 1.5 Verify performance improvement and RPC call reduction
   - [x] 1.6 Verify all tests pass
 
-- [ ] 2. Implement APR calculation domain service and mathematics
-  - [ ] 2.1 Write tests for AprCalculatorService with known mathematical values
-  - [ ] 2.2 Create AprCalculatorService with safe 256-bit arithmetic
-  - [ ] 2.3 Implement overflow handling for feeGrowthInside calculations
-  - [ ] 2.4 Add APR calculation formulas for multiple time windows (24h, 7d, 30d)
-  - [ ] 2.5 Create validation against industry standard calculators
-  - [ ] 2.6 Verify all mathematical edge cases and tests pass
+- [x] 2. Implement APR calculation domain service and mathematics
+  - [x] 2.1 Write tests for AprCalculatorService with known mathematical values
+  - [x] 2.2 Create AprCalculatorService with safe 256-bit arithmetic
+  - [x] 2.3 Implement overflow handling for feeGrowthInside calculations
+  - [x] 2.4 Add APR calculation formulas for multiple time windows (24h, 7d, 30d)
+  - [x] 2.5 Create validation against industry standard calculators
+  - [x] 2.6 Verify all mathematical edge cases and tests pass
 
 - [ ] 3. Build historical data management system
   - [ ] 3.1 Write tests for PositionSnapshot MMKV storage and retrieval
