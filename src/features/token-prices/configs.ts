@@ -1,3 +1,4 @@
+import { arbitrum, mainnet } from "viem/chains";
 import type { PriceProviderConfig } from "./domain/types";
 
 export const PRICE_PROVIDER_CONFIGS: Record<string, PriceProviderConfig> = {
@@ -34,6 +35,12 @@ export const PRICE_PROVIDER_CONFIGS: Record<string, PriceProviderConfig> = {
 };
 
 // Supported chain IDs
-export const SUPPORTED_CHAIN_IDS = [1, 42161, 137, 10, 8453] as const;
+export const SUPPORTED_CHAIN_IDS = [
+  mainnet.id,
+  arbitrum.id,
+  137,
+  10,
+  8453
+] as const;
 
 export type SupportedChainId = (typeof SUPPORTED_CHAIN_IDS)[number];

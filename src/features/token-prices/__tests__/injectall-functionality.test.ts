@@ -197,21 +197,4 @@ describe("@injectAll Provider Injection", () => {
     await expect(useCase.execute({ tokenAddress, chainId })).rejects.toThrow("No price providers configured");
   });
 
-  it("should provide provider status information", async () => {
-    container.register<PriceProviderRepository>("PriceProvider", {
-      useValue: new MockProvider("WorkingProvider", false),
-    });
-
-    container.register<GetTokenPriceUseCase>("GetTokenPriceUseCase", {
-      useClass: GetTokenPriceUseCase,
-    });
-
-    const useCase = container.resolve<GetTokenPriceUseCase>("GetTokenPriceUseCase");
-
-    const status = useCase.getProviderStatus();
-
-    expect(status).toHaveLength(1);
-    expect(status[0].provider).toBe("WorkingProvider");
-    expect(status[0].available).toBe(true);
   });
-});

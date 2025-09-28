@@ -1,7 +1,6 @@
 import { container } from "tsyringe";
 
 import { DefaultLoggerFactory, type LoggerConfig, type LoggerFactory } from "../../../infrastructure/logging";
-import { GetChainlinkPriceUseCase } from "../../chainlink-feeds/application/use-cases/get-chainlink-price";
 import { configureChainlinkDI } from "../../chainlink-feeds/config/di-container";
 import { GetTokenPriceUseCase } from "../application/use-cases/get-token-price";
 import { ChainlinkPriceRepository } from "../data/repositories/chainlink-price";
@@ -27,38 +26,17 @@ export function configureTokenPricesDI(): void {
   };
 
   // Register logger factory for token-prices
-  container.register<LoggerFactory>("LoggerFactory", {
-    useFactory: () => new DefaultLoggerFactory(loggerConfig),
-  });
+  container.register<LoggerFactory>("LoggerFactory", { useFactory: () => new DefaultLoggerFactory(loggerConfig) });
 
   // Register all providers under the same "PriceProvider" token for @injectAll
-  // Order matters: DeFiLlama first for speed, then Chainlink for security
-  container.register<PriceProviderRepository>("PriceProvider", {
-    useClass: DeFiLlamaPriceRepository,
-  });
-
-  container.register<PriceProviderRepository>("PriceProvider", {
-    useFactory: () => {
-      const chainlinkUseCase = container.resolve(GetChainlinkPriceUseCase);
-      const loggerFactory = container.resolve<LoggerFactory>("LoggerFactory");
-      return new ChainlinkPriceRepository(chainlinkUseCase, loggerFactory);
-    },
-  });
-
-  container.register<PriceProviderRepository>("PriceProvider", {
-    useClass: CoinGeckoPriceRepository,
-  });
-
-  container.register<PriceProviderRepository>("PriceProvider", {
-    useClass: MoralisPriceRepository,
-  });
+  // Order matters: DeFiLlama, Chainlink
+  container.register<PriceProviderRepository>("PriceProvider", { useClass: DeFiLlamaPriceRepository });
+  container.register<PriceProviderRepository>("PriceProvider", { useClass: ChainlinkPriceRepository });
+  container.register<PriceProviderRepository>("PriceProvider", { useClass: CoinGeckoPriceRepository });
+  container.register<PriceProviderRepository>("PriceProvider", { useClass: MoralisPriceRepository });
 
   // Register use case
-  container.register<GetTokenPriceUseCase>("GetTokenPriceUseCase", {
-    useFactory: () => {
-      return new GetTokenPriceUseCase();
-    },
-  });
+  container.register<GetTokenPriceUseCase>("GetTokenPriceUseCase", { useClass: GetTokenPriceUseCase });
 }
 
 export { container };
