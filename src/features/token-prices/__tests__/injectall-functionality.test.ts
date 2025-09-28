@@ -7,6 +7,7 @@ import type { Address } from "viem";
 
 import type { TokenPrice } from "../domain/types";
 import type { PriceProviderRepository } from "../domain/repositories";
+import { GetTokenPriceUseCase } from "../application/use-cases/get-token-price";
 
 // Mock providers for testing @injectAll functionality
 class MockProvider implements PriceProviderRepository {
@@ -43,35 +44,6 @@ class MockProvider implements PriceProviderRepository {
   }
 }
 
-// Test FallbackPriceRepository that will be modified to use @injectAll
-class TestFallbackRepository {
-  constructor(private readonly providers: PriceProviderRepository[]) {
-    // No sorting needed - order is determined by DI registration
-  }
-
-  async getPrice(tokenAddress: Address, chainId: number): Promise<TokenPrice> {
-    for (const provider of this.providers) {
-      try {
-        const isAvailable = await provider.isAvailable();
-        if (!isAvailable) {
-          continue;
-        }
-
-        const price = await provider.getTokenPrice(tokenAddress, chainId);
-        return price;
-      } catch (error) {
-        continue;
-      }
-    }
-
-    throw new Error("All providers failed");
-  }
-
-  getProviders(): PriceProviderRepository[] {
-    return this.providers;
-  }
-}
-
 describe("@injectAll Provider Injection", () => {
   beforeEach(() => {
     // Clear container before each test
@@ -103,7 +75,7 @@ describe("@injectAll Provider Injection", () => {
     ]);
   });
 
-  it("should maintain registration order when injected", () => {
+  it("should work with GetTokenPriceUseCase using @injectAll", async () => {
     // Register providers in specific order
     container.register<PriceProviderRepository>("PriceProvider", {
       useValue: new MockProvider("PrimaryProvider"),
@@ -113,52 +85,25 @@ describe("@injectAll Provider Injection", () => {
       useValue: new MockProvider("SecondaryProvider"),
     });
 
-    container.register<PriceProviderRepository>("PriceProvider", {
-      useValue: new MockProvider("TertiaryProvider"),
+    // Register the use case
+    container.register<GetTokenPriceUseCase>("GetTokenPriceUseCase", {
+      useClass: GetTokenPriceUseCase,
     });
 
-    // Resolve and create test repository
-    const providers = container.resolveAll<PriceProviderRepository>("PriceProvider");
-    const repository = new TestFallbackRepository(providers);
-
-    // Check that providers maintain registration order
-    const orderedProviders = repository.getProviders();
-    expect(orderedProviders.map(p => p.getProviderName())).toEqual([
-      "PrimaryProvider",
-      "SecondaryProvider",
-      "TertiaryProvider"
-    ]);
-  });
-
-  it("should work with empty provider list", () => {
-    // Don't register any providers, should return empty array or handle gracefully
-    try {
-      const providers = container.resolveAll<PriceProviderRepository>("PriceProvider");
-      expect(providers).toHaveLength(0);
-    } catch (error) {
-      // If it throws, that's also acceptable behavior for empty provider list
-      expect(error).toBeInstanceOf(Error);
-    }
-  });
-
-  it("should maintain provider functionality after injection", async () => {
-    container.register<PriceProviderRepository>("PriceProvider", {
-      useValue: new MockProvider("WorkingProvider"),
-    });
-
-    const providers = container.resolveAll<PriceProviderRepository>("PriceProvider");
-    const repository = new TestFallbackRepository(providers);
+    // Resolve the use case - it should receive all providers via @injectAll
+    const useCase = container.resolve<GetTokenPriceUseCase>("GetTokenPriceUseCase");
 
     const tokenAddress = "0x0000000000000000000000000000000000000000" as Address;
     const chainId = 1;
 
-    const price = await repository.getPrice(tokenAddress, chainId);
+    const price = await useCase.execute({ tokenAddress, chainId });
 
-    expect(price.source).toBe("WorkingProvider");
+    // Should use the first (primary) provider
+    expect(price.source).toBe("PrimaryProvider");
     expect(price.price).toBe(100);
   });
 
-  it("should handle fallback behavior with multiple providers", async () => {
+  it("should handle fallback behavior with GetTokenPriceUseCase", async () => {
     // Register failing provider and working provider
     container.register<PriceProviderRepository>("PriceProvider", {
       useValue: new MockProvider("FailingProvider", true), // shouldFail = true
@@ -168,13 +113,17 @@ describe("@injectAll Provider Injection", () => {
       useValue: new MockProvider("WorkingProvider", false), // shouldFail = false
     });
 
-    const providers = container.resolveAll<PriceProviderRepository>("PriceProvider");
-    const repository = new TestFallbackRepository(providers);
+    // Register the use case
+    container.register<GetTokenPriceUseCase>("GetTokenPriceUseCase", {
+      useClass: GetTokenPriceUseCase,
+    });
+
+    const useCase = container.resolve<GetTokenPriceUseCase>("GetTokenPriceUseCase");
 
     const tokenAddress = "0x0000000000000000000000000000000000000000" as Address;
     const chainId = 1;
 
-    const price = await repository.getPrice(tokenAddress, chainId);
+    const price = await useCase.execute({ tokenAddress, chainId });
 
     // Should fallback to the working provider
     expect(price.source).toBe("WorkingProvider");
@@ -190,13 +139,17 @@ describe("@injectAll Provider Injection", () => {
       useValue: new MockProvider("FailingProvider2", true),
     });
 
-    const providers = container.resolveAll<PriceProviderRepository>("PriceProvider");
-    const repository = new TestFallbackRepository(providers);
+    // Register the use case
+    container.register<GetTokenPriceUseCase>("GetTokenPriceUseCase", {
+      useClass: GetTokenPriceUseCase,
+    });
+
+    const useCase = container.resolve<GetTokenPriceUseCase>("GetTokenPriceUseCase");
 
     const tokenAddress = "0x0000000000000000000000000000000000000000" as Address;
     const chainId = 1;
 
-    await expect(repository.getPrice(tokenAddress, chainId)).rejects.toThrow("All providers failed");
+    await expect(useCase.execute({ tokenAddress, chainId })).rejects.toThrow("All price providers failed");
   });
 
   it("should respect provider availability checks", async () => {
@@ -214,16 +167,51 @@ describe("@injectAll Provider Injection", () => {
       useValue: workingProvider,
     });
 
-    const providers = container.resolveAll<PriceProviderRepository>("PriceProvider");
-    const repository = new TestFallbackRepository(providers);
+    // Register the use case
+    container.register<GetTokenPriceUseCase>("GetTokenPriceUseCase", {
+      useClass: GetTokenPriceUseCase,
+    });
+
+    const useCase = container.resolve<GetTokenPriceUseCase>("GetTokenPriceUseCase");
 
     const tokenAddress = "0x0000000000000000000000000000000000000000" as Address;
     const chainId = 1;
 
-    const price = await repository.getPrice(tokenAddress, chainId);
+    const price = await useCase.execute({ tokenAddress, chainId });
 
     // Should skip unavailable provider and use working one
     expect(price.source).toBe("WorkingProvider");
     expect(price.price).toBe(100);
+  });
+
+  it("should work with empty provider list", async () => {
+    // Don't register any providers, should handle gracefully
+    // Since @injectAll requires at least one registration for the token,
+    // we need to test this differently by creating use case directly
+
+    const useCase = new GetTokenPriceUseCase([]);
+
+    const tokenAddress = "0x0000000000000000000000000000000000000000" as Address;
+    const chainId = 1;
+
+    await expect(useCase.execute({ tokenAddress, chainId })).rejects.toThrow("No price providers configured");
+  });
+
+  it("should provide provider status information", async () => {
+    container.register<PriceProviderRepository>("PriceProvider", {
+      useValue: new MockProvider("WorkingProvider", false),
+    });
+
+    container.register<GetTokenPriceUseCase>("GetTokenPriceUseCase", {
+      useClass: GetTokenPriceUseCase,
+    });
+
+    const useCase = container.resolve<GetTokenPriceUseCase>("GetTokenPriceUseCase");
+
+    const status = useCase.getProviderStatus();
+
+    expect(status).toHaveLength(1);
+    expect(status[0].provider).toBe("WorkingProvider");
+    expect(status[0].available).toBe(true);
   });
 });

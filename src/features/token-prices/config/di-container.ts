@@ -4,13 +4,11 @@ import { DefaultLoggerFactory, type LoggerConfig, type LoggerFactory } from "../
 import { GetChainlinkPriceUseCase } from "../../chainlink-feeds/application/use-cases/get-chainlink-price";
 import { configureChainlinkDI } from "../../chainlink-feeds/config/di-container";
 import { GetTokenPriceUseCase } from "../application/use-cases/get-token-price";
-import { CachedPriceRepository } from "../data/repositories/cached-price";
 import { ChainlinkPriceRepository } from "../data/repositories/chainlink-price";
 import { CoinGeckoPriceRepository } from "../data/repositories/coingecko-price";
 import { DeFiLlamaPriceRepository } from "../data/repositories/defillama-price";
-import { FallbackPriceRepository } from "../data/repositories/fallback-price";
 import { MoralisPriceRepository } from "../data/repositories/moralis-price";
-import type { PriceRepository, PriceProviderRepository } from "../domain/repositories";
+import type { PriceProviderRepository } from "../domain/repositories";
 
 export function configureTokenPricesDI(): void {
   // Initialize Chainlink DI first
@@ -24,7 +22,6 @@ export function configureTokenPricesDI(): void {
       ChainlinkPrice: process.env.NODE_ENV === "development" ? "debug" : "info",
       CoinGeckoPrice: process.env.NODE_ENV === "development" ? "debug" : "warn",
       MoralisPrice: process.env.NODE_ENV === "development" ? "debug" : "warn",
-      FallbackPrice: process.env.NODE_ENV === "development" ? "debug" : "info",
       CachedPrice: "silent",
     },
   };
@@ -56,19 +53,10 @@ export function configureTokenPricesDI(): void {
     useClass: MoralisPriceRepository,
   });
 
-  // Register the main fallback repository with automatic provider injection
-  container.register<PriceRepository>("PriceRepository", {
-    useFactory: () => {
-      const fallbackRepository = container.resolve(FallbackPriceRepository);
-      return new CachedPriceRepository(fallbackRepository);
-    },
-  });
-
   // Register use case
   container.register<GetTokenPriceUseCase>("GetTokenPriceUseCase", {
     useFactory: () => {
-      const priceRepository = container.resolve<PriceRepository>("PriceRepository");
-      return new GetTokenPriceUseCase(priceRepository);
+      return new GetTokenPriceUseCase();
     },
   });
 }

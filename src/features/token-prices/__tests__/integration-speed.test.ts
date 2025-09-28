@@ -6,12 +6,13 @@ import type { Address } from "viem";
 
 import { configureTokenPricesDI } from "../config/di-container";
 import { GetTokenPriceUseCase } from "../application/use-cases/get-token-price";
-import type { PriceRepository } from "../domain/repositories";
+import type { PriceProviderRepository } from "../domain/repositories";
 
 describe("Price Providers Integration - Speed Test", () => {
   let getTokenPriceUseCase: GetTokenPriceUseCase;
 
   beforeEach(() => {
+    // Clear instances to prevent duplicate providers
     container.clearInstances();
     configureTokenPricesDI();
     getTokenPriceUseCase = container.resolve(GetTokenPriceUseCase);
@@ -19,8 +20,8 @@ describe("Price Providers Integration - Speed Test", () => {
 
   it("should successfully integrate all providers including DeFiLlama", async () => {
     // Test that DI container resolves all providers correctly
-    const priceRepository = container.resolve<PriceRepository>("PriceRepository");
-    expect(priceRepository).toBeDefined();
+    const providers = container.resolveAll<PriceProviderRepository>("PriceProvider");
+    expect(providers.length).toBeGreaterThan(0);
 
     // Test with a common token (USDC on Ethereum)
     const tokenAddress = "0xA0b86a33E6417aAb7b6DbCBbe9FD4E89c0778a4B" as Address;
@@ -92,10 +93,13 @@ describe("Price Providers Integration - Speed Test", () => {
 
   it("should verify DeFiLlama is registered as first provider", () => {
     // This test verifies the DI configuration is correct
-    const priceRepository = container.resolve<PriceRepository>("PriceRepository");
-    expect(priceRepository).toBeDefined();
+    const providers = container.resolveAll<PriceProviderRepository>("PriceProvider");
+    expect(providers.length).toBeGreaterThan(0);
 
-    // The fact that this resolves means all providers are correctly registered
+    // Verify DeFiLlama is first (for speed)
+    expect(providers[0].getProviderName()).toBe("DeFiLlama");
+
     console.log("✅ All price providers registered successfully");
+    console.log(`📊 Provider order: ${providers.map(p => p.getProviderName()).join(", ")}`);
   });
 });
