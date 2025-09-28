@@ -1,6 +1,14 @@
 import type { PriceProviderConfig } from "./domain/types";
 
 export const PRICE_PROVIDER_CONFIGS: Record<string, PriceProviderConfig> = {
+  defillama: {
+    name: "DeFiLlama",
+    baseUrl: "https://coins.llama.fi",
+    rateLimit: {
+      requestsPerMinute: 100, // Free tier: 100 requests per minute
+      requestsPerMonth: 10000, // Free tier: 10,000 requests per month
+    },
+  },
   chainlink: {
     name: "Chainlink",
     baseUrl: "", // No external API - uses blockchain directly

@@ -1,4 +1,4 @@
-import { injectable } from "tsyringe";
+import { inject, injectAll, injectable } from "tsyringe";
 import type { Address } from "viem";
 
 import type { PriceRepository, PriceProviderRepository } from "../../domain/repositories";
@@ -8,7 +8,13 @@ import type { TokenPrice, PriceProviderError } from "../../domain/types";
 export class FallbackPriceRepository implements PriceRepository {
   private readonly errors: PriceProviderError[] = [];
 
-  constructor(private readonly providers: PriceProviderRepository[]) {}
+  constructor(
+    @injectAll("PriceProvider")
+    private readonly providers: PriceProviderRepository[]
+  ) {
+    // Providers are automatically ordered by DI registration order
+    // No additional sorting needed - order is determined by DI configuration
+  }
 
   async getTokenPrice(tokenAddress: Address, chainId: number): Promise<TokenPrice> {
     this.clearOldErrors();

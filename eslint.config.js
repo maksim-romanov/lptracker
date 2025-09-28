@@ -13,7 +13,7 @@ module.exports = defineConfig([
   eslintPluginPrettierRecommended,
   cspellConfigs.recommended,
   {
-    ignores: ["dist/*", ".expo/*", "node_modules/*"],
+    ignores: ["dist/*", ".expo/*", "node_modules/*", ".agent-os/*", ".claude/*", ".cursor/*"],
   },
   {
     files: ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx"],

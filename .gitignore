@@ -48,3 +48,7 @@ ios
 keys.*.json
 
 __generated__
+
+
+.agent-os/product
+.agent-os/specs

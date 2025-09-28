@@ -7,6 +7,7 @@ import { GetTokenPriceUseCase } from "../application/use-cases/get-token-price";
 import { CachedPriceRepository } from "../data/repositories/cached-price";
 import { ChainlinkPriceRepository } from "../data/repositories/chainlink-price";
 import { CoinGeckoPriceRepository } from "../data/repositories/coingecko-price";
+import { DeFiLlamaPriceRepository } from "../data/repositories/defillama-price";
 import { FallbackPriceRepository } from "../data/repositories/fallback-price";
 import { MoralisPriceRepository } from "../data/repositories/moralis-price";
 import type { PriceRepository, PriceProviderRepository } from "../domain/repositories";
@@ -19,6 +20,7 @@ export function configureTokenPricesDI(): void {
   const loggerConfig: LoggerConfig = {
     defaultLevel: "info",
     classLevels: {
+      DeFiLlamaPrice: process.env.NODE_ENV === "development" ? "debug" : "info",
       ChainlinkPrice: process.env.NODE_ENV === "development" ? "debug" : "info",
       CoinGeckoPrice: process.env.NODE_ENV === "development" ? "debug" : "warn",
       MoralisPrice: process.env.NODE_ENV === "development" ? "debug" : "warn",
@@ -32,8 +34,13 @@ export function configureTokenPricesDI(): void {
     useFactory: () => new DefaultLoggerFactory(loggerConfig),
   });
 
-  // Register individual providers
-  container.register<PriceProviderRepository>("ChainlinkPriceRepository", {
+  // Register all providers under the same "PriceProvider" token for @injectAll
+  // Order matters: DeFiLlama first for speed, then Chainlink for security
+  container.register<PriceProviderRepository>("PriceProvider", {
+    useClass: DeFiLlamaPriceRepository,
+  });
+
+  container.register<PriceProviderRepository>("PriceProvider", {
     useFactory: () => {
       const chainlinkUseCase = container.resolve(GetChainlinkPriceUseCase);
       const loggerFactory = container.resolve<LoggerFactory>("LoggerFactory");
@@ -41,24 +48,18 @@ export function configureTokenPricesDI(): void {
     },
   });
 
-  container.register<PriceProviderRepository>("CoinGeckoPriceRepository", {
+  container.register<PriceProviderRepository>("PriceProvider", {
     useClass: CoinGeckoPriceRepository,
   });
 
-  container.register<PriceProviderRepository>("MoralisPriceRepository", {
+  container.register<PriceProviderRepository>("PriceProvider", {
     useClass: MoralisPriceRepository,
   });
 
-  // Register the main fallback repository with provider chain
-  // Chainlink first, then fallback to external APIs
+  // Register the main fallback repository with automatic provider injection
   container.register<PriceRepository>("PriceRepository", {
     useFactory: () => {
-      const providers = [
-        container.resolve<PriceProviderRepository>("ChainlinkPriceRepository"),
-        container.resolve(CoinGeckoPriceRepository),
-        container.resolve(MoralisPriceRepository),
-      ];
-      const fallbackRepository = new FallbackPriceRepository(providers);
+      const fallbackRepository = container.resolve(FallbackPriceRepository);
       return new CachedPriceRepository(fallbackRepository);
     },
   });
