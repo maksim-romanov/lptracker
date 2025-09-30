@@ -5,7 +5,6 @@ import { container } from "tsyringe";
 import type { Address } from "viem";
 
 import { DeFiLlamaPriceRepository } from "../data/repositories/defillama-price";
-import { PRICE_PROVIDER_CONFIGS, SUPPORTED_CHAIN_IDS } from "../configs";
 import type { PriceProviderRepository } from "../domain/repositories";
 
 // Mock ApiClient
@@ -18,6 +17,14 @@ class MockApiClient {
 
   get = mockGet;
 }
+
+// Mock Logger
+const mockLogger = {
+  debug: mock(() => {}),
+  info: mock(() => {}),
+  warn: mock(() => {}),
+  error: mock(() => {}),
+};
 
 // Mock the ApiClient import
 mock.module("../../../../infrastructure/api/api-client", () => ({
@@ -33,12 +40,12 @@ describe("DeFiLlamaPriceRepository", () => {
     container.clearInstances();
 
     // Create repository instance
-    repository = new DeFiLlamaPriceRepository();
+    repository = new DeFiLlamaPriceRepository(mockLogger as any);
   });
 
-  describe("getProviderName", () => {
+  describe("name", () => {
     it("should return correct provider name", () => {
-      expect(repository.getProviderName()).toBe("DeFiLlama");
+      expect(repository.name).toBe("DeFiLlama");
     });
   });
 
@@ -78,29 +85,10 @@ describe("DeFiLlamaPriceRepository", () => {
     });
   });
 
-  describe("isAvailable", () => {
-    it("should return true (simplified availability check)", async () => {
-      // Since we simplified isAvailable to return true, just test that
-      const result = await repository.isAvailable();
-      expect(result).toBeTrue();
-    });
-  });
-
   describe("configuration", () => {
-    it("should use correct config", () => {
-      expect(PRICE_PROVIDER_CONFIGS.defillama).toEqual({
-        name: "DeFiLlama",
-        baseUrl: "https://coins.llama.fi", // Updated to new domain
-        rateLimit: {
-          requestsPerMinute: 100,
-          requestsPerMonth: 10000,
-        },
-      });
-    });
-
-    it("should initialize with correct API client configuration", () => {
+    it("should initialize with correct provider name", () => {
       expect(repository).toBeDefined();
-      expect(repository.getProviderName()).toBe("DeFiLlama");
+      expect(repository.name).toBe("DeFiLlama");
     });
   });
 });

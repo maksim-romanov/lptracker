@@ -1,10 +1,11 @@
-import { injectable } from "tsyringe";
+import { inject, injectable } from "tsyringe";
 import type { Address } from "viem";
 
-import { ApiClient } from "../../../../infrastructure/api/api-client";
-import { SUPPORTED_CHAIN_IDS, PRICE_PROVIDER_CONFIGS } from "../../configs";
+import { ApiClient } from "infrastructure/api/api-client";
+import type { Logger } from "infrastructure/logging";
+
 import type { PriceProviderRepository } from "../../domain/repositories";
-import type { TokenPrice } from "../../domain/types";
+import { SUPPORTED_CHAIN_IDS, type TokenPrice } from "../../domain/types";
 
 interface CoinGeckoResponse {
   [key: string]: {
@@ -15,12 +16,14 @@ interface CoinGeckoResponse {
 
 @injectable()
 export class CoinGeckoPriceRepository implements PriceProviderRepository {
-  private readonly config = PRICE_PROVIDER_CONFIGS.coingecko;
+  readonly name = "CoinGecko";
+  // Rate limits: 10-50 req/min, 10,000 req/month (Free tier)
+  private readonly BASE_URL = "https://api.coingecko.com/api/v3";
   private readonly apiClient: ApiClient;
 
-  constructor() {
+  constructor(@inject("Logger") private readonly logger: Logger) {
     this.apiClient = new ApiClient({
-      baseURL: this.config.baseUrl,
+      baseURL: this.BASE_URL,
       headers: {
         Accept: "application/json",
       },
@@ -34,6 +37,7 @@ export class CoinGeckoPriceRepository implements PriceProviderRepository {
     }
 
     const platformId = this.getChainPlatformId(chainId);
+    this.logger.debug(`Getting price for token ${tokenAddress} on chain ${chainId} (${platformId}) from CoinGecko`);
 
     try {
       const data = await this.apiClient.get<CoinGeckoResponse>(`/simple/token_price/${platformId}`, {
@@ -47,32 +51,28 @@ export class CoinGeckoPriceRepository implements PriceProviderRepository {
       const tokenData = data[tokenAddress.toLowerCase()];
 
       if (!tokenData || typeof tokenData.usd !== "number") {
+        this.logger.warn(`Price not found for token ${tokenAddress} on chain ${chainId}`);
         throw new Error(`Price not found for token ${tokenAddress} on chain ${chainId}`);
       }
 
+      this.logger.info(`Successfully got price from CoinGecko: $${tokenData.usd}`);
       return {
         tokenAddress,
         chainId,
         price: tokenData.usd,
         priceChange24h: tokenData.usd_24h_change,
         timestamp: new Date(),
-        source: this.config.name,
+        source: "CoinGecko",
       };
     } catch (error: any) {
       if (error.status === 429) {
+        this.logger.warn("CoinGecko rate limit exceeded");
         throw new Error("CoinGecko rate limit exceeded");
       }
+      const errorMessage = error instanceof Error ? error.message : "Unknown error";
+      this.logger.warn(`CoinGecko price fetch failed: ${errorMessage}`);
       throw error;
     }
-  }
-
-  async isAvailable(): Promise<boolean> {
-    // CoinGecko free API is generally available, let the main method handle errors
-    return true;
-  }
-
-  getProviderName(): string {
-    return this.config.name;
   }
 
   private isChainSupported(chainId: number): boolean {

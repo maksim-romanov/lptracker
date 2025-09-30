@@ -11,11 +11,15 @@ import { GetTokenPriceUseCase } from "../application/use-cases/get-token-price";
 
 // Mock providers for testing @injectAll functionality
 class MockProvider implements PriceProviderRepository {
+  readonly name: string;
+
   constructor(
-    private name: string,
+    name: string,
     private shouldFail = false,
     private shouldReturnNull = false
-  ) {}
+  ) {
+    this.name = name;
+  }
 
   async getTokenPrice(tokenAddress: Address, chainId: number): Promise<TokenPrice> {
     if (this.shouldFail) {
@@ -33,14 +37,6 @@ class MockProvider implements PriceProviderRepository {
       timestamp: new Date(),
       source: this.name,
     };
-  }
-
-  async isAvailable(): Promise<boolean> {
-    return !this.shouldFail;
-  }
-
-  getProviderName(): string {
-    return this.name;
   }
 }
 
@@ -68,7 +64,7 @@ describe("@injectAll Provider Injection", () => {
     const providers = container.resolveAll<PriceProviderRepository>("PriceProvider");
 
     expect(providers).toHaveLength(3);
-    expect(providers.map(p => p.getProviderName())).toEqual([
+    expect(providers.map(p => p.name)).toEqual([
       "FirstProvider",
       "SecondProvider",
       "ThirdProvider"
@@ -150,38 +146,6 @@ describe("@injectAll Provider Injection", () => {
     const chainId = 1;
 
     await expect(useCase.execute({ tokenAddress, chainId })).rejects.toThrow("All price providers failed");
-  });
-
-  it("should respect provider availability checks", async () => {
-    const unavailableProvider = new MockProvider("UnavailableProvider", false);
-    // Mock isAvailable to return false
-    unavailableProvider.isAvailable = () => Promise.resolve(false);
-
-    const workingProvider = new MockProvider("WorkingProvider", false);
-
-    container.register<PriceProviderRepository>("PriceProvider", {
-      useValue: unavailableProvider,
-    });
-
-    container.register<PriceProviderRepository>("PriceProvider", {
-      useValue: workingProvider,
-    });
-
-    // Register the use case
-    container.register<GetTokenPriceUseCase>("GetTokenPriceUseCase", {
-      useClass: GetTokenPriceUseCase,
-    });
-
-    const useCase = container.resolve<GetTokenPriceUseCase>("GetTokenPriceUseCase");
-
-    const tokenAddress = "0x0000000000000000000000000000000000000000" as Address;
-    const chainId = 1;
-
-    const price = await useCase.execute({ tokenAddress, chainId });
-
-    // Should skip unavailable provider and use working one
-    expect(price.source).toBe("WorkingProvider");
-    expect(price.price).toBe(100);
   });
 
   it("should work with empty provider list", async () => {

@@ -13,22 +13,20 @@ console.log(`Token: ${tokenAddress}`);
 console.log(`Chain: ${chainId}`);
 console.log("");
 
-const repository = new DeFiLlamaPriceRepository();
+// Mock Logger
+const mockLogger = {
+  debug: () => {},
+  info: () => {},
+  warn: () => {},
+  error: () => {},
+};
+
+const repository = new DeFiLlamaPriceRepository(mockLogger as any);
 
 console.log("🔄 Testing DeFiLlama API...");
 console.log("");
 
 try {
-  // Test isAvailable first
-  console.log("📡 Checking availability...");
-  const startAvailable = Date.now();
-  const isAvailable = await repository.isAvailable();
-  const timeAvailable = Date.now() - startAvailable;
-
-  console.log(`Available: ${isAvailable}`);
-  console.log(`Check time: ${timeAvailable}ms`);
-  console.log("");
-
   // Test actual price fetch
   console.log("📡 Fetching price...");
   const startPrice = Date.now();
@@ -48,9 +46,8 @@ try {
   console.log("");
 
   console.log("📊 Performance Summary:");
-  console.log(`Availability check: ${timeAvailable}ms`);
   console.log(`Price fetch: ${timePrice}ms`);
-  console.log(`Provider: ${repository.getProviderName()}`);
+  console.log(`Provider: ${repository.name}`);
 
 } catch (error) {
   console.log("❌ Error occurred:");

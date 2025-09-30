@@ -26,4 +26,4 @@ export const METADATA_PROVIDER_CONFIGS: Record<string, MetadataProviderConfig> =
 };
 
 // Reuse supported chain IDs from token-prices
-export { SUPPORTED_CHAIN_IDS, type SupportedChainId } from "../token-prices/configs";
+export { SUPPORTED_CHAIN_IDS, type SupportedChainId } from "../token-prices/domain/types";

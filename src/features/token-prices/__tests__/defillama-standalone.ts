@@ -7,7 +7,15 @@ import { DeFiLlamaPriceRepository } from "../data/repositories/defillama-price";
 console.log("🔍 DeFiLlama Standalone Test");
 console.log("");
 
-const repository = new DeFiLlamaPriceRepository();
+// Mock Logger
+const mockLogger = {
+  debug: () => {},
+  info: () => {},
+  warn: () => {},
+  error: () => {},
+};
+
+const repository = new DeFiLlamaPriceRepository(mockLogger as any);
 
 // Test tokens
 const testTokens = [
@@ -23,26 +31,15 @@ for (const token of testTokens) {
   console.log(`\n📡 Testing ${token.name} (${token.address})...`);
 
   try {
-    // Test availability first
-    console.log("  🔍 Checking availability...");
-    const startAvailable = Date.now();
-    const isAvailable = await repository.isAvailable();
-    const timeAvailable = Date.now() - startAvailable;
-    console.log(`  ✅ Available: ${isAvailable} (${timeAvailable}ms)`);
+    // Test price fetch
+    console.log("  💰 Fetching price...");
+    const startPrice = Date.now();
+    const price = await repository.getTokenPrice(token.address, token.chainId);
+    const timePrice = Date.now() - startPrice;
 
-    if (isAvailable) {
-      // Test price fetch
-      console.log("  💰 Fetching price...");
-      const startPrice = Date.now();
-      const price = await repository.getTokenPrice(token.address, token.chainId);
-      const timePrice = Date.now() - startPrice;
-
-      console.log(`  ✅ Price: $${price.price}`);
-      console.log(`  📊 Source: ${price.source}`);
-      console.log(`  ⏱️  Response time: ${timePrice}ms`);
-    } else {
-      console.log("  ⚠️  Skipping price fetch due to unavailability");
-    }
+    console.log(`  ✅ Price: $${price.price}`);
+    console.log(`  📊 Source: ${price.source}`);
+    console.log(`  ⏱️  Response time: ${timePrice}ms`);
 
   } catch (error) {
     const endTime = Date.now();

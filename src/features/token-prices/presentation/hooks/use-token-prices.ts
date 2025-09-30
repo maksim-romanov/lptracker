@@ -58,14 +58,14 @@ export function useTokenPrices(
       },
       enabled: enabled && !!token.tokenAddress && !!token.chainId,
       staleTime,
-      retry: (failureCount, error: QueryError) => {
+      retry: (failureCount: number, error: QueryError) => {
         // Don't retry on 404 or authentication errors
         if (error?.status === 404 || error?.status === 401) {
           return false;
         }
         return failureCount < retry;
       },
-      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+      retryDelay: (attemptIndex: number) => Math.min(1000 * 2 ** attemptIndex, 30000),
     })),
   });
 

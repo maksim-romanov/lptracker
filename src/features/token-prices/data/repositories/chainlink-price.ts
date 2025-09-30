@@ -1,21 +1,19 @@
 import { inject, injectable } from "tsyringe";
 import type { Address } from "viem";
 
-import type { Logger, LoggerFactory } from "../../../../infrastructure/logging";
-import { GetChainlinkPriceUseCase } from "../../../chainlink-feeds/application/use-cases/get-chainlink-price";
+import type { Logger } from "infrastructure/logging";
+import { GetChainlinkPriceUseCase } from "features/chainlink-feeds/application/use-cases/get-chainlink-price";
 import type { PriceProviderRepository } from "../../domain/repositories";
 import type { TokenPrice } from "../../domain/types";
 
 @injectable()
 export class ChainlinkPriceRepository implements PriceProviderRepository {
-  private readonly logger: Logger;
+  readonly name = "Chainlink";
 
   constructor(
-    private readonly chainlinkUseCase: GetChainlinkPriceUseCase,
-    @inject("LoggerFactory") loggerFactory: LoggerFactory,
-  ) {
-    this.logger = loggerFactory.createLogger("ChainlinkPrice");
-  }
+    @inject(GetChainlinkPriceUseCase) private readonly chainlinkUseCase: GetChainlinkPriceUseCase,
+    @inject("Logger") private readonly logger: Logger,
+  ) {}
 
   async getTokenPrice(tokenAddress: Address, chainId: number): Promise<TokenPrice> {
     try {
@@ -43,18 +41,5 @@ export class ChainlinkPriceRepository implements PriceProviderRepository {
       this.logger.warn(`Chainlink price fetch failed: ${errorMessage}`);
       throw error;
     }
-  }
-
-  async isAvailable(): Promise<boolean> {
-    try {
-      return await this.chainlinkUseCase.isChainlinkAvailable();
-    } catch (error) {
-      this.logger.warn("Chainlink availability check failed:", error);
-      return false;
-    }
-  }
-
-  getProviderName(): string {
-    return "Chainlink";
   }
 }

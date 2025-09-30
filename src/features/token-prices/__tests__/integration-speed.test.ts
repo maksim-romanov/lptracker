@@ -70,8 +70,8 @@ describe("Price Providers Integration - Speed Test", () => {
 
   it("should handle multiple token requests efficiently", async () => {
     const tokens = [
-      { address: "0xA0b86a33E6417aAb7b6DbCBbe9FD4E89c0778a4B" as Address, chainId: 1 }, // USDC
-      { address: "0x6B175474E89094C44Da98b954EedeAC495271d0F" as Address, chainId: 1 }, // DAI
+      { tokenAddress: "0xA0b86a33E6417aAb7b6DbCBbe9FD4E89c0778a4B" as Address, chainId: 1 }, // USDC
+      { tokenAddress: "0x6B175474E89094C44Da98b954EedeAC495271d0F" as Address, chainId: 1 }, // DAI
     ];
 
     const results = await Promise.allSettled(
@@ -97,9 +97,9 @@ describe("Price Providers Integration - Speed Test", () => {
     expect(providers.length).toBeGreaterThan(0);
 
     // Verify DeFiLlama is first (for speed)
-    expect(providers[0].getProviderName()).toBe("DeFiLlama");
+    expect(providers[0].name).toBe("DeFiLlama");
 
     console.log("✅ All price providers registered successfully");
-    console.log(`📊 Provider order: ${providers.map(p => p.getProviderName()).join(", ")}`);
+    console.log(`📊 Provider order: ${providers.map(p => p.name).join(", ")}`);
   });
 });

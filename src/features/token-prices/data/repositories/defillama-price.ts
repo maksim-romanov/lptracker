@@ -1,33 +1,38 @@
-import { injectable } from "tsyringe";
+import { inject, injectable } from "tsyringe";
 import type { Address } from "viem";
 
-import { ApiClient } from "../../../../infrastructure/api/api-client";
-import { PRICE_PROVIDER_CONFIGS, SUPPORTED_CHAIN_IDS } from "../../configs";
+import { ApiClient } from "infrastructure/api/api-client";
+import type { Logger } from "infrastructure/logging";
 import type { PriceProviderRepository } from "../../domain/repositories";
-import type { TokenPrice } from "../../domain/types";
+import { SUPPORTED_CHAIN_IDS, type TokenPrice } from "../../domain/types";
 
 interface DeFiLlamaPriceResponse {
-  coins: Record<string, {
-    price: number;
-    symbol?: string;
-    timestamp?: number;
-    confidence?: number;
-    decimals?: number;
-  }>;
+  coins: Record<
+    string,
+    {
+      price: number;
+      symbol?: string;
+      timestamp?: number;
+      confidence?: number;
+      decimals?: number;
+    }
+  >;
 }
 
 @injectable()
 export class DeFiLlamaPriceRepository implements PriceProviderRepository {
-  private readonly config = PRICE_PROVIDER_CONFIGS.defillama;
+  readonly name = "DeFiLlama";
+  // Rate limits: 100 req/min, 10,000 req/month (Free tier)
+  private readonly BASE_URL = "https://coins.llama.fi";
   private readonly apiClient: ApiClient;
 
-  constructor() {
+  constructor(@inject("Logger") private readonly logger: Logger) {
     this.apiClient = new ApiClient({
-      baseURL: this.config.baseUrl,
+      baseURL: this.BASE_URL,
       headers: {
         Accept: "application/json",
       },
-      timeout: 5000, // Standard timeout for API calls
+      timeout: 5000,
     });
   }
 
@@ -37,6 +42,7 @@ export class DeFiLlamaPriceRepository implements PriceProviderRepository {
     }
 
     const chainIdString = this.getChainIdString(chainId);
+    this.logger.debug(`Getting price for token ${tokenAddress} on chain ${chainId} (${chainIdString}) from DeFiLlama`);
 
     try {
       // Use the correct DeFiLlama API endpoint format
@@ -46,40 +52,37 @@ export class DeFiLlamaPriceRepository implements PriceProviderRepository {
       const coinData = data.coins[coinKey];
 
       if (!coinData || typeof coinData.price !== "number") {
+        this.logger.warn(`Price not found for token ${tokenAddress} on chain ${chainId}`);
         throw new Error(`Price not found for token ${tokenAddress} on chain ${chainId}`);
       }
 
       // Validate price reasonableness
       if (coinData.price <= 0 || coinData.price > 1000000) {
+        this.logger.warn(`Invalid price ${coinData.price} for token ${tokenAddress}`);
         throw new Error(`Invalid price ${coinData.price} for token ${tokenAddress}`);
       }
 
+      this.logger.info(`Successfully got price from DeFiLlama: $${coinData.price}`);
       return {
         tokenAddress,
         chainId,
         price: coinData.price,
         timestamp: coinData.timestamp ? new Date(coinData.timestamp * 1000) : new Date(),
-        source: this.config.name,
+        source: "DeFiLlama",
       };
     } catch (error: any) {
       if (error.status === 429) {
+        this.logger.warn("DeFiLlama rate limit exceeded");
         throw new Error("DeFiLlama rate limit exceeded");
       }
       if (error.status === 404) {
+        this.logger.warn(`Token ${tokenAddress} not found on DeFiLlama`);
         throw new Error(`Token ${tokenAddress} not found on DeFiLlama`);
       }
+      const errorMessage = error instanceof Error ? error.message : "Unknown error";
+      this.logger.warn(`DeFiLlama price fetch failed: ${errorMessage}`);
       throw error;
     }
-  }
-
-  async isAvailable(): Promise<boolean> {
-    // Quick health check with WETH (which we know exists on DeFiLlama)
-    // await this.getTokenPrice("0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2" as Address, 1);
-    return true;
-  }
-
-  getProviderName(): string {
-    return this.config.name;
   }
 
   private isChainSupported(chainId: number): boolean {

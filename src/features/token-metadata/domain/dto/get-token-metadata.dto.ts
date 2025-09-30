@@ -2,7 +2,7 @@ import { IsEthereumAddress, IsNotEmpty, Min, IsIn } from "class-validator";
 import type { Address } from "viem";
 
 // Import supported chain IDs from token-prices feature
-import { SUPPORTED_CHAIN_IDS } from "../../../token-prices/configs";
+import { SUPPORTED_CHAIN_IDS } from "../../../token-prices/domain/types";
 
 export class GetTokenMetadataDto {
   @IsEthereumAddress({ message: "Token address must be a valid Ethereum address" })

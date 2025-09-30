@@ -1,6 +1,6 @@
 import { container } from "tsyringe";
 
-import { DefaultLoggerFactory, type LoggerConfig, type LoggerFactory } from "../../../infrastructure/logging";
+import { DefaultLoggerFactory, type LoggerConfig } from "../../../infrastructure/logging";
 import { configureChainlinkDI } from "../../chainlink-feeds/config/di-container";
 import { GetTokenPriceUseCase } from "../application/use-cases/get-token-price";
 import { ChainlinkPriceRepository } from "../data/repositories/chainlink-price";
@@ -14,29 +14,56 @@ export function configureTokenPricesDI(): void {
   configureChainlinkDI();
 
   // Configure token-prices logging
+  const isDevelopment = process.env.NODE_ENV === "development";
+  const devDebugProdInfo = isDevelopment ? "debug" : "info";
+  const devDebugProdWarn = isDevelopment ? "debug" : "warn";
+
   const loggerConfig: LoggerConfig = {
     defaultLevel: "info",
     classLevels: {
-      DeFiLlamaPrice: process.env.NODE_ENV === "development" ? "debug" : "info",
-      ChainlinkPrice: process.env.NODE_ENV === "development" ? "debug" : "info",
-      CoinGeckoPrice: process.env.NODE_ENV === "development" ? "debug" : "warn",
-      MoralisPrice: process.env.NODE_ENV === "development" ? "debug" : "warn",
-      CachedPrice: "silent",
+      DeFiLlamaPrice: devDebugProdInfo,
+      ChainlinkPrice: devDebugProdInfo,
+      CoinGeckoPrice: devDebugProdWarn,
+      MoralisPrice: devDebugProdWarn,
     },
   };
 
-  // Register logger factory for token-prices
-  container.register<LoggerFactory>("LoggerFactory", { useFactory: () => new DefaultLoggerFactory(loggerConfig) });
+  const loggerFactory = new DefaultLoggerFactory(loggerConfig);
 
   // Register all providers under the same "PriceProvider" token for @injectAll
   // Order matters: DeFiLlama, Chainlink
-  container.register<PriceProviderRepository>("PriceProvider", { useClass: DeFiLlamaPriceRepository });
-  container.register<PriceProviderRepository>("PriceProvider", { useClass: ChainlinkPriceRepository });
-  container.register<PriceProviderRepository>("PriceProvider", { useClass: CoinGeckoPriceRepository });
-  container.register<PriceProviderRepository>("PriceProvider", { useClass: MoralisPriceRepository });
+  container.register<PriceProviderRepository>("PriceProvider", {
+    useFactory: (c) => {
+      c.register("Logger", { useValue: loggerFactory.createLogger("DeFiLlamaPrice") });
+      return c.resolve(DeFiLlamaPriceRepository);
+    },
+  });
+  container.register<PriceProviderRepository>("PriceProvider", {
+    useFactory: (c) => {
+      c.register("Logger", { useValue: loggerFactory.createLogger("ChainlinkPrice") });
+      return c.resolve(ChainlinkPriceRepository);
+    },
+  });
+  container.register<PriceProviderRepository>("PriceProvider", {
+    useFactory: (c) => {
+      c.register("Logger", { useValue: loggerFactory.createLogger("CoinGeckoPrice") });
+      return c.resolve(CoinGeckoPriceRepository);
+    },
+  });
+  container.register<PriceProviderRepository>("PriceProvider", {
+    useFactory: (c) => {
+      c.register("Logger", { useValue: loggerFactory.createLogger("MoralisPrice") });
+      return c.resolve(MoralisPriceRepository);
+    },
+  });
 
   // Register use case
-  container.register<GetTokenPriceUseCase>("GetTokenPriceUseCase", { useClass: GetTokenPriceUseCase });
+  container.register<GetTokenPriceUseCase>("GetTokenPriceUseCase", {
+    useFactory: (c) => {
+      c.register("Logger", { useValue: loggerFactory.createLogger("GetTokenPriceUseCase") });
+      return c.resolve(GetTokenPriceUseCase);
+    },
+  });
 }
 
 export { container };

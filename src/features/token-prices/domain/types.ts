@@ -1,4 +1,5 @@
 import type { Address } from "viem";
+import { arbitrum, mainnet } from "viem/chains";
 
 export interface TokenPrice {
   tokenAddress: Address;
@@ -9,15 +10,10 @@ export interface TokenPrice {
   source: string;
 }
 
-export interface PriceProviderConfig {
-  name: string;
-  baseUrl: string;
-  apiKey?: string;
-  rateLimit?: {
-    requestsPerMinute: number;
-    requestsPerMonth?: number;
-  };
-}
+// Supported chain IDs
+export const SUPPORTED_CHAIN_IDS = [mainnet.id, arbitrum.id, 137, 10, 8453] as const;
+
+export type SupportedChainId = (typeof SUPPORTED_CHAIN_IDS)[number];
 
 export interface PriceProviderError {
   provider: string;
