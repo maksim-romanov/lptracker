@@ -36,3 +36,29 @@ export interface PriceCache {
   cleanup(): void;
   size(): number;
 }
+
+// Circuit Breaker monitoring types
+export interface CircuitBreakerStats {
+  failures: number;
+  successes: number;
+  fires: number;
+  timeouts: number;
+  rejects: number;
+  fallbacks: number;
+  cacheHits: number;
+  cacheMisses: number;
+  coalesceCacheHits: number;
+  coalesceCacheMisses: number;
+  semaphoreRejections: number;
+  percentiles: Record<string, number>;
+  latencyTimes: number[];
+  latencyMean: number;
+}
+
+export interface CircuitBreakerState {
+  opened: boolean;
+  halfOpen: boolean;
+  closed: boolean;
+  name: string;
+  stats: CircuitBreakerStats;
+}

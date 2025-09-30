@@ -23,5 +23,11 @@ config.transformer.minifierConfig = {
 // like attempted subpath imports (e.g. "@noble/hashes/crypto.js").
 config.resolver.unstable_enablePackageExports = false;
 
+// Add Node.js core module polyfills for React Native
+config.resolver.extraNodeModules = {
+  ...config.resolver.extraNodeModules,
+  events: require.resolve("events/"),
+};
+
 // module.exports = wrapWithReanimatedMetroConfig(config);
 module.exports = config;
