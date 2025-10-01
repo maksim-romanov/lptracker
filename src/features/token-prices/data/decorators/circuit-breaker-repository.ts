@@ -54,13 +54,7 @@ export class CircuitBreakerRepository implements PriceProviderRepository {
   }
 
   getState() {
-    return {
-      opened: this.breaker.opened,
-      halfOpen: this.breaker.halfOpen,
-      closed: this.breaker.closed,
-      name: this.name,
-      stats: this.breaker.stats,
-    };
+    return this.breaker;
   }
 
   // Control methods for testing/management

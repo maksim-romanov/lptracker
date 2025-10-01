@@ -1,7 +1,7 @@
 import { inject, injectable, injectAll } from "tsyringe";
 import type { Address } from "viem";
 
-import { LogErrors, ValidateParams } from "../../../../domain/decorators";
+import { ValidateParams } from "../../../../domain/decorators";
 import { BaseUseCase } from "../../../../domain/use-cases/base-use-case";
 import { GetTokenPriceDto } from "../../domain/dto/get-token-price.dto";
 import type { PriceProviderRepository } from "../../domain/repositories";
@@ -19,7 +19,6 @@ export class GetTokenPriceUseCase implements BaseUseCase<GetTokenPriceParams, To
     private readonly providers: PriceProviderRepository[],
   ) {}
 
-  @LogErrors()
   @ValidateParams(GetTokenPriceDto)
   async execute(params: GetTokenPriceParams): Promise<TokenPrice> {
     const { tokenAddress, chainId } = params;

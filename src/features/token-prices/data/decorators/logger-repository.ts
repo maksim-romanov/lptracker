@@ -1,7 +1,7 @@
 import { inject, injectable } from "tsyringe";
 import type { Address } from "viem";
 
-import { ILogger } from "domain/logger";
+import type { ILogger } from "domain/logger/logger.interface";
 
 import type { PriceProviderRepository } from "../../domain/repositories";
 import type { TokenPrice } from "../../domain/types";
