@@ -9,6 +9,7 @@ import { DeFiLlamaPriceRepository } from "../data/repositories/defillama-price";
 import { MoralisPriceRepository } from "../data/repositories/moralis-price";
 import type { PriceProviderRepository } from "../domain/repositories";
 import { circuitBreakerConfigs } from "./circuit-breaker.config";
+import { LoggerRepository } from "../data/decorators/logger-repository";
 
 export function configureTokenPricesDI(): void {
   // Initialize Chainlink DI first
@@ -19,32 +20,35 @@ export function configureTokenPricesDI(): void {
   // Each provider is wrapped with CircuitBreaker decorator
   container.register<PriceProviderRepository>("PriceProvider", {
     useFactory: (c) => {
-      const baseRepo = c.resolve(DeFiLlamaPriceRepository);
-      c.register("InnerRepository", { useValue: baseRepo });
+      c.register("InnerRepository", { useValue: c.resolve(DeFiLlamaPriceRepository) });
+      c.register("InnerRepository", { useValue: c.resolve(LoggerRepository) });
       c.register("CircuitBreakerConfig", { useValue: circuitBreakerConfigs.DeFiLlama });
       return c.resolve(CircuitBreakerRepository);
     },
   });
+
   container.register<PriceProviderRepository>("PriceProvider", {
     useFactory: (c) => {
-      const baseRepo = c.resolve(ChainlinkPriceRepository);
-      c.register("InnerRepository", { useValue: baseRepo });
+      c.register("InnerRepository", { useValue: c.resolve(ChainlinkPriceRepository) });
+      c.register("InnerRepository", { useValue: c.resolve(LoggerRepository) });
       c.register("CircuitBreakerConfig", { useValue: circuitBreakerConfigs.Chainlink });
       return c.resolve(CircuitBreakerRepository);
     },
   });
+
   container.register<PriceProviderRepository>("PriceProvider", {
     useFactory: (c) => {
-      const baseRepo = c.resolve(CoinGeckoPriceRepository);
-      c.register("InnerRepository", { useValue: baseRepo });
+      c.register("InnerRepository", { useValue: c.resolve(CoinGeckoPriceRepository) });
+      c.register("InnerRepository", { useValue: c.resolve(LoggerRepository) });
       c.register("CircuitBreakerConfig", { useValue: circuitBreakerConfigs.CoinGecko });
       return c.resolve(CircuitBreakerRepository);
     },
   });
+
   container.register<PriceProviderRepository>("PriceProvider", {
     useFactory: (c) => {
-      const baseRepo = c.resolve(MoralisPriceRepository);
-      c.register("InnerRepository", { useValue: baseRepo });
+      c.register("InnerRepository", { useValue: c.resolve(MoralisPriceRepository) });
+      c.register("InnerRepository", { useValue: c.resolve(LoggerRepository) });
       c.register("CircuitBreakerConfig", { useValue: circuitBreakerConfigs.Moralis });
       return c.resolve(CircuitBreakerRepository);
     },

@@ -11,6 +11,7 @@ import { WalletsRepositoryImpl } from "data/repositories/wallets-repository-impl
 import { NativeAlertService } from "data/services/native-alert-service";
 import { ToastServiceImpl } from "data/services/toast-service-impl";
 import { AlertServiceFactory } from "domain/factories/alert-service-factory";
+import type { ILogger } from "domain/logger/logger.interface";
 import type { BlockchainRepository } from "domain/repositories/blockchain-repository";
 import type { ClipboardRepository } from "domain/repositories/clipboard-repository";
 import type { SettingsRepository } from "domain/repositories/settings-repository";
@@ -23,6 +24,7 @@ import { ClipboardUseCase } from "domain/use-cases/clipboard";
 import { SettingsManagementUseCase } from "domain/use-cases/settings";
 import { WalletsUseCase } from "domain/use-cases/wallets";
 import { configureChainlinkDI } from "features/chainlink-feeds/config/di-container";
+import { ReactNativeLogger } from "infrastructure/logger/react-native-logger";
 import { queryClient } from "infrastructure/query";
 
 // Feature modules
@@ -33,6 +35,11 @@ configureChainlinkDI();
 // Infrastructure bindings
 container.register<QueryClient>("QueryClient", {
   useValue: queryClient,
+});
+
+// Logger binding (singleton)
+container.register<ILogger>("Logger", {
+  useClass: ReactNativeLogger,
 });
 
 // Repository bindings
