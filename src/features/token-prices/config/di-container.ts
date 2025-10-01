@@ -1,6 +1,5 @@
 import { container } from "tsyringe";
 
-import { configureChainlinkDI } from "../../chainlink-feeds/config/di-container";
 import { GetTokenPriceUseCase } from "../application/use-cases/get-token-price";
 import { CircuitBreakerRepository } from "../data/decorators/circuit-breaker-repository";
 import { ChainlinkPriceRepository } from "../data/repositories/chainlink-price";
@@ -12,9 +11,6 @@ import { circuitBreakerConfigs } from "./circuit-breaker.config";
 import { LoggerRepository } from "../data/decorators/logger-repository";
 
 export function configureTokenPricesDI(): void {
-  // Initialize Chainlink DI first
-  configureChainlinkDI();
-
   // Register all providers under the same "PriceProvider" token for @injectAll
   // Order matters: DeFiLlama, Chainlink, CoinGecko, Moralis
   // Each provider is wrapped with CircuitBreaker decorator
@@ -54,10 +50,7 @@ export function configureTokenPricesDI(): void {
     },
   });
 
-  // Register use case
-  container.register<GetTokenPriceUseCase>("GetTokenPriceUseCase", {
-    useClass: GetTokenPriceUseCase,
-  });
+  container.register<GetTokenPriceUseCase>("GetTokenPriceUseCase", { useClass: GetTokenPriceUseCase });
 }
 
 export { container };

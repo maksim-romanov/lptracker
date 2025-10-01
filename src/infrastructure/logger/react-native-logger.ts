@@ -37,6 +37,9 @@ export class ReactNativeLogger implements ILogger {
         error: 3,
       },
 
+      severity: "info",
+      printDate: false,
+
       transportOptions: {
         colors: {
           info: "blueBright",
