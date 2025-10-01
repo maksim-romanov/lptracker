@@ -2,7 +2,6 @@ import { inject, injectable } from "tsyringe";
 import type { Address } from "viem";
 
 import { ApiClient } from "infrastructure/api/api-client";
-import type { Logger } from "infrastructure/logging";
 import type { PriceProviderRepository } from "../../domain/repositories";
 import { SUPPORTED_CHAIN_IDS, type TokenPrice } from "../../domain/types";
 
@@ -26,7 +25,7 @@ export class DeFiLlamaPriceRepository implements PriceProviderRepository {
   private readonly BASE_URL = "https://coins.llama.fi";
   private readonly apiClient: ApiClient;
 
-  constructor(@inject("Logger") private readonly logger: Logger) {
+  constructor() {
     this.apiClient = new ApiClient({
       baseURL: this.BASE_URL,
       headers: {
@@ -42,7 +41,6 @@ export class DeFiLlamaPriceRepository implements PriceProviderRepository {
     }
 
     const chainIdString = this.getChainIdString(chainId);
-    this.logger.debug(`Getting price for token ${tokenAddress} on chain ${chainId} (${chainIdString}) from DeFiLlama`);
 
     try {
       // Use the correct DeFiLlama API endpoint format
@@ -52,17 +50,14 @@ export class DeFiLlamaPriceRepository implements PriceProviderRepository {
       const coinData = data.coins[coinKey];
 
       if (!coinData || typeof coinData.price !== "number") {
-        this.logger.warn(`Price not found for token ${tokenAddress} on chain ${chainId}`);
         throw new Error(`Price not found for token ${tokenAddress} on chain ${chainId}`);
       }
 
       // Validate price reasonableness
       if (coinData.price <= 0 || coinData.price > 1000000) {
-        this.logger.warn(`Invalid price ${coinData.price} for token ${tokenAddress}`);
         throw new Error(`Invalid price ${coinData.price} for token ${tokenAddress}`);
       }
 
-      this.logger.info(`Successfully got price from DeFiLlama: $${coinData.price}`);
       return {
         tokenAddress,
         chainId,
@@ -72,15 +67,11 @@ export class DeFiLlamaPriceRepository implements PriceProviderRepository {
       };
     } catch (error: any) {
       if (error.status === 429) {
-        this.logger.warn("DeFiLlama rate limit exceeded");
         throw new Error("DeFiLlama rate limit exceeded");
       }
       if (error.status === 404) {
-        this.logger.warn(`Token ${tokenAddress} not found on DeFiLlama`);
         throw new Error(`Token ${tokenAddress} not found on DeFiLlama`);
       }
-      const errorMessage = error instanceof Error ? error.message : "Unknown error";
-      this.logger.warn(`DeFiLlama price fetch failed: ${errorMessage}`);
       throw error;
     }
   }

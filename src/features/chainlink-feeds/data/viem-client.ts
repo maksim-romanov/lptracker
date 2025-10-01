@@ -1,4 +1,4 @@
-import { createPublicClient, http, type PublicClient } from "viem";
+import { createPublicClient, http } from "viem";
 import { mainnet, bsc, polygon, avalanche, arbitrum, optimism } from "viem/chains";
 
 import type { SupportedChainId } from "../configs";
@@ -36,7 +36,7 @@ export const CHAINLINK_CHAIN_CONFIGS = {
   },
 } as const;
 
-export function makeChainlinkClient(chainId: SupportedChainId): PublicClient {
+export function makeChainlinkClient(chainId: SupportedChainId) {
   const config = CHAINLINK_CHAIN_CONFIGS[chainId];
   if (!config) {
     throw new Error(`Unsupported chain ID: ${chainId}`);

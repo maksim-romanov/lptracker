@@ -2,7 +2,6 @@ import { inject, injectable } from "tsyringe";
 import type { Address } from "viem";
 
 import { ApiClient } from "infrastructure/api/api-client";
-import type { Logger } from "infrastructure/logging";
 
 import type { PriceProviderRepository } from "../../domain/repositories";
 import { SUPPORTED_CHAIN_IDS, type TokenPrice } from "../../domain/types";
@@ -21,7 +20,7 @@ export class CoinGeckoPriceRepository implements PriceProviderRepository {
   private readonly BASE_URL = "https://api.coingecko.com/api/v3";
   private readonly apiClient: ApiClient;
 
-  constructor(@inject("Logger") private readonly logger: Logger) {
+  constructor() {
     this.apiClient = new ApiClient({
       baseURL: this.BASE_URL,
       headers: {
@@ -37,7 +36,6 @@ export class CoinGeckoPriceRepository implements PriceProviderRepository {
     }
 
     const platformId = this.getChainPlatformId(chainId);
-    this.logger.debug(`Getting price for token ${tokenAddress} on chain ${chainId} (${platformId}) from CoinGecko`);
 
     try {
       const data = await this.apiClient.get<CoinGeckoResponse>(`/simple/token_price/${platformId}`, {
@@ -51,11 +49,9 @@ export class CoinGeckoPriceRepository implements PriceProviderRepository {
       const tokenData = data[tokenAddress.toLowerCase()];
 
       if (!tokenData || typeof tokenData.usd !== "number") {
-        this.logger.warn(`Price not found for token ${tokenAddress} on chain ${chainId}`);
         throw new Error(`Price not found for token ${tokenAddress} on chain ${chainId}`);
       }
 
-      this.logger.info(`Successfully got price from CoinGecko: $${tokenData.usd}`);
       return {
         tokenAddress,
         chainId,
@@ -66,11 +62,8 @@ export class CoinGeckoPriceRepository implements PriceProviderRepository {
       };
     } catch (error: any) {
       if (error.status === 429) {
-        this.logger.warn("CoinGecko rate limit exceeded");
         throw new Error("CoinGecko rate limit exceeded");
       }
-      const errorMessage = error instanceof Error ? error.message : "Unknown error";
-      this.logger.warn(`CoinGecko price fetch failed: ${errorMessage}`);
       throw error;
     }
   }

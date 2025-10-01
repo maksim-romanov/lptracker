@@ -13,15 +13,7 @@ console.log(`Token: ${tokenAddress}`);
 console.log(`Chain: ${chainId}`);
 console.log("");
 
-// Mock Logger
-const mockLogger = {
-  debug: () => {},
-  info: () => {},
-  warn: () => {},
-  error: () => {},
-};
-
-const repository = new DeFiLlamaPriceRepository(mockLogger as any);
+const repository = new DeFiLlamaPriceRepository();
 
 console.log("🔄 Testing DeFiLlama API...");
 console.log("");

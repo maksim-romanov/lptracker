@@ -1,7 +1,6 @@
-import { inject, injectable } from "tsyringe";
+import { injectable } from "tsyringe";
 import type { Address } from "viem";
 
-import type { Logger, LoggerFactory } from "../../../../infrastructure/logging";
 import type { BlockchainPriceRepository } from "../../domain/repositories";
 import { makeChainlinkClient, isValidChainId } from "../viem-client";
 
@@ -31,11 +30,6 @@ const AGGREGATOR_V3_ABI = [
 
 @injectable()
 export class BlockchainPriceRepositoryImpl implements BlockchainPriceRepository {
-  private readonly logger: Logger;
-
-  constructor(@inject("ChainlinkLoggerFactory") loggerFactory: LoggerFactory) {
-    this.logger = loggerFactory.createLogger("BlockchainPrice");
-  }
   async getLatestPrice(
     feedAddress: Address,
     chainId: number,
@@ -81,10 +75,7 @@ export class BlockchainPriceRepositoryImpl implements BlockchainPriceRepository 
       const maxAge = BigInt(24 * 3600); // 24 hours in seconds (more lenient for stablecoins)
 
       if (now - updatedAt > maxAge) {
-        this.logger.warn(
-          `Price data is stale but proceeding: ${feedAddress}, updated: ${new Date(Number(updatedAt) * 1000).toISOString()}`,
-        );
-        // Don't throw error for stale data - just warn
+        // Don't throw error for stale data - just proceed
       }
 
       return {

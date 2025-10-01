@@ -1,8 +1,6 @@
 import { inject, injectable, injectAll } from "tsyringe";
 import type { Address } from "viem";
 
-import { Logger } from "infrastructure/logging";
-
 import { LogErrors, ValidateParams } from "../../../../domain/decorators";
 import { BaseUseCase } from "../../../../domain/use-cases/base-use-case";
 import { GetTokenPriceDto } from "../../domain/dto/get-token-price.dto";

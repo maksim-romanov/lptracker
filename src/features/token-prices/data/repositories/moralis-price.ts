@@ -3,7 +3,6 @@ import type { Address } from "viem";
 import { toHex } from "viem";
 
 import { ApiClient } from "infrastructure/api/api-client";
-import type { Logger } from "infrastructure/logging";
 import type { PriceProviderRepository } from "../../domain/repositories";
 import { SUPPORTED_CHAIN_IDS, type TokenPrice } from "../../domain/types";
 
@@ -23,11 +22,7 @@ export class MoralisPriceRepository implements PriceProviderRepository {
   private readonly apiKey = process.env.EXPO_PUBLIC_MORALIS_API_KEY;
   private readonly apiClient: ApiClient;
 
-  constructor(@inject("Logger") private readonly logger: Logger) {
-    if (!this.apiKey) {
-      this.logger.warn("Moralis API key not configured - provider will be unavailable");
-    }
-
+  constructor() {
     this.apiClient = new ApiClient({
       baseURL: this.BASE_URL,
       headers: {
@@ -48,7 +43,6 @@ export class MoralisPriceRepository implements PriceProviderRepository {
     }
 
     const chainHex = toHex(chainId);
-    this.logger.debug(`Getting price for token ${tokenAddress} on chain ${chainId} (${chainHex}) from Moralis`);
 
     try {
       const data = await this.apiClient.get<MoralisResponse>(`/erc20/${tokenAddress}/price`, {
@@ -58,13 +52,11 @@ export class MoralisPriceRepository implements PriceProviderRepository {
       });
 
       if (!data.usdPrice || typeof data.usdPrice !== "number") {
-        this.logger.warn(`Price not found for token ${tokenAddress} on chain ${chainId}`);
         throw new Error(`Price not found for token ${tokenAddress} on chain ${chainId}`);
       }
 
       const priceChange24h = data["24hrPercentChange"] ? parseFloat(data["24hrPercentChange"]) : undefined;
 
-      this.logger.info(`Successfully got price from Moralis: $${data.usdPrice}`);
       return {
         tokenAddress,
         chainId,
@@ -75,15 +67,11 @@ export class MoralisPriceRepository implements PriceProviderRepository {
       };
     } catch (error: any) {
       if (error.status === 429) {
-        this.logger.warn("Moralis rate limit exceeded");
         throw new Error("Moralis rate limit exceeded");
       }
       if (error.status === 401) {
-        this.logger.warn("Moralis API key invalid");
         throw new Error("Moralis API key invalid");
       }
-      const errorMessage = error instanceof Error ? error.message : "Unknown error";
-      this.logger.warn(`Moralis price fetch failed: ${errorMessage}`);
       throw error;
     }
   }

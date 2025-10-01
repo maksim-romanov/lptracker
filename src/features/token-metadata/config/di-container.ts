@@ -1,6 +1,5 @@
 import { container } from "tsyringe";
 
-import { DefaultLoggerFactory, type LoggerConfig, type LoggerFactory } from "../../../infrastructure/logging";
 import { GetTokenMetadataUseCase } from "../application/use-cases/get-token-metadata";
 import { CachedMetadataRepository } from "../data/repositories/cached-metadata";
 import { CoinGeckoMetadataRepository } from "../data/repositories/coingecko-metadata";
@@ -10,25 +9,6 @@ import { TrustWalletMetadataRepository } from "../data/repositories/trustwallet-
 import type { MetadataRepository, MetadataProviderRepository } from "../domain/repositories";
 
 export function configureDI(): void {
-  // Configure logging
-  const loggerConfig: LoggerConfig = {
-    defaultLevel: "info",
-    classLevels: {
-      // Can be configured via environment or config
-      TrustWallet: "silent",
-      CoinGecko: process.env.NODE_ENV === "development" ? "debug" : "warn",
-      Moralis: process.env.NODE_ENV === "development" ? "debug" : "warn",
-      TokenMetadata: "silent", // For fallback repository
-      GetTokenMetadata: "silent", // For use case
-      useTokenMetadata: "silent", // For React hook
-    },
-  };
-
-  // Register logger factory
-  container.register<LoggerFactory>("LoggerFactory", {
-    useFactory: () => new DefaultLoggerFactory(loggerConfig),
-  });
-
   // Register individual providers
   container.register<MetadataProviderRepository>("TrustWalletMetadataRepository", {
     useClass: TrustWalletMetadataRepository,
@@ -50,8 +30,7 @@ export function configureDI(): void {
         container.resolve(CoinGeckoMetadataRepository),
         container.resolve(MoralisMetadataRepository),
       ];
-      const loggerFactory = container.resolve<LoggerFactory>("LoggerFactory");
-      return new FallbackMetadataRepository(providers, loggerFactory);
+      return new FallbackMetadataRepository(providers);
     },
   });
 
@@ -59,8 +38,7 @@ export function configureDI(): void {
   container.register<MetadataRepository>("MetadataRepository", {
     useFactory: () => {
       const fallbackRepo = container.resolve<MetadataRepository>("FallbackMetadataRepository");
-      const loggerFactory = container.resolve<LoggerFactory>("LoggerFactory");
-      return new CachedMetadataRepository(fallbackRepo, loggerFactory);
+      return new CachedMetadataRepository(fallbackRepo);
     },
   });
 

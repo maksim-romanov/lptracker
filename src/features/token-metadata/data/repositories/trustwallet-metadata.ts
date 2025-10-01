@@ -1,9 +1,8 @@
-import { inject, injectable } from "tsyringe";
+import { injectable } from "tsyringe";
 import type { Address } from "viem";
 import { getAddress } from "viem";
 
 import { ApiClient } from "../../../../infrastructure/api/api-client";
-import type { Logger, LoggerFactory } from "../../../../infrastructure/logging";
 import { METADATA_PROVIDER_CONFIGS, SUPPORTED_CHAIN_IDS } from "../../configs";
 import type { MetadataProviderRepository } from "../../domain/repositories";
 import type { TokenMetadata } from "../../domain/types";
@@ -24,10 +23,8 @@ interface TrustWalletTokenInfo {
 export class TrustWalletMetadataRepository implements MetadataProviderRepository {
   private readonly config = METADATA_PROVIDER_CONFIGS.trustwallet;
   private readonly apiClient: ApiClient;
-  private readonly logger: Logger;
 
-  constructor(@inject("LoggerFactory") loggerFactory: LoggerFactory) {
-    this.logger = loggerFactory.createLogger("TrustWalletMetadataRepository");
+  constructor() {
     this.apiClient = new ApiClient({
       baseURL: this.config.baseUrl,
       headers: {
@@ -38,17 +35,13 @@ export class TrustWalletMetadataRepository implements MetadataProviderRepository
   }
 
   async getTokenMetadata(tokenAddress: Address, chainId: number): Promise<TokenMetadata> {
-    const startTime = Date.now();
-    this.logger.debug(`Fetching metadata for ${tokenAddress} on chain ${chainId}`);
-
     if (!this.isChainSupported(chainId)) {
-      this.logger.error(`Chain ${chainId} not supported`);
       throw new Error(`Chain ID ${chainId} not supported by Trust Wallet`);
     }
 
     // Handle native tokens (zero address) - we have full metadata for these
     if (tokenAddress.toLowerCase() === "0x0000000000000000000000000000000000000000") {
-      return this.getNativeTokenMetadata(chainId, startTime);
+      return this.getNativeTokenMetadata(chainId);
     }
 
     const chainName = this.getChainName(chainId);
@@ -62,29 +55,24 @@ export class TrustWalletMetadataRepository implements MetadataProviderRepository
     try {
       // Try to get full metadata from info.json
       const endpoint = `/blockchains/${chainName}/assets/${checksumAddress}/info.json`;
-      this.logger.debug(`Fetching token info: ${endpoint}`);
 
       let data = await this.apiClient.get<TrustWalletTokenInfo>(endpoint);
 
       // Fix: Trust Wallet API sometimes returns JSON as string
       if (typeof data === "string") {
-        this.logger.debug(`Parsing JSON string response`);
         data = JSON.parse(data) as TrustWalletTokenInfo;
       }
 
       // Check if we have essential data
       if (!data.name || !data.symbol) {
-        this.logger.warn(`Incomplete token data for ${tokenAddress} - name: ${data.name}, symbol: ${data.symbol}`);
         throw new Error(`Incomplete token metadata for ${tokenAddress} on chain ${chainId}`);
       }
 
       // Skip tokens marked as spam/inactive
       if (data.status === "spam" || data.status === "abandoned") {
-        this.logger.warn(`Token ${tokenAddress} marked as ${data.status}`);
         throw new Error(`Token marked as ${data.status}: ${tokenAddress}`);
       }
 
-      const requestTime = Date.now() - startTime;
       const metadata = {
         address: tokenAddress,
         chainId,
@@ -98,17 +86,12 @@ export class TrustWalletMetadataRepository implements MetadataProviderRepository
         source: this.config.name,
       };
 
-      this.logger.info(`SUCCESS (full metadata): ${metadata.symbol} (${metadata.name}) (${requestTime}ms)`);
       return metadata;
     } catch (error: any) {
-      const requestTime = Date.now() - startTime;
-
       if (error.status === 404) {
-        this.logger.warn(`Token info not found: ${tokenAddress} (${requestTime}ms)`);
         throw new Error(`Token not found: ${tokenAddress} on chain ${chainId}`);
       }
 
-      this.logger.error(`API error (status ${error.status}) for ${tokenAddress} (${requestTime}ms): ${error.message}`);
       throw error;
     }
   }
@@ -146,8 +129,7 @@ export class TrustWalletMetadataRepository implements MetadataProviderRepository
     return chainName;
   }
 
-  private getNativeTokenMetadata(chainId: number, startTime: number): TokenMetadata {
-    const requestTime = Date.now() - startTime;
+  private getNativeTokenMetadata(chainId: number): TokenMetadata {
     const chainName = this.getChainName(chainId);
 
     const nativeTokens: Record<number, Omit<TokenMetadata, "address" | "chainId" | "timestamp" | "source">> = {
@@ -214,7 +196,6 @@ export class TrustWalletMetadataRepository implements MetadataProviderRepository
       source: this.config.name,
     };
 
-    this.logger.info(`SUCCESS (native): ${metadata.symbol} (${metadata.name}) logoUrl=available (${requestTime}ms)`);
     return metadata;
   }
 }

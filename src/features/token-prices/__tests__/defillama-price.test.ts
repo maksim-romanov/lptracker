@@ -18,14 +18,6 @@ class MockApiClient {
   get = mockGet;
 }
 
-// Mock Logger
-const mockLogger = {
-  debug: mock(() => {}),
-  info: mock(() => {}),
-  warn: mock(() => {}),
-  error: mock(() => {}),
-};
-
 // Mock the ApiClient import
 mock.module("../../../../infrastructure/api/api-client", () => ({
   ApiClient: MockApiClient,
@@ -40,7 +32,7 @@ describe("DeFiLlamaPriceRepository", () => {
     container.clearInstances();
 
     // Create repository instance
-    repository = new DeFiLlamaPriceRepository(mockLogger as any);
+    repository = new DeFiLlamaPriceRepository();
   });
 
   describe("name", () => {

@@ -7,15 +7,7 @@ import { DeFiLlamaPriceRepository } from "../data/repositories/defillama-price";
 console.log("🔍 DeFiLlama Standalone Test");
 console.log("");
 
-// Mock Logger
-const mockLogger = {
-  debug: () => {},
-  info: () => {},
-  warn: () => {},
-  error: () => {},
-};
-
-const repository = new DeFiLlamaPriceRepository(mockLogger as any);
+const repository = new DeFiLlamaPriceRepository();
 
 // Test tokens
 const testTokens = [
