@@ -14,7 +14,6 @@ export interface TokenInput {
 
 export interface UseTokenPricesOptions {
   enabled?: boolean;
-  sequentialDelay?: number;
   staleTime?: number;
   retry?: number;
 }
@@ -37,22 +36,15 @@ export function useTokenPrices(
 ): UseTokenPricesResult {
   const safeTokens = tokens.filter((token) => token.tokenAddress && token.chainId) as TokenInput[];
 
-  const {
-    enabled = true,
-    // sequentialDelay = 0,
-    staleTime = 60 * 1000, // 1 minute
-    retry = 2,
-  } = options;
+  const { enabled = true, staleTime = 60 * 1000, retry = 2 } = options;
 
   const queries = useQueries({
-    queries: safeTokens?.map((token, index) => ({
+    queries: safeTokens?.map((token) => ({
       queryKey: tokenPricesQueryKeys.singlePrice(token.tokenAddress, token.chainId),
       queryFn: async () => {
-        // Sequential delay to avoid rate limiting
-        // if (index > 0) {
-        //   await new Promise((resolve) => setTimeout(resolve, sequentialDelay));
-        // }
-
+        // Rate limiting is now handled automatically by RateLimiterRepository decorator
+        // No need for manual sequential delays - the decorator queues requests
+        // and smooths out traffic peaks using execEvenly option
         const useCase = container.resolve<GetTokenPriceUseCase>("GetTokenPriceUseCase");
         return useCase.execute(token);
       },

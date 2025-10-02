@@ -51,6 +51,7 @@
         "numbro": "^2.5.0",
         "ofetch": "^1.4.1",
         "opossum": "^9.0.0",
+        "rate-limiter-flexible": "^8.0.1",
         "react": "19.1.0",
         "react-dom": "19.1.0",
         "react-hook-form": "^7.62.0",
@@ -2455,6 +2456,8 @@
     "randombytes": ["randombytes@2.1.0", "", { "dependencies": { "safe-buffer": "^5.1.0" } }, "sha512-vYl3iOX+4CKUWuxGi9Ukhie6fsqXqS9FE2Zaic4tNFD2N2QQaXOMFbuKK4QmDHC0JO6B1Zp41J0LpT0oR68amQ=="],
 
     "range-parser": ["range-parser@1.2.1", "", {}, "sha512-Hrgsx+orqoygnmhFbKaHE6c296J+HTAQXoxEF6gNupROmmGJRoyzfG3ccAveqCBrwr/2yxQ5BVd/GTl5agOwSg=="],
+
+    "rate-limiter-flexible": ["rate-limiter-flexible@8.0.1", "", {}, "sha512-UVJdIvGYUDGH9+f3e63dIyOB1wxCLC9CSH09eXLohENGAsxY9PTwI2uJgY6Kj0ULf7x1Aq4FZIGvhJHXJTbdSQ=="],
 
     "raw-body": ["raw-body@2.5.2", "", { "dependencies": { "bytes": "3.1.2", "http-errors": "2.0.0", "iconv-lite": "0.4.24", "unpipe": "1.0.0" } }, "sha512-8zGqypfENjCIqGhgXToC8aB2r7YrBX+AQAfIPs/Mlk+BtPTztOvTS01NRW/3Eh60J+a48lt8qsCzirQ6loCVfA=="],
 

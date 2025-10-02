@@ -63,6 +63,7 @@
     "numbro": "^2.5.0",
     "ofetch": "^1.4.1",
     "opossum": "^9.0.0",
+    "rate-limiter-flexible": "^8.0.1",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-hook-form": "^7.62.0",
